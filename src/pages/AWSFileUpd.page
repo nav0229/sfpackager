@@ -1,0 +1,9 @@
+<apex:page id="AWSFileUpd"     docType="html-5.0" sideBar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+
+    
+                    <span class="small-text" id="copyright-statement">
+                    © 1996 - 2019 Steelcase Inc. is the global leader in office furniture, 
+                    interior architecture and space solutions for offices, hospitals and classrooms. 
+                    Our furniture is inspired by innovative research in workspace design.
+                </span>
+</apex:page>

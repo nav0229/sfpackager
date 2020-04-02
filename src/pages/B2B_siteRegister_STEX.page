@@ -1,0 +1,34 @@
+<apex:page id="B2B_siteRegister_STEX" applyHtmlTag="false"  controller="B2B_SiteRegisterControllerExt_STEX"    docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" >
+
+        <apex:define name="meta">
+            <!-- <title><apex:outputText value="{!PageTitle}" /></title> -->
+          
+        </apex:define>
+
+        <apex:define name="breadcrumb">
+            <apex:outputPanel >
+             
+            </apex:outputPanel>
+        </apex:define>
+
+        <apex:define name="body">
+            <!-- <apex:outputPanel layout="none" rendered="{!useBodyBegin}" > 
+                
+            </apex:outputPanel> --> 
+            <div class="newCustomerSection" />
+            <!-- <apex:outputPanel layout="none" rendered="{!useBodyEnd}" >
+				<apex:include pageName="{!bodyEndPage}" />
+            </apex:outputPanel> -->
+        </apex:define>
+
+        <apex:define name="htmlbodyX">
+            <!-- common components -->
+            <!-- c:cc_PageMessagesRD />
+            <c:cc_headerRD ccCtrl="{!NewCustomerController}" rendered="{!widgetConfiguration[LOWER('H.Enabled')]}" />
+            <c:cc_productSearchWidget pCcCtrl="{!NewCustomerController}" rendered="{!widgetConfiguration[LOWER('H.Enabled')]}" />
+            <c:cc_topMenuRD ccCtrl="{!NewCustomerController}" rendered="{!widgetConfiguration[LOWER('TM.Enabled')]}" />
+            <!-- page-specific components -->
+            <!--c:cc_CommonTemplates />
+            <c:cc_NewCustomerRD /-->
+        </apex:define>
+</apex:page>

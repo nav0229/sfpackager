@@ -1,0 +1,362 @@
+<apex:page controller="B2B_ChooserOptionController_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/jquery-3.3.1.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/jquery-migrate-3.0.1.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/jquery-ui-custom.1.12.1.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/jquery.cookie-1.4.1.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/jquery.hoverIntent-1.9.0.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/jquery-vertical-accordion-menu/js/jquery.dcjqaccordion.2.7.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/jquery.validate.1.17.0.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/underscore-1.9.1.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/backbone-1.3.3.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/modernizr-2.8.3.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/accounting-0.4.2.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/handlebars-v4.0.11.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/js-image-slider-2016.9.27.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/bootstrap-datepicker-1.8.0.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/js2form.2011.9.19.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/form2js-2010.9.9.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/backbone.paginator.2.0.6.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/bootstrap-2.3.2/js/bootstrap.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/jquery.nouislider.min.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CC_Javascript_Framework, 'js/jquery.currency.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CC_Javascript_Framework, 'js/controllers_new_slider.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CC_Javascript_Framework, 'js/cloudcraze.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CC_Javascript_Framework, 'js/CC_Backbone.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CC_Javascript_Framework, 'js/backbone_models.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CC_Javascript_Framework, 'js/libs/respond.src.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.ccrz__CC_Javascript_Framework, 'js/uiproperties.js')}"/>
+        
+        <!-- CSS -->
+        <apex:stylesheet value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/css/bootstrap-datepicker.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/css/jquery-ui-custom.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/css/jquery.nouislider.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/boot3/css/bootstrap-datepicker3.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/boot3/css/bootstrap.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/boot3/css/shimbs3.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/boot3/css/jquery.nouislider.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.ccrz__CCRZ_JS, 'v004/classic/css/jquery.nouislider.css')}"/>
+
+    <style>
+       /* <!-- Move this to the main Style CSS . --> */
+        
+        .modal-content {
+         width:50%;
+         margin: 10px auto;
+        }
+        .messagingSection-Warning {
+            color: red;
+        }
+    </style>
+    
+    
+    
+    
+    <script type="text/javascript">
+        Visualforce.remoting.Manager.add(new $VFRM.RemotingProviderImpl({"vf":{"vid":"0661S000001Oid8","xhr":false,"dev":false,"tst":false,"dbg":false,"tm":1564625162483,"ovrprm":false},"actions":{"ccrz.cc_ctrl_AutoComplete":{"ms":[{"name":"searchAutoComplete","len":4,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSwxN0hQcGJvY21kT2d0eU9ZU3RfZlRmLE4ySTROV1Zp"}],"prm":1},"ccrz.cc_ctrl_Header":{"ms":[{"name":"forgotPassword","len":1,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSxTa1dsYkt1UHZGSnhqLUZNWldPQkRVLE56QXdObVl6"}],"prm":1},"ccrz.cc_ctrl_MenuBar":{"ms":[{"name":"getMenuJson","len":1,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSxTOVJhVWhEME5xaVNWaVd5MHA4VUFqLFpHTm1OalZo"}],"prm":1},"ccrz.cc_RemoteActionController":{"ms":[{"name":"addBulk","len":2,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSxPUnR3ejVFbnVqdU1kNXZJMGJBR2t6LE56SmpNVE14"},{"name":"addConfigurationRemoteAction","len":5,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSx2R1FHaWFhYklIWWZtdEw5VkN2elY0LFpqUTJaVGN3"},{"name":"addConfiguration","len":4,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSxTaG1XV3F3ajEyNVFPWEV0TTh0RWF5LFpURTNPREF3"},{"name":"addItem","len":7,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSxXcjUwNnVRR3dncWI2QmpYNHRrRExOLE1XUmlZbVkx"},{"name":"getCartTotal","len":3,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSxqM3BZX2xLeW90QS1QaF9OQU8ySDZSLFpEZG1OREF5"},{"name":"getCategoryTreeJson","len":1,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSxSNzZpR0pnVU1RU0VkamZrNjZjcXBJLFpHRTROemxs"},{"name":"getCountries","len":1,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSxjdGxrZEx5MElTVXNpSlVuX1dZNWRzLFlUZzBaRFl4"},{"name":"getCurrentUser","len":1,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSx4bXlLN2YxY2RLbG1yV2lZTjdLMDdCLFlqYzJOalUy"},{"name":"getHeaderInfo","len":1,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSwwaEhnbW1OcVNQNnBSMDdHR3VVb1gzLFl6aGxNREV3"},{"name":"getStates","len":0,"ns":"ccrz","ver":44.0,"csrf":"VmpFPSxNakF4T1Mwd09DMHdORlF3TWpvd05qb3dNaTQwT0RSYSxZQlc4NWYxWjlIUXNRc2RNMDdlVTcyLFl6aGtaRFZs"}],"prm":1}},"service":"exchange/apexremote"}));
+    </script>
+    <script>
+        (function(UITheme) {
+            UITheme.getUITheme = function() { 
+                return UserContext.uiTheme;
+            };
+        }(window.UITheme = window.UITheme || {}));
+    </script>
+        
+    <div class="MySubscriberPageDskTarget">
+        <div class="messagingSection-Error"></div>
+        <div id='chooserOptionContentId'></div>        
+    </div>  
+        
+    <script type="text/template" id="chooser-option-page-template">
+            
+        
+<div class="deskLayout cc_deskLayout">
+        <header>
+            <div class="header cc_header">
+  <div class="navbar-inverse cc_navbar-inverse">
+   <div class="container cc_container">
+    <div class="row cc_navbar_row">
+     <small>
+      <div class="col-md-4 col-xs-12 cc_navbar_col_misc">
+       <p class="header-spacer visible-md-* cc_header_spacer"></p>
+       <div class="navbar-header pull-left cc_navbar-header">
+        <span class="misc-function cc_misc_function"></span>
+        <span class="lssec cc_lssec"></span>
+       </div>
+      </div>
+      <div class="col-md-5 col-xs-12 cc_navbar_col_acct">
+        <p class="header-spacer visible-md-* cc_header_spacer"></p>
+      </div>
+      </small>
+    </div>
+   </div>
+  </div>
+ </div>
+            <div class="menu_container cc_menu_container">
+   <div id="secnav cc_secnav">
+   <nav class="navbar navbar-default navbar-static-top cc_navbar">
+    <div class="container cc_container">
+     <div class="navbar-header cc_navbar_header">
+      
+     </div>
+    
+    </div>
+   </nav>
+  </div>
+ </div>
+        </header>
+        <div class="home_slider cc_home_slider">
+            <span id="loginPage:cc_tmpl_OneColRD:cc_tmpl_Storefront:j_id122">
+                <div id="loginPage:cc_tmpl_OneColRD:cc_tmpl_Storefront:j_id122:cc_Hero:j_id123" class="main_page_title main_page_title MyAccount en_US">
+                </div>
+            </span>
+            <div class="container cc_breadrumb_container" id="breadcrumb_desktop_container">
+                <span id="loginPage:cc_tmpl_OneColRD:cc_tmpl_Storefront:j_id127">
+                </span>
+            </div>
+        </div>
+         
+        <div class="contentBody cc_content_body">
+                <div class="model-dialog" role="document">
+                    <!-- Logo Container Start-->
+                     <!-- <div>
+                            <div>
+                             <div>
+                                <a style="max-width: 100px;height: 100px;float:left"  href="https://b2b.steelcase.com/demo/">
+                                        <img src="https://b2b.steelcase.com/media/catalog/category/n/b/nbs_logo_6.png" alt="Henry" >
+                                </a>
+                                                                         
+                                 
+                                <a style="max-width: 100px;height: 100px;float:right" href="https://b2b.steelcase.com/demo/">                            
+                                    <img  src="https://b2b.steelcase.com/media/catalog/category/n/b/nbs_logo_6.png" alt="Site Demo">
+                                </a>
+                            </div>
+                            
+                    </div> -->
+                    <!-- Logo Container End-->
+                <div class="modal-content cc_modal_content">
+                    
+                    <div class="modal-header cc_modal_header">
+                        <a style="max-width: 50px;height: 50px;float:center" href="#">                            
+                              <img  src="{{ dealerLocations.logoUrl }}" alt="Site Demo">
+                        </a>
+                    </div>
+                    <div class="modal-body cc_modal_body">
+                        <div class="panel-body cc_body">
+           <div class="cc_page_controls col-xs-12 col-md-6">
+               <div class="messagingSection-Info" style="display: none"></div>
+                <div class="messagingSection-Warning" style="display: none"></div>
+                    <div class="row">
+                        <form id='chooserOptionForm'>
+                            <label class="cc_contact_input_language_label">{{ dealerLocations.chooserQuestion }}</label>               
+                            <select class="form-control cc_page_size_control" id='chooser-option-selector' >
+                                <option value="--select--">--select--</option>
+                               {{#each dealerLocations.chooserAnswers}}
+                                <option value="{{Id}}">{{Name}}</option>
+                                {{/each}}
+                            </select>                            
+                        </form>
+                        <br></br>
+                        <div class="form-group">
+                            <button id="selectChooserOptBtnId" class="btn btn-default btn-sm updateProfile cc_update_profile" onclick="return false">Continue to Site</button>                                                      
+                        </div>
+                    </div>
+                                   
+             </div>
+                    
+       </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    </script>
+    
+    
+    <script>
+    jQuery(function($){
+            function changeCartToGivenEprocCart(cartEncId){
+                Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.B2B_ChooserOptionController_STEX.changeActiveCartToEprocValue}', 
+                cartEncId,
+                (result) =>{
+                    if (result){
+                        console.log('cart successfully set to eproc value');
+                    } else {
+                        console.log('error setting cart');
+                    }
+                },
+                {
+                    escape:false
+                });
+            }
+            var GetChooserOptions = CCRZ.CloudCrazeView.extend({
+            id: 'base-modal',
+            viewName: 'dealerLocations',
+            //template: CCRZ.util.template('chooser-option-modal'),
+            template: CCRZ.util.template('chooser-option-page-template'),
+            managedSubView : true,
+            el:'#chooserOptionContentId',
+            events : {
+                //"change #chooser-option-selector": "chooserOptionSelected",
+                "click #selectChooserOptBtnId": "chooserOptionPicked"                
+            },
+            data: {
+                dealerLocationInfo: [],
+                eproc: false,
+                sessionType: 'create',
+                cartId: ''
+            },
+            initialize: function() {
+                //console.log('initializing '+ ${this.type} );
+                _.bindAll(this,'renderDesktop','getRemoteAccount');
+                console.log('inithttps://steelcase--acumendev.cs40.my.salesforce.com/_ui/common/apex/debug/ApexCSIPage#');
+                this.getRemoteAccount(this);                
+            },
+            renderDesktop: function(data) {
+                console.log('result.data:'+data);
+                this.$el.html(this.template(data))
+            },
+            getCookieValueByName: function(name) {
+                return localStorage.getItem('siteParam');
+            },
+            getRemoteAccount: function(currentView) {
+                var userId='{!$user.Id}';
+                console.log('User Id: '+ userId );
+                // Get Cookie Start
+                //Test
+                // var name = "site=";
+                var siteCookieValue = this.getCookieValueByName('anything here');
+                console.log('site cookie: ',siteCookieValue);               
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.B2B_ChooserOptionController_STEX.getChooserOptions}', 
+                    {'UserId':userId,'site' : siteCookieValue }, 
+                    function(result, event) {
+                        if (event.status) {  
+                            console.log('response:'+result.success);
+                            console.log('result.siteInfo:'+result.siteInfo);
+                            console.log('result.currAcct:'+result.currAcct);                         
+                            console.log('result.siteName:'+result.siteName);
+                            console.log('result.catalogEnabled: ', result.catalogEnabled);
+
+                            // ccrz.pagevars.catalogEnabled = result.catalogEnabled;
+                            localStorage.setItem('catalogEnabled', result.catalogEnabled);
+                            
+                            if (result.siteName && result.eprocInfo){
+                                console.log('EPROC VALUES HERE: '+result.eprocInfo);
+                                let res = result.eprocInfo.split(',');
+                                if (res[0]){
+                                    if (localStorage.getItem('siteParam')){
+                                        if (res[0]!=localStorage.getItem('siteParam')){
+                                            // set site param to user's value if they are not equal
+                                            localStorage.setItem('siteParam',res[0]);
+                                        }
+                                    } else {
+                                        // if it does not exist, add it
+                                        localStorage.setItem('siteParam',res[0]);
+                                    }
+                                    CCRZ.setCookie('site', res[0]);
+                                    CCRZ.setCookie('apex__site', res[0]);
+                                }
+                                if (res[1]){
+                                    localStorage.setItem('isEproc',true);
+                                }
+                                if (res[2]){
+                                    localStorage.setItem('eProcSessionType',res[2]);
+                                    if (res[2]=='edit' && res[3]){
+                                        this.sessionType = 'edit';
+                                        this.cartId = res[3];
+                                        changeCartToGivenEprocCart(res[3]);
+                                    } else {
+                                        this.sessionType = 'create';
+                                        this.cartId = null;
+                                    }
+                                }
+                                if (res[4]){
+                                    localStorage.setItem('PostalCode',res[4]);
+                                    console.log('Postal code: ', localStorage.getItem('PostalCode'));
+                                } else localStorage.removeItem('PostalCode');
+                                
+                            } else if (!result.eprocInfo){
+                                console.log('NO EPROC VALUES FOUND, DELETING OLD ONES IF PRESENT');
+                                localStorage.removeItem('isEproc');
+                                localStorage.removeItem('eProcSessionType');
+                                localStorage.removeItem('PostalCode');
+                            }                       
+                            if ( result.siteInfo != null) {                                
+                                console.log('chooserQuestion:'+result.siteInfo.chooserQuestion);
+                                console.log('chooserAnswers:'+result.siteInfo.chooserAnswers);
+                                console.log('chooserAnswers:'+(result.siteInfo.chooserAnswers != null));
+                                
+                                console.log('LogoUrl:'+result.siteInfo.logoUrl);
+                                if( result.showChooserOptionPage ) {
+                                    console.log('Inside showChooserOptionPage loop');
+                                    this.data = {dealerLocations:result.siteInfo};
+                                    currentView.renderDesktop(this.data);
+                                } else {
+                                    if( result.EffectiveAccountId != null ) {
+                                        console.log('result.EffectiveAccountId: '+result.EffectiveAccountId);
+                                        console.log('session type here: '+this.sessionType +' or is it this?: ' );
+                                        if(this.sessionType == 'edit' && this.cartId){
+                                            window.location.href = '/exchange/ccrz__Cart?cartId='+this.cartId+'&effectiveAccount='+result.EffectiveAccountId;
+                                        } else {
+                                            // no session
+                                            window.location.href = '/exchange/ccrz__HomePage?effectiveAccount='+result.EffectiveAccountId;
+                                        }
+                                    } else {
+                                        //window.location.href = '/exchange/ccrz__HomePage';
+                                    }                                
+                                }
+                            } else {
+                          
+                                var errName = $(".messagingSection-Error"); //Element selector
+                                if( errName != null ) {
+                                    errName.removeClass('alert alert-danger alert-info');
+                                }
+                                errName.addClass('alert alert-danger');
+                                errName.html('Site has not been set up. Please contact site administrator.');                                          
+                            }             
+                            
+                        } else if (event.type === 'exception') {
+                            console.log('exception');
+                        } else {
+                           console.log('error response');
+                        }
+                    }, 
+                    {escape: true}
+                );
+            },
+            chooserOptionPicked : function(e) {
+                e.preventDefault();
+                console.log('e is: ' , e);
+                let selectedValue = $("#chooser-option-selector").val();
+                // $("#chooser-option-selector").children("option:selected").val();
+                
+                if(selectedValue != '--select--') {
+                    var siteName = this.getCookieValueByName('site=');
+                    var effectiveAccountId = $("#chooser-option-selector").val();
+                    if(this.sessionType == 'edit' && this.cartId){
+                        window.location.href = '/exchange/ccrz__Cart?cartId='+this.cartId+'&effectiveAccount='+effectiveAccountId;
+                        CCRZ.pagevars.currentCartID = this.cartId;
+                    } else {
+                        // no session
+                        window.location.href = '/exchange/ccrz__HomePage?effectiveAccount='+effectiveAccountId;
+                    }
+                } else {
+                    $('.messagingSection-Warning').append('<p>You must select a valid option.</p>').show();
+                }
+            }
+            
+        }); 
+        console.log('GetChooserOptions');
+        var chooserOptionView = new GetChooserOptions();
+    
+    
+    });     
+    </script>
+    
+
+</apex:page>

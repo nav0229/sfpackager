@@ -1,0 +1,109 @@
+<apex:page id="B2B_ccHomePageTemplate_STEX" controller="B2B_HomePageController_STEX" applyHtmlTag="false" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false">
+    <div class="container cc_main_container cc_tmpl_ThreeColRD">
+        <!-- Main content three column layout -->
+        <div class="row cc_main_row">
+            <div class="col-md-3 cc_left_col">
+                <div class="search-box-LeftNav" />
+                <!-- <apex:insert name="WidgetBoxL" /> -->
+                <!-- <apex:insert name="ProductSearch" /> -->
+                <apex:insert name="PhoneSplash"/>
+                <!-- <div id="categories-left-nav"></div>  -->
+                <!-- ^^^ placeholder for category tree in left nav -->
+                <!-- <div class="filterContainer"></div> -->
+                <!-- <apex:insert name="ContactUs" /> -->
+                <!-- <div class="promotion-box-LeftNav"></div> -->
+                <!-- <apex:insert name="LeftNavX" /> -->
+            </div><!-- end col-md-3"-->
+            <div class="col-md-6 cc_main_content_col">
+                <div class="row cc_main_content_row">
+                    <!-- <apex:insert name="WidgetBoxC" />
+                    <apex:insert name="Banner" />
+                    <div class="promotion-box-Banner"></div>
+                    <div class="effwig"></div>
+                    <apex:insert name="ProductSpotlight" />
+                    <apex:insert name="body" />
+                    <apex:insert name="PromosCenter" />
+                    <apex:insert name="FeaturedProducts" />
+                    <apex:insert name="GuideProducts" />
+                    <apex:insert name="UpsellProducts" />
+                    <apex:insert name="ProductReviews" />
+                    <apex:insert name="CenterX" /> -->
+                </div>
+            </div><!-- end col-md-6 -->
+            <div class="col-md-3 cc_right_col right_column">
+                <div class="effright"></div>
+                <div class="search-box-RightNav" />
+                <div id="MyAccount_navSection"></div> <!-- placeholder for MyAccount Nav in right nav -->
+                <!-- <apex:insert name="WidgetBoxR" /> -->
+                <!-- <apex:insert name="MiniCartBox" /> -->
+                <!-- <apex:insert name="SellerLocatorBox"/> -->
+                <!-- <div id="categories-right-nav"></div>  -->
+                <!-- placeholder for category tree in right nav -->
+                <!-- <div class="widgetSection"></div> -->
+                <!-- <apex:insert name="MiniQuickOrderBox" /> -->
+                <!-- <c:cc_SFLiveChatWidget /> -->
+                <!-- <apex:insert name="MiniWishListBox" /> -->
+                <!-- <div class="promotion-box-RightNav"></div> -->
+                <!-- <apex:insert name="RightNavX" /> -->
+            </div><!-- end col-md-3-->
+        </div><!-- end row -->
+        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6 quoteWidgetContainer">
+                        <div class="hpWidget" id="quoteRetrievalWidget">
+                            <div class="row">
+                                <div class="col-xs-9">
+                                    <span class="hpSubheading">Quote Retrieval</span>
+                                </div><!-- close col-xs-10  -->
+                                <div class="col-xs-3">
+                                    <span class="showAllLink"><a href="" id="showAllQuotes">SHOW ALL</a></span>
+                                </div><!-- close col-xs-2 -->
+                            </div><!-- close row -->
+                            <div class="row">
+                                <div class="col-xs-12" id="quoteRetrievalTableContainer"></div>
+                            </div> <!-- close row -->
+                        </div><!-- close hpWidget -->
+                    </div><!-- close col-md-6 -->
+                    
+                    <div class="col-md-6 orderHistoryWidgetContainer">
+                        <div class="hpWidget" id="orderHistoryWidget">
+                            <div class="row">
+                                <div class="col-xs-9">
+                                    <span class="hpSubheading">Order History</span>
+                                </div><!-- close col-xs-10  -->
+                                <div class="col-xs-3">
+                                    <span class="showAllLink"><a href="" id="showAllOrders">SHOW ALL</a></span>
+                                </div><!-- close col-xs-2 -->
+                            </div><!-- close row  -->
+                            <div class="row">
+                                <div class="col-xs-12" id="orderHistoryTableContainer"></div>
+                            </div> <!-- close row -->
+                        </div><!-- close hpWidget -->
+                    </div><!-- close col-md-6 -->
+                </div><!-- end row -->
+
+
+                <!-- <apex:insert name="WidgetBoxC" /> -->
+                <!-- <apex:insert name="Banner" /> -->
+                <div class="promotion-box-Banner"></div>
+                <!-- <div class="effwig"></div>  -->
+
+
+                <apex:insert name="body" />
+
+
+                <!-- <apex:insert name="ProductSpotlight" /> -->
+                <!-- <apex:insert name="PromosCenter" /> -->
+                <!-- <apex:insert name="FeaturedProducts" /> -->
+                <!-- <apex:insert name="GuideProducts" /> -->
+                <!-- <apex:insert name="UpsellProducts" /> -->
+                <!-- <apex:insert name="ProductReviews" /> -->
+                <!-- <apex:insert name="CenterX" /> -->
+
+
+            </div><!-- end col-md-12 -->
+        </div> <!-- end row -->
+    </div>
+</apex:page>

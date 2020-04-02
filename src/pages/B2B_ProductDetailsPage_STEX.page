@@ -1,0 +1,8 @@
+<!--
+ - Created by agearheart on 2019-08-09.
+ -->
+
+<apex:page id="B2B_ProductDetailsPage_STEX" docType="html-5.0" sideBar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+    <c:B2B_EffAcctSelector_STEX />
+    <c:B2B_ProductDetailExt_STEX /> 
+</apex:page>

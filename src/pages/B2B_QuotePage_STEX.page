@@ -1,0 +1,84 @@
+<apex:page docType="html-5.0" controller="B2B_QuotePageController_STEX" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+    <c:B2B_EffAcctSelector_STEX />
+    <div id="eproc-msg" class="b2b-rule-msg"></div>
+
+    <div class="row">    
+        <button id="checkout" class="btn btn-default btn-sm pull-right">Checkout</button>
+        <button id="reject" class="btn btn-sm pull-right" style="margin-right: 10px;">Reject Quote</button>
+        <h2 class="title cc_title cartTitle pull-left" id="quoteTitle"></h2>
+    </div>
+    <div class="well">
+        <div class="row">
+            <div class="col-xs-4">
+                <h5 id="quoteNumber"><strong>Quote Number:</strong><br/></h5>
+            </div>
+            <div class="col-xs-4">
+                <h5 id="publishedFor"><strong>Published For:</strong><br/></h5>
+            </div>
+            <div class="col-xs-4">
+                <h5 id="publishedDate"><strong>Date Published:</strong><br/></h5>
+            </div>    
+        </div>
+        <div class="row">
+            <div class="col-xs-4">
+                <h5 id="soldTo"><strong>Sold To</strong><br/></h5>
+            </div>
+            <div class="col-xs-4">
+                <h5 id="shipTo"><strong>Ship To</strong><br/></h5>
+            </div>
+            <div class="col-xs-4">
+                <h5 id="dealerReps"><strong>Dealer Representatives</strong><br/></h5>
+            </div>
+        </div>
+    </div>
+    <c:B2B_QuoteDetails_STEX />
+    <script>
+        let urlVars = (function () {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                vars[key] = value;
+                if(value.substring(value.length - 1) === '#')
+                    vars[key] = value.substring(0, value.length - 1);
+            });
+            return vars;
+        })();
+
+        $("#checkout").on('click', function() {
+            localStorage.setItem('lastActive', urlVars["cartId"]);
+            document.location = "/exchange/ccrz__CheckoutNew?cartId=" + urlVars["quoteId"] + getCSRQueryString();
+        });
+        
+        $("#reject").on('click', function(){
+            document.location = "/exchange/ccrz__CCPage?pageKey=FRM&formType=RejectQuote&cartId=" + urlVars["quoteId"];
+        });
+        
+        let isEproc = localStorage.getItem('isEproc');
+        if(isEproc) {
+            $("#checkout").prop("disabled",true);
+            $('#eproc-msg').append(`<span> 
+                                        Checkout is not enabled for this site. The quote was returned to the awaiting approval list and can be retrieved during your next punchout session.
+                                    </span>`); 
+        }
+
+        jQuery(function($){
+            const remote = _.extend(CCRZ.RemoteInvocation, { className: 'B2B_QuotePageController_STEX'});
+            remote.invokeCtx(
+                'GetQuote', 
+                urlVars["quoteId"],
+                (res, err) => {
+                    if(res && res.success) {
+                        let quote = res.data['quote'];
+                        let items = res.data['items'];
+                        let billTo = res.data['billTo'];
+                        let shipTo = res.data['shipTo'];
+                        let pricingComponents = res.data['pricingComponents'];
+                        populateHeader(quote, billTo, shipTo);
+                        renderQuoteDetails(quote, items, pricingComponents);
+                    }
+                },
+                {
+                    nmsp: false
+                });
+        });
+    </script>
+</apex:page>

@@ -1,0 +1,159 @@
+<!--
+ - Created by mnovet on 10/24/2019.
+ -->
+
+<apex:page id="B2B_ViewAllPublishedQuotes_STEX" controller="B2B_ViewAllPublishedQuotesCont_STEX" sideBar="false" showHeader="false"
+ standardStyleSheets="false" applyHtmlTag="false">
+	<div id="users" class="list-view">
+		<h2>All Quotes</h2>
+		<div class="search-bar">
+			<input class="search" placeholder="Search" />
+			<button class="sort" data-sort="name">
+				Sort by Quote #
+			</button>
+			<button class="sort" data-sort="title">
+				Sort by Title
+			</button>
+			<button class="sort" data-sort="total">
+				Sort by Total
+			</button>
+			<button id="downloadButton">Export</button>
+		</div>
+
+		<table class="quote-table">
+			<tr>
+				<th>
+					<h3>Quote #</h3>
+				</th>
+				<th>
+					<h3>Title</h3>
+				</th>
+				<th>
+					<h3>Total</h3>
+				</th>
+			</tr>
+		</table>
+		<table class="list quote-table"></table>
+
+	</div>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+
+	<script>
+		jQuery(function ($) {
+			var options = {
+				valueNames: [
+					// { name:'name', attr: "href" }, 
+					'name',
+					{ name: 'href', attr: 'href' },
+					'title', 
+					'total'
+				],
+				// Since there are no elements in the list, this will be used as template.
+				item: '<tr><td><a class="href" href=""><h3 class="name"></h3></a></td><td><p class="title"></p></td><td><p class="total"></p></td></tr>'
+				// item: '<tr><td><a href="" class="name"></></td><td><p class="title"></p></td><td><p class="total"></p></td></tr>'
+
+			};
+			var values = [
+			];
+
+			var userList = new List('users', options, values);
+			var downloadQuotes = [];
+
+			function buildQuoteDetailLink(quoteId) {
+				let url = window.location.href;
+				let currentCartId = CCRZ.pagevars.currentCartID;
+				url = url.replace(/(ccrz__CCPage)+(.){1,}/, `ccrz__CCPage?pageKey=quote&quoteId=${quoteId}&cartId=${currentCartId}`);
+				console.log('url is: ', url);
+				return url;
+			}
+
+			//display quotes
+			function getQuotesRA() {
+			    const remote = _.extend(CCRZ.RemoteInvocation, { className: 'B2B_ViewAllPublishedQuotesCont_STEX'});
+
+			    let siteName = localStorage.getItem('siteParam');
+
+			    let getRemoteData = new Promise(function(resolve, reject) {
+        			remote.invokeCtx('getQuotes', siteName, (res, err) => {
+			            console.log(res);
+            			if (res && res.success) {
+			                console.log('Success.');
+            			    resolve(res.data);
+			            }
+            			else {
+			                console.log('Failure.');
+            			    reject(err);
+			            }
+			        },
+			        {
+            			nmsp: false
+			        })
+			    });
+			    getRemoteData.then(
+			        function(data) {
+            			console.log('data is: ', data);
+					    data.quotes.forEach(function(quote) {
+					        console.log(quote.Name + ', ' + quote.ccrz__Name__c + ', ' + quote.ccrz__TotalAmount__c + ', ' + quote.ccrz__EncryptedId__c);
+							// ccrz__EncryptedId__c
+							let link = buildQuoteDetailLink(quote.ccrz__EncryptedId__c);
+							userList.add({
+								name: quote.STEXQuoteNumber__c,
+								href: link,
+					            title: quote.Quote_Title__c,
+					            total: quote.ccrz__TotalAmount__c
+					        });
+					        downloadQuotes.push([quote.Name, quote.Quote_Title__c, quote.ccrz__TotalAmount__c]);
+					    });
+			        },
+			        function(error) {
+            			console.log('promise was rejected.');
+			        }
+			    );
+			}
+			getQuotesRA();
+			//download quotes
+			document.getElementById("downloadButton").addEventListener("click", function() {
+
+				var csv = 'Name,Title,Total\n';
+				downloadQuotes.forEach(function (row) {
+					csv += row.join(',');
+					csv += "\n";
+				});
+
+				console.log(csv);
+				var hiddenElement = document.createElement('a');
+				hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+				hiddenElement.target = '_blank';
+				hiddenElement.download = 'quotes.csv';
+				hiddenElement.click();
+			});
+		});
+	</script>
+
+	<style>
+		.list-view {
+			width: 50%;
+		}
+
+		.search-bar {
+			width: 100%;
+			background-color: #e2e2e2;
+		}
+
+		.quote-table {
+			width: 100%;
+			text-align: left;
+		}
+
+		.quote-table th {
+			background-color: #f2f2f2;
+		}
+
+		.quote-table th,
+		td {
+			border-bottom: 1px solid #ddd;
+			width: 33%;
+		}
+	</style>
+</apex:page>

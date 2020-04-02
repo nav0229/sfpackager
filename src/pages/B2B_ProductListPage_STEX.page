@@ -1,0 +1,21 @@
+<apex:page id="B2B_ProductListPage_STEX" controller="B2B_ProductListPageController_STEX" applyHtmlTag="false" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false">
+<!-- <apex:page controller="B2B_ProductListPageController_STEX"  id="B2B_ProductListPage_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">  -->
+
+    <c:B2B_EffAcctSelector_STEX />
+    <c:B2B_PLPHeader_STEX />
+    <!-- <c:B2B_PLPFooter_STEX /> -->
+    <c:B2B_PLPLeftColFilterWidget_STEX />
+    <c:B2B_PLPProductItemRow_STEX />
+    <c:B2B_PLPProductItemGrid_STEX />
+    <c:B2C_PLPPriceDisplay />
+    <!-- <c:B2B_PLPproductQuantityControls_STEX /> -->
+    <!-- <c:B2B_PLPnoResultsDisplay_STEX /> -->
+
+    <link rel="stylesheet" type="text/css" href="{!$Resource.priceSliderStyles}"/>
+    <!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+
+    <apex:includeScript value="{!$Resource.B2B_PLPJS_STEX}"/>
+    <script>
+        PLP();
+    </script>
+</apex:page>

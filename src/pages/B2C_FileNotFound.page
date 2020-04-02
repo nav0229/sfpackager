@@ -1,0 +1,7 @@
+<apex:page id="B2CFileNotFound" applyHtmlTag="false" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false">
+    <html>
+        <head>
+            <meta http-equiv="refresh" content="0;URL=ccrz__CCPage?pageKey=FTF"/>
+        </head>
+    </html>  
+</apex:page>

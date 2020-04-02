@@ -1,0 +1,132 @@
+<apex:page id="B2B_OrderDetailPage_Stex" standardController="Hedberg_Order__c" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+<!--<apex:page id="B2B_OrderDetailPage_Stex" controller="B2B_OrderDetailController_STEX" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">-->
+    <h1>Test</h1>
+    <apex:variable value="x0G54000000CbJuEAK" var="testId" />
+    <apex:detail subject="{!testId}" relatedList="true" />
+ <!--       <apex:relatedList list="Hedburg_Order_Lines__r" subject="{!testId}" /> -->
+
+
+<!--    <apex:slds />-->
+<!--    <div class="slds-scope">-->
+<!--        <div class="slds-text-heading_large">Order Detail</div>-->
+<!--        <article class="slds-card">-->
+<!--            <div class="slds-grid slds-gutters">-->
+<!--                <div id="orderDetailHeaderLeft" class="slds-col slds-size&#45;&#45;2-of-3">-->
+<!--&lt;!&ndash;                    <div><strong>Order: </strong> {!selectedOrder.DealerOrderNumber__c} - {!selectedOrder.OrderTitle__c}</div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div><strong>Quote: </strong> {!selectedOrder.DealerQuoteTitle__c}</div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div><strong>WebID: </strong>{!selectedOrder.WebOrderNumber__c}</div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div><strong>Project: </strong>{!selectedOrder.DealerProjectTitle__c}</div>&ndash;&gt;-->
+<!--                </div>-->
+<!--                <div id="orderDetailHeaderRight" class="slds-col">-->
+<!--&lt;!&ndash;                    <div><strong>Today's Date: </strong>{!MONTH(TODAY())}/{!DAY(TODAY())}/{!YEAR(TODAY())}</div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div><strong>Purchase Order: </strong>{!selectedOrder.CustomerPONumber__c}</div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div><strong>Delivery: </strong> {!selectedOrder.ExpectedDeliveryDate__c}</div>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <div>Status Graphic goes here</div>&ndash;&gt;-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </article>-->
+<!--        <article class="slds-card">-->
+<!--            <div class="slds-grid slds-gutters">-->
+<!--                <div id="soldToCol" class="slds-col">-->
+<!--                    <strong>Sold To:</strong>-->
+<!--                    <br  />-->
+<!--                    {!selectedOrder.SoldToName__c}-->
+<!--                    <br/>-->
+<!--                    There should be an address here-->
+<!--                </div>-->
+<!--                <div id="shipToCol" class="slds-col">-->
+<!--                    <strong>Ship To:</strong>-->
+<!--                    <br  />-->
+<!--                    {!selectedOrder.ShipToName__c}-->
+<!--                    <br/>-->
+<!--                    There should be an address here-->
+<!--                </div>-->
+<!--                <div id="dealerCol" class="slds-col">-->
+<!--                    <strong>Name of Dealership</strong>-->
+<!--                    <br/>-->
+<!--                    {!selectedOrder.TMDBDealerID__c}-->
+<!--                    <br/>-->
+<!--                    Should be name of sales contact(s)-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </article>-->
+
+<!--        <article class="slds-card">-->
+<!--            <div class="slds-grid slds-gutters">-->
+<!--                <div class="slds-col slds-size&#45;&#45;1-of-12">-->
+<!--                    <strong>Line</strong>-->
+<!--                </div>-->
+<!--                <div class="slds-col slds-size&#45;&#45;1-of-12">-->
+<!--                    <strong>Qty</strong>-->
+<!--                </div>-->
+<!--                <div class="slds-col slds-size&#45;&#45;2-of-12">-->
+<!--                    <strong>Item</strong>-->
+<!--                </div>-->
+<!--                <div class="slds-col slds-size&#45;&#45;4-of-12">-->
+<!--                    <strong>Description</strong>-->
+<!--                </div>-->
+<!--                <div class="slds-col slds-size&#45;&#45;2-of-12">-->
+<!--                    <strong>Unit</strong>-->
+<!--                </div>-->
+<!--                <div class="slds-col slds-size&#45;&#45;2-of-12">-->
+<!--                    <strong>Total</strong>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div class="slds-grid slds-gutters slds-wrap">-->
+<!--                <apex:repeat value="{!orderLines}" var="line" >-->
+<!--                    <div class="slds-col slds-size&#45;&#45;1-of-12">-->
+<!--                        {!line.LineItemNumber__c}-->
+<!--                    </div>-->
+<!--                    <div class="slds-col slds-size&#45;&#45;1-of-12 slds-m-top_small">-->
+<!--                        {!line.Quantity__c}-->
+<!--                    </div>-->
+<!--                    <div class="slds-col slds-size&#45;&#45;2-of-12 slds-m-top_small">-->
+<!--                        {!line.ProductCode__c}-->
+<!--                    </div>-->
+<!--                    <div class="slds-col slds-size&#45;&#45;4-of-12 slds-m-top_small slds-m-bottom_small">-->
+<!--                        {!line.ProductDescription__c}-->
+<!--                    </div>-->
+<!--                    <div class="slds-col slds-size&#45;&#45;2-of-12 slds-m-top_small">-->
+<!--                        <apex:outputText value="{0, Number, Currency}">-->
+<!--                            <apex:param value="{!line.SellAmount__c}" />-->
+<!--                        </apex:outputText>-->
+<!--                    </div>-->
+<!--                    <div class="slds-col slds-size&#45;&#45;2-of-12 slds-m-top_small">-->
+<!--                        <apex:outputText value="{0, Number, Currency}">-->
+<!--                            <apex:param value="{!line.SellAmount__c * line.Quantity__c}" />-->
+<!--                        </apex:outputText>-->
+<!--                    </div>-->
+<!--                </apex:repeat>-->
+<!--            </div>-->
+
+<!--        </article>-->
+<!--    </div>-->
+
+<!--    <apex:includeScript value="{!$Resource.B2B_OrderDetailPage_STEX}" />-->
+<!--    <script>-->
+<!--//        jQuery(function ($) {-->
+<!--            let orderId = 'test';-->
+<!--            function initOrderData(orderId) {-->
+<!--                const remote = _.extend(CCRZ.RemoteInvocation, { className: 'B2B_OrderDetailController_STEX' });-->
+<!--                debugger;-->
+<!--                remote.invokeCtx('getOrderHeaderInfo', orderId,-->
+<!--                    (res, err) => {-->
+<!--                        if (res && res.success) {-->
+<!--                            let orderData = res.data;-->
+<!--                            OrderDetailHandler.createOrderHeader(orderData);-->
+<!--                            OrderDetailHandler.createAddressHeader(orderData);-->
+<!--                            console.log('res.data from remote action is', orderData);-->
+<!--                        }-->
+<!--                        else {-->
+<!--                            console.log('Failed to get order.');-->
+<!--                        }-->
+<!--                    },-->
+<!--                    {-->
+<!--                        nmsp: false-->
+<!--                    }-->
+<!--                );-->
+<!--            }-->
+<!--//        });-->
+<!--    </script>-->
+</apex:page>

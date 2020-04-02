@@ -1,0 +1,9 @@
+<apex:page id="PCEWebCallout" controller="B2B_PCEWebCalloutController_STEX">
+	<apex:form >
+		<apex:inputTextarea value="{!inputText}" id="inputText"/><br/>
+		<apex:commandButton action="{!createSpecification}" value="Create" id="createSpecificationButton"/>
+		<apex:commandButton action="{!processSpecification}" value="Process" id="processSpecificationButton"/><br/>
+		<apex:outputText value="{!responseTime}" id="responseTime"/><br/>
+		<apex:outputText value="{!responseOutput}" id="responseOutput"/>
+	</apex:form>
+</apex:page>

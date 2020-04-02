@@ -1,0 +1,93 @@
+<apex:page standardController="Case" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">    
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">    
+
+<head>
+    <title>New Request</title>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+</head>    
+<apex:remoteObjects >
+    <apex:remoteObjectModel name="Opportunity" fields="Id,Name,AccountId,Amount"/>
+</apex:remoteObjects>
+<body>    
+
+    <!-- REQUIRED SLDS WRAPPER -->
+    <div class="slds">    
+
+        <!-- MASTHEAD -->
+        <h1 class="slds-text-heading--label slds-m-bottom--small slds-m-top--large slds-m-left--large">
+        Choose a geography below that will handle your srNetwork request
+        </h1>
+        <!-- / MASTHEAD -->    
+
+        <!-- PRIMARY CONTENT WRAPPER -->
+        <div class="slds-grid">    
+            <div class="slds-grid slds-grid--align-center slds-m-top--large slds-m-left--large">
+                <button class="slds-button slds-button--brand" id="amer" onclick="openRqstPage('AMER')">AMER</button>
+                <button class="slds-button slds-button--brand" id="emea" onclick="openRqstPage('EMEA')">EMEA</button>
+                <button class="slds-button slds-button--brand" id="mexico_city" onclick="openRqstPage('Mexico_City')">Mexico City</button>
+                <button class="slds-button slds-button--brand" id="apac" disabled="true">APAC</button>
+            </div>
+
+        </div>
+        <!-- / PRIMARY CONTENT WRAPPER -->    
+
+        <p class="slds-hide" id="optyName"></p>
+        <p class="slds-hide" id="actId"></p>
+    </div>
+    <!-- / REQUIRED SLDS WRAPPER -->    
+
+</body>
+<script>    
+    function openRqstPage(geo) {
+
+        var host = window.location.hostname,
+            url = host + '/apex/SrNetworkRequest?',
+            optyid = "{!Case.Opportunity__c}",
+            opps = new SObjectModel.Opportunity(),
+            where = {Id: {eq: optyid}},
+            optyname = document.getElementById('optyName').innerHTML, 
+            actid = document.getElementById('actId').innerHTML;
+
+        url = url + 'rqstType=' + geo + '&originType=opty'+ '&actId=' + actid + '&optyId=' + optyid + '&recordName=' + "{!URLENCODE(" + optyname + ")}";
+
+        // navigate to the srnRequest vf page
+        if (!sforce.one) {
+            // do nothing
+        } else {
+            sforce.one.navigateToURL(url);
+            console.log(url);
+        }
+    }
+
+        var optyid = "{!Case.Opportunity__c}",
+            opps = new SObjectModel.Opportunity(),
+            where = {Id: {eq: optyid}},
+            optyname, actid;
+
+        opps.retrieve(
+
+            { where },
+
+            function(error, records) {
+                if (error) {
+                    console.log('loadData: ' + error.message);
+                } else {
+                    // get the opportunity  name and the account id
+                    if (records.length > 0) {
+                        records.forEach(function(record) {
+                            optyname = record.get("Name");
+                            actid = record.get("AccountId");
+
+                            document.getElementById('optyName').innerHTMl = optyname;
+                            document.getElementById('actId').innerHTML = actid;
+                        });
+                    }
+                }
+            }
+        );
+
+
+</script>
+</html>
+</apex:page>

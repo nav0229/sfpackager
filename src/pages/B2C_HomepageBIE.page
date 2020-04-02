@@ -1,0 +1,18 @@
+<apex:page id="B2C_HomepageBIE" docType="html-5.0" sideBar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+
+	<apex:includeScript value="{!$Resource.B2C_HomePageJS}" />
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+	<c:B2_HomePageCarousel />
+	<!-- <c:B2B_HomepageWidgets_STEX /> -->
+	<c:B2B_HomePagePromos_STEX />
+	<c:B2B_HomePageQuickOrderComponent_STEX />
+	<c:B2B_HomePageAddToWishlistComponent_STEX />
+	<c:B2C_HomePageFeaturedProducts />
+	<c:B2C_HomePageGetPlanningHelp />
+
+	<script>
+		homePage();
+	</script>
+
+</apex:page>

@@ -1,0 +1,74 @@
+<apex:page standardController="Account" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+<apex:form >
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head>
+            <title>Email Account info</title>
+            <style>
+                .scsBtn {
+                    padding-left: 16px;
+                    padding-right: 16px;
+                    text-align: center;
+                    vertical-align: middle;
+                    background-color: #0070d2;
+                    border: 1px solid #0070d2;
+                    color: white;
+                    display: inline-block;
+                    border-radius: 4px;
+                    font: 24px Arial;
+                    line-height: 34px;
+                    margin: 20px 0 0 20px;
+                }
+                .scsHide {
+                    display: inline;
+                    visibility: hidden;
+                }
+            </style>
+        </head>
+
+        <body>
+
+            <!--  navigation button for the user to click when finished sending the email  -->
+            <!--  this is a backup plan in case the setTimeout function fails to go back to the account -->
+            <button class="scsBtn" onclick="backNav()" type="button">Back</button>
+        </body>
+
+        <script>
+            // function to take the user back to the account
+            function backNav() {
+
+                var oppId = "{!Account.Id}";
+                if (!sforce.one) {
+                    console.log('backNav: no sforce.one object');
+                } else {
+                    sforce.one.navigateToSObject(oppId);
+                }
+            }
+
+            // function to create, open and populate the email
+            function sendEmail() {
+                var actName = "{!TRIM(SUBSTITUTE(URLENCODE(Account.Name),'+', ' '))}";
+                var ultimate = "{!TRIM(SUBSTITUTE(URLENCODE(Account.Ultimate_Parent__c),'+', ' '))}";
+                //"{!URLENCODE(SUBSTITUTE(Account.Name,' ','%20'))}";  //  =  AT&T%20Inc.%20(AT&T)
+                var subject = ('CRM Account Information for ' + actName);
+                var link = "{!TRIM(SUBSTITUTE(URLENCODE(Account.Account_Link__c),'+', ' '))}";
+                var body = ('%0AAccount Name: ' + actName + '%0ASite-ID: {!Account.Site_ID__c}%0AAccount Classification: {!Account.Account_Classification__c}%0AAccount Owner: {!Account.Owner.FirstName} {!Account.Owner.LastName}%0ALocation: {!Account.BillingStreet}, {!Account.BillingCity}, {!Account.BillingState}, {!Account.BillingPostalCode}, {!Account.BillingCountry} %0AUltimate Parent: '+ultimate+', Site-ID: {!Account.Ultimate_Parent_Site_Id__c}%0A%0AAccount Link: '+link+'%0A(Please note this link can be only accessed by users with a Steelcase CRM license.)%0A%0A~~~Account Information from Steelcase CRM~~~'
+                );
+                            //document.write('<a href="mailto:'  + '?subject=' +subject+ '&body=' +body+ '">' + 'Click here to open your E-Mail Page' + '<'+'/a>');
+
+                // create the mailto link
+                mailtoLink = 'mailto:' + '?subject=' + subject + '&body=' + body;
+
+                setTimeout(backNav, 1000);
+
+                // open the mailto link
+                window.location.href = mailtoLink;
+            }
+
+            // run the sendEmail function when the page loads
+            sendEmail();
+
+        </script>
+
+    </html>
+     </apex:form>
+</apex:page>

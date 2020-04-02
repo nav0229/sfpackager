@@ -1,0 +1,30 @@
+<apex:page >
+
+  <head>
+    <title>CRM Data Clean-up Reports</title>
+
+    <script type="text/javascript"
+        src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+    <script type="text/javascript">
+        function initViz() {
+            var containerDiv = document.getElementById("vizContainer"),
+                url = "https://tableau.steelcase.com/t/innovation/views/CRMAccountCleanup2019_1b/CRMAccountClean-upReports",
+                options = {
+                    hideTabs: false,
+                    onFirstInteractive: function () {
+                        console.log("Run this code when the viz has finished loading.");
+                    }
+                };
+
+            var viz = new tableau.Viz(containerDiv, url, options);
+            // Create a viz object and embed it in the container div.
+        }
+    </script>
+</head>
+
+<body onload="initViz();">
+<h1>I'm waiting to Load</h1>
+    <div id="vizContainer" style="width:800px; height:700px;"></div>
+</body>
+
+</apex:page>

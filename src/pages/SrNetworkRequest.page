@@ -1,0 +1,1413 @@
+<apex:page standardController="Case" id="srnPage" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">    
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">    
+
+<head>
+  <title>srNetwork Request</title>
+  <apex:includeScript value="{!$Resource.jquery0101203}"/>
+  <apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+</head>    
+  <apex:remoteObjects >
+    <apex:remoteObjectModel name="Account" fields="Id,Name,RecordTypeId"/>
+    <apex:remoteObjectModel name="RecordType" fields="Id,Name,DeveloperName,SobjectType"/>
+    <apex:remoteObjectModel name="Opportunity" fields="Id,Name,AccountId"/>
+    <apex:remoteObjectModel name="User" fields="Id,Sales_Geography__c,Sales_Business_Group__c,Sales_Region__c"/>
+    <apex:remoteObjectModel name="SrN_Assignment__c" fields="Id,Service_Type__c,SRN_API_Field_Name__c,SRN_Field_Label__c,Description__c,Available_Geographies__c,SortServices__c,Inactive__c,isSrnOnly__c"
+    />
+    <apex:remoteObjectModel name="SRN_Request__c" fields="Strategic_Pricing_Consultancy_DT__c,Strategic_Pricing_Consultancy__c,Internal_Projects_DT__c,Internal_Projects__c,Revit_Translation_DT__c,Revit_Translation__c,Fact_Pack_EMEA_DT__c,Fact_Pack_EMEA__c,Other_sales_materials_EMEA_DT__c,Other_sales_materials_EMEA__c,Request_for_Information_EMEA_DT__c,Request_for_Information_EMEA__c,Request_for_Proposal_EMEA_DT__c,Request_for_Proposal_EMEA__c,Global_Net_DT__c,Global_Net__c,Specials_Customised_Products_DT__c,Specials_Customised_Products__c,Mock_Up_Experience_DT__c,Mock_Up_Experience__c,Mock_Up_Execution_DT__c,Mock_Up_Execution__c,Sales_Contract_Review_and_Negotiation_DT__c,Sales_Contract_Review_and_Negotiation__c,Customer_Price_Adjustment_DT__c,Customer_Price_Adjustment__c,Application_Consultancy_Ed_DT__c,Application_Consultancy_Ed__c,Win_Room_Design_DT__c,Win_Room_Design__c,Revisions_to_CET_Drawings_Specs_DT__c,Revisions_to_CET_Drawings_Specs__c,Special_Solution_DT__c,Special_Solution__c,Feasibility_Check_DT__c,Feasibility_Check__c,Pricing_Estimation_Markups_DT__c,Pricing_Estimation_Markups__c,WT_R_ALES_Workshop__c,WT_R_Ecosystem_Assessment_EMEA__c,Strategy_Assistance_DT__c,Strategy_Assistance__c,Spec_Check_Application_Audits_DT__c,Spec_Check_Application_Audits__c,Showroom_Review_Wood_DT__c,Showroom_Review_Wood__c,Mockup_Spec_Check_DT__c,Mockup_Spec_Check__c,Marketing_Activity_DT__c,Marketing_Activity__c,Grand_Rapids_Visit_Support_Wood_DT__c,Grand_Rapids_Visit_Support_Wood__c,CET_Drawings_DT__c,CET_Drawings__c,CET_Drawing_and_Specification_DT__c,CET_Drawing_and_Specification__c,VE_Review_30_min_web_meeting__c,VE_Review_30_min_web_meeting_DT__c,Steelcase_Concept_Review__c,Steelcase_Concept_Review_DT__c,Standard_Development__c,Standard_Development_DT__c,RFP_Proposal_assistance_Alternate__c,RFP_Proposal_assistance_Alternate_DT__c,Project_specific_Thoughtstarters__c,Project_specific_Thoughtstarters_DT__c,Mock_up_assistance__c,Mock_up_assistance_DT__c,Co_Creation_Engagement_2hrinfield__c,Co_Creation_Engagement_2hrinfield_DT__c,A_D_Walls_Overview_1_hr__c,A_D_Walls_Overview_1_hr_DT__c,Financial_Quote__c,Financial_Quote_DT__c,Market_Quotation__c,Market_Quotation_DT__c,Worklife_Order__c,Worklife_Order_DT__c,Internal_Order__c,Internal_Order_DT__c,Mock_Up__c,Mock_Up_DT__c,WT_R_Ecosystem_Assessment__c,WT_R_Ecosystem_Assessment_DT__c,WT_R_User_Expression_Exercise__c,WT_R_User_Expression_Exercise_DT__c,Design_Solutions_Specifications__c,Design_Solutions_Specifications_DT__c,pCon_Visualization_Zones_Floor_Plans__c,pCon_Visualization_Zones_Flr_Plans_D__c,Layout_Test_Fit__c,Layout_Test_Fit_DT__c,pCon_Visualization__c,pCon_Visualization_DT__c,Technical_Drawings__c,Technical_Drawings_DT__c,Workplace_Solutions_WithEngagement__c,Workplace_Solutions_WithEngagement_DT__c,Workplace_Solutions_WithoutEngagement__c,Workplace_Solutions_WithoutEngagement_DT__c,Thought_Starters__c,Thought_Starters_DT__c,KBC_SMM_Visit__c,KBC_SMM_Visit_DT__c,Request_for_RegionalQuotation_APAC__c,Request_for_RegionalQuotation_APAC_DT__c,Request_for_Global_QuotationGlobal__c,Request_for_Global_QuotationGlobal_DT__c,Collateral_Design_Others__c,Collateral_Design_Others_DT__c,Collateral_Design_Handouts__c,Collateral_Design_Handouts_DT__c,Collateral_Design_Booklet__c,Collateral_Design_Booklet_DT__c,Collateral_Design_Presentation__c,Collateral_Design_Presentation_DT__c,Request_for_Information_RFI__c,Request_for_Information_RFI_DT__c,Request_for_Proposal_RFP__c,Request_for_Proposal_RFP_DT__c,Virtual_Reality_Augmented_Reality__c,Virtual_Reality_Augmented_Reality_DT__c,X3D_Animation__c,X3D_Animation_DT__c,Layout_Visualization__c,Layout_Visualization_DT__c,Customize_Visualization__c,Customize_Visualization_DT__c,Interior_Templates__c,Interior_Templates_DT__c,Technical_Visualization__c,Technical_Visualization_DT__c,White_Background__c,White_Background_DT__c,Customer_Visit_Support_LA__c,Customer_Visit_Support_LA_DT__c,Project_Management_LA__c,Project_Management_LA_DT__c,Order_Entry_LA__c,Order_Entry_LA_DT__c,Proforma_LA__c,Proforma_LA_DT__c,Project_Presentation_LA__c,Project_Presentation_LA_DT__c,Proposal_Design_LA__c,Proposal_Design_LA_DT__c,RFP_LA__c,RFP_LA_DT__c,Template_LA__c,Template_LA_DT__c,Save_the_Date_LA__c,Save_the_Date_LA_DT__c,Mailing_or_Newsletter_LA__c,Mailing_or_Newsletter_LA_DT__c,Agenda_LA__c,Agenda_LA_DT__c,WT_R_17_Ecosystem_Assessment_Existing__c,WT_R_17_Ecosystem_Assessment_Existing_DT__c,WT_R_16_Ecosystem_Assessment_Conceptl__c,WT_R_16_Ecosystem_Assessment_Conceptl_DT__c,FOR_MOCK_UP_TEAM_Workplc_Applctn_Dsgn__c,FOR_MOCK_UP_TEAM_Workplc_Applctn_Dsgn_DT__c,FOR_MOCK_UP_TEAM_Graphic_Dsgn_Support__c,FOR_MOCK_UP_TEAM_Graphic_Dsgn_Support_DT__c,Intake_and_collaboration_call__c,Intake_and_collaboration_call_DT__c,Fact_Pack__c,Fact_Pack_DT__c,Technical_Writing__c,Technical_Writing_DT__c,Writing_Services__c,Writing_Services_DT__c,Number_of_Workstations__c,Workplace_Design_Services__c,Workplace_Design_Services_DT__c,X2D_Floor_Plan__c,X360_Panoramic_View__c,X3D_PDF__c,Agile_Animation__c,Animation__c,Application_High_Level_3D__c,Applications__c,Application_Standard_3D__c,Banner__c,Bird_s_Eye_3D_Floor_Plan__c,Client_Presentation__c,Client_Website__c,Collateral_Booklets__c,Collateral_Handouts__c,Collateral_Invitations_Thank_you_notes__c,Collateral_Other__c,Collateral_Presentations__c,Collateral_Signage__c,Consultative_Support_Product_Design_Co__c,Health_GR_Visit_Support__c,Health_GR_Visit_Support_DT__c,Health_Product_Design_Coaching__c,Health_Product_Design_Coaching_DT__c,Health_Showroom_Review__c,Health_Showroom_Review_DT__c,Health_Special_Custom__c,Health_Special_Custom_DT__c,Health_Spot_Check__c,Health_Spot_Check_DT__c,Health_Concept_Review__c,Health_Concept_Review_DT__c,Health_Pilot_Space__c,Health_Pilot_Space_DT__c,Health_Application_Offer__c,Health_Application_Offer_DT__c,Contract_Request_Amended__c,Contract_Request_CDA__c,Contract_Request_New__c,Customer_Catalog__c,Design_Consultation__c,Design_Consultation_EMEA__c,Design_Deliverables_Play_5_Concept_Rev__c,Design_Deliverables_Play_7_Pilot_Space__c,Field_Inspection__c,Government_Request_for_Proposal__c,Graphic_Design_Booklet__c,High_Level_Application_EMEA__c,Interactive_Fly_Through__c,Interactive_Presentation__c,Interior_Design__c,Layered_Renderings__c,MAC_s__c,Mockup__c,Performance_Mockup__c,Move_In__c,Multi_Content_Image__c,Non_Obsolescence_Letter__c,Other__c,X360_Panoramic_View_EMEA__c,Participate_in_Grand_Rapids_CustomerV__c,Product_Loan__c,Product_Procurement__c,Program_Management__c,Project_Management__c,Proposal__c,Quarterly_Business_Review_NA__c,Quarterly_Business_Review_NCC_or_GCC1__c,Renderings_Background_needed__c,Renderings_No_Background__c,Renderings_VR__c,Request_for_Information__c,Request_for_Proposal__c,Room_Perspective_High_Level_3D__c,Room_Perspective_Standard_3D__c,Special_Request__c,Standard_application_EMEA__c,Stickers__c,Sustainability_Corporate__c,Sustainability_Environmental__c,Sustainability_Other__c,Sustainability_Social__c,Technical_Drawing__c,Thank_You_Note__c,Thoughtstarters__c,Turntable_No_Background__c,Visualizations__c,Warranty_Extension_Letter__c,Warranty_Review__c,WT_R_Play_1_Discovery_Exercises_co_fa__c,WT_R_Play_1_Discovery_Exercises_EMEA1__c,WT_R_Play_2_Observation_Cards_co_faci__c,WT_R_Play_2_Observation_Cards_EMEA__c,WT_R_Play_3_Collaborative_EMEA__c,WT_R_Play_3_Collaborative_Situations1__c,WT_R_Play_4_User_Expression_Exercise1__c,WT_R_Play_5_Concept_Review__c,WT_R_Play_5_Concept_review_EMEA__c,WT_R_Play_7_Pilot_Space__c,WT_R_Play_8_User_Experience_co_facili__c,WT_R_Play_13_Day_in_the_Life__c,WT_R_Play_14_Privacy_Workshop__c,WT_R_Play_14_Privacy_Workshop_EMEA__c,Design_Deliverables_Play_14_Privacy_EMEA__c,Design_Deliverables_Play_3_Clbrtv_EMEA__c,Design_Deliverables_Play_5ConceptRvwEMEA__c,X2D_Floor_Plan_DT__c,X360_Panoramic_View_DT__c,X3D_PDF_DT__c,Agile_Animation_DT__c,Animation_DT__c,Application_High_Level_3D_DT__c,Applications_DT__c,Application_Standard_3D_DT__c,Banner_DT__c,Bird_s_Eye_3D_Floor_Plan_DT__c,Client_Presentation_DT__c,Client_Website_DT__c,Collateral_Booklets_DT__c,Collateral_Handouts_DT__c,Collateral_Invitations_Thank_you_note_DT__c,Collateral_Other_DT__c,Collateral_Presentations_DT__c,Collateral_Signage_DT__c,Consultative_Support_Product_Design_C_DT__c,Contract_Request_Amended_DT__c,Contract_Request_CDA_DT__c,Contract_Request_New_DT__c,Customer_Catalog_DT__c,GR_Visit_Support__c,GR_Visit_Support_DT__c,Design_Consultation_DT__c,Design_Consultation_EMEA_DT__c,Design_Deliverables_Play_5_Concept_Re_DT__c,Design_Deliverables_Play_7_Pilot_Spac_DT__c,Field_Inspection_DT__c,Government_Request_for_Proposal_DT__c,Graphic_Design_Booklet_DT__c,High_Level_Application_EMEA_DT__c,Interactive_Fly_Through_DT__c,Interactive_Presentation_DT__c,Interior_Design_DT__c,Layered_Renderings_DT__c,MAC_s_DT__c,Mockup_DT__c,Performance_Mockup_DT__c,Move_In_DT__c,Multi_Content_Image_DT__c,Non_Obsolescence_Letter_DT__c,Other_DT__c,X360_Panoramic_View_EMEA_DT__c,Participate_in_Grand_Rapids_CustomerV_DT__c,Product_Loan_DT__c,Product_Procurement_DT__c,Program_Management_DT__c,Project_Management_DT__c,Proposal_DT__c,Quarterly_Business_Review_NA_DT__c,Quarterly_Business_Review_NCC_or_GCC1_DT__c,Renderings_Background_needed_DT__c,Renderings_No_Background_DT__c,Renderings_VR_DT__c,Request_for_Information_DT__c,Request_for_Proposal_DT__c,Room_Perspective_High_Level_3D_DT__c,Room_Perspective_Standard_3D_DT__c,Special_Request_DT__c,Standard_application_EMEA_DT__c,Stickers_DT__c,Sustainability_Corporate_DT__c,Sustainability_Environmental_DT__c,Sustainability_Other_DT__c,Sustainability_Social_DT__c,Technical_Drawing_DT__c,Thank_You_Note_DT__c,Thoughtstarters_DT__c,Turntable_No_Background_DT__c,Visualizations_DT__c,Warranty_Extension_Letter_DT__c,Warranty_Review_DT__c,WT_R_Play_1_Discovery_Exercises_co_fa_DT__c,WT_R_Play_1_Discovery_Exercises_EMEA1_DT__c,WT_R_Play_2_Observation_Cards_co_faci_DT__c,WT_R_Play_2_Observation_Cards_EMEA_DT__c,WT_R_Play_3_Collaborative_EMEA_DT__c,WT_R_Play_3_Collaborative_Situations1_DT__c,WT_R_Play_4_User_Expression_Exercise1_DT__c,WT_R_Play_5_Concept_Review_DT__c,WT_R_Play_5_Concept_review_EMEA_DT__c,WT_R_Play_7_Pilot_Space_DT__c,WT_R_Play_8_User_Experience_co_facili_DT__c,WT_R_Play_13_Day_in_the_Life_DT__c,WT_R_Play_14_Privacy_Workshop_DT__c,WT_R_Play_14_Privacy_Workshop_EMEA_DT__c,Design_Deliverables_Play_14_Privacy_E_DT__c,Design_Deliverables_Play_3_Clbrtv_EME_DT__c,Design_Deliverables_Play_5ConceptRvwE_DT__c,GD_AD_Agenda__c,GD_AD_Agenda_DT__c,GD_AD_Banner__c,GD_AD_Banner_DT__c,GD_AD_Booklets__c,GD_AD_Booklets_DT__c,GD_AD_Card__c,GD_AD_Card_DT__c,GD_AD_Invitation__c,GD_AD_Invitation_DT__c,GD_AD_Mailing_or_Newsletter__c,GD_AD_Mailing_or_Newsletter_DT__c,GD_AD_Name_tags__c,GD_AD_Name_tags_DT__c,GD_AD_Poster__c,GD_AD_Poster_DT__c,GD_AD_Presentation__c,GD_AD_Presentation_DT__c,GD_AD_Save_the_Date__c,GD_AD_Save_the_Date_DT__c,GD_AD_Template__c,GD_AD_Template_DT__c,GD_AD_Tent_Card__c,GD_AD_Tent_Card_DT__c,GD_AD_Thank_you_notes__c,GD_AD_Thank_you_notes_DT__c"
+    />
+  </apex:remoteObjects>
+
+  <!--Letter_of_Understanding_DT__c,Letter_of_Understanding__c,Amendment_DT__c,Amendment__c,Agreement_DT__c,Agreement__c, - removed 11.3.17 per ben krill: tb-->
+
+<body id="srnRqstBody">    
+
+  <!-- REQUIRED SLDS WRAPPER -->
+  <div class="slds">    
+
+      <!-- geography selection for srNetwork request -->
+    <div class="slds-hide" id="geoSelectionForm">
+        <h1 class="slds-text-heading--label slds-m-bottom--small slds-m-top--large slds-m-left--large">
+            Choose your srNetwork geography below
+        </h1>
+        <p class="slds-hide" id="optyName"></p>
+        <p class="slds-hide" id="actId"></p>
+        <p class="slds-hide" id="Opportunity_Name__c"></p>
+        <p class="slds-hide" id="Account__c"></p>
+        <p class="slds-hide" id="selectedGeo"></p>
+        <p class="slds-hide" id="RecordTypeId"></p>
+        <p class="slds-hide" id="isSrNetworkUser">{!$User.Division}</p>
+
+        <div class="slds-grid">
+            <div class="slds-grid slds-grid--align-center slds-m-top--large slds-m-left--large">
+                <button class="slds-button slds-button--brand" id="amer" onclick="createForm('AMER')">AMER</button>
+                <button class="slds-button slds-button--brand" id="emea" onclick="createForm('EMEA')">EMEA</button>
+                <button class="slds-button slds-button--brand" id="mexico_city" onclick="createForm('Mexico_City')">Mexico City</button>
+                <button class="slds-button slds-button--brand" id="apac" disabled="true">APAC</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- main srNetwork request form -->
+    <div class="slds-hide" id="requestForm">
+
+        <!-- MASTHEAD -->
+        <div class="slds-page-header" role="banner">
+          <div class="slds-media">
+            <div class="slds-media__figure">
+              <svg aria-hidden="true" class="slds-icon slds-icon--large slds-icon-standard-case">
+                <use xlink:href="{!URLFOR($Resource.SLDS100,'/assets/icons/standard-sprite/svg/symbols.svg#case')}"></use>
+              </svg>
+            </div>
+            <div class="slds-media__body">
+              <p class="slds-page-header__title slds-truncate slds-align-middle" id="pageHeader">Support Requests</p>
+              <p class="slds-text-body--small slds-page-header__info" id="pageSubheader"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- / MASTHEAD -->    
+
+        <!-- PRIMARY CONTENT WRAPPER -->
+        <!-- cancel/save buttons -->
+        <div class="slds-grid slds-grid--align-center slds-m-top--small">
+            <button class="slds-button slds-button--neutral" id="cancelForm" onclick="cancelForm()">Cancel</button>
+            <button class="slds-button slds-button--brand" id="submitForm" onclick="submitForm()">Submit</button>
+            <div class="slds-spinner_container slds-hide" id="scsSpinner">
+                <div class="slds-spinner slds-spinner--small" aria-hidden="false" role="alert">
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+        <div class="srnRqstContent">
+
+          <div class="slds-grid">
+            <div class="slds-col--padded slds-size--1-of-1">
+                <form id="srnForm">
+                    <div id="srnServiceRqst">
+                        <!-- record of origin - the Account name/id or Opportunity name/id  -->
+                        <div class="slds-text-heading--small slds-m-top--medium">
+                            These service requests are for <span id="scsRecordOrigin">Opportunity Name</span>
+                        </div>
+                        
+                        <!-- srNetwork Services placeholder -->
+
+                    </div>
+                </form>
+            </div>
+
+          </div>
+
+        </div>
+        <!-- cancel/save buttons -->
+        <div class="slds-grid slds-grid--align-center">
+            <button class="slds-button slds-button--neutral" id="cancelForm_btm" onclick="cancelForm()">Cancel</button>
+            <button class="slds-button slds-button--brand" id="submitForm_btm" onclick="submitForm()">Submit</button>
+            <div class="slds-spinner_container slds-hide" id="scsSpinner_btm">
+                <div class="slds-spinner slds-spinner--small" aria-hidden="false" role="alert">
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>  <!-- end request form -->
+
+        <!-- / PRIMARY CONTENT WRAPPER -->    
+
+  </div>
+  <!-- / REQUIRED SLDS WRAPPER -->    
+
+</body>
+
+<script>
+
+    // parse the URL for this service's requested geography
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    function defaultRqstDate() {
+
+        var rqstDate = new Date(),
+            numberOfDaysToAdd = 10,
+            dd, mm, y, formattedDate;
+
+        rqstDate.setDate(rqstDate.getDate() + numberOfDaysToAdd);
+
+        dd = rqstDate.getDate();
+        mm = rqstDate.getMonth() + 1;
+        y = rqstDate.getFullYear();
+
+        if (dd < 10) { 
+            dd = "0" + dd; 
+        }
+
+        if (mm < 10) { 
+            mm = "0" + mm; 
+        }
+
+        formattedDate = y + '-'+ mm + '-'+ dd + 'T12:00:00';
+
+        return formattedDate;
+    }
+
+    // show/hide the geography-select div
+    function toggleGeoSelectDiv(status) {
+
+        var selectDiv = document.getElementById('geoSelectionForm'),
+            formDiv = document.getElementById('requestForm');
+
+        if (status === 'hide') {
+            selectDiv.setAttribute('class','slds-hide');
+            formDiv.setAttribute('class','slds-show');
+        } else if (status === 'show') {
+            selectDiv.setAttribute('class','slds-show');
+            formDiv.setAttribute('class','slds-hide');
+        }
+    }
+
+    // initialize the form by creating a checkbox for each service found in SrN_Assignment__c
+    function createForm(geography) {
+
+        var srnA = new SObjectModel.SrN_Assignment__c(),
+            isSrNetworkUser = document.getElementById('isSrNetworkUser').innerHTML,
+            isSrnUser = isSrNetworkUser === 'srNetwork' ? true : false,
+            srnAgeoParm = '%' + geography + '%',
+            //where1 = { Available_Geographies__c: {like:srnAgeoParm}},
+            //where2 = { Available_Geographies__c: {like:'%'}},
+            //where = geography !=null ? where1 : where2,
+            where = {Available_Geographies__c: {like: srnAgeoParm},isSrnOnly__c: {eq: isSrnUser}},
+            outputDiv = document.getElementById("srnServiceRqst"),
+            header = document.getElementById("pageSubheader"),
+            selectedGeo = document.getElementById('selectedGeo'),
+            html = outputDiv.innerHTML,
+            defaultRqstedDate = defaultRqstDate(),
+            serviceTypesAll = [], serviceTypes = [], svcType, i, j, description, fieldLabel;
+
+        // hide the geography select portion and unhides the correct form
+        toggleGeoSelectDiv('hide');
+
+        // sets the selected geography name in hidden field
+        selectedGeo.innerHTML = geography;
+
+        // set the chosen record type id in hidden field
+        getRecordTypeId();
+
+        // display selected geography in header
+        header.innerHTML = "processed by " + geography.replace("_", " ");
+
+        // Requested Due Date
+        /*
+        html += '<div class="slds-form-element slds-m-top--medium slds-col slds-size--1-of-1 slds-medium-size--1-of-3 slds-large-size--1-of-11">';
+        html += '<label class="slds-text-heading--small" for="Requested_Due_Date__c">';
+        html += '<abbr class="slds-required" title="required">*</abbr>';
+        html += 'Requested Due Date</label>';
+        html += '<div class="slds-form-element__control">';
+        html += '<input id="Requested_Due_Date__c" class="slds-input" type="date" placeholder="'+ defaultRqstedDate +'" value="'+ defaultRqstedDate +'" />';
+        html += '</div>';
+        html += '</div>';
+        */
+
+        // comments field
+        html += '<div class="slds-form-element slds-m-top--medium slds-m-bottom--medium slds-col slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--2-of-3">';
+        html += '<label class="slds-text-heading--small" for="Comments__c">Comments</label>';
+        html += '<div class="slds-form-element__control">';
+        html += '<textarea id="Comments__c" class="slds-textarea" placeholder="Type a message to the srNetwork team here"></textarea>';
+        html += '</div>';
+        html += '</div>';
+
+        //set where clause
+        if (isSrnUser) {
+            console.log('srNetwork user');
+            where = {Available_Geographies__c: {like: srnAgeoParm},Inactive__c: {eq: false}};
+        } else {
+            console.log('not srn user');
+            where = {Available_Geographies__c: {like: srnAgeoParm},isSrnOnly__c: {eq: isSrnUser},Inactive__c: {eq: false}};
+        }
+
+        srnA.retrieve(
+            { where,
+            orderby: [{SortServices__c: 'ASC NULLS LAST'}, {SRN_Field_Label__c: 'ASC'}], limit: 100},
+            function(error, records) {
+                if (error) {
+                    console.log(error.message);
+                } else {
+                    console.log('# of services for this geography: ' + records.length);
+
+                    // get headers into an array
+                    if (records.length > 0) {
+                        records.forEach(function(record) {
+                            serviceTypesAll.push(record.get("Service_Type__c"));
+                            }
+                        );
+
+                        j$.each(serviceTypesAll, function(i, el){
+                            if(j$.inArray(el, serviceTypes) === -1) serviceTypes.push(el);
+                        });
+                    }
+
+                    // headers
+                    for (i = 0, j = serviceTypes.length; i < j; i = i + 1) {
+                        svcType = serviceTypes[i];
+                        html += '<h3 class="slds-text-heading--large slds-m-top--large slds-m-bottom-small">'+ svcType +'</h3>';
+                    
+                        // loop through the fields, adding each with a matching service type
+                        if (records.length > 0) {
+                            records.forEach(function(record) {  
+                                description = record.get("Description__c") != undefined ? record.get("Description__c") : 'No Description Available';
+
+                                if ( svcType === record.get("Service_Type__c") ) {
+
+                                    html += '<div class="slds-form-element slds-m-bottom--small">';
+
+                                    // add first 'if' to accomodate EMEA applications process - 10.10.16 tb
+                                    if (svcType === 'Workplace/Application Design EMEA') {
+
+                                        // fields
+
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<label class="slds-checkbox" id='+ record.get("Service_Type__c") +'>';
+                                        html += '<input type="checkbox" name="checkbox" id='+ record.get("SRN_API_Field_Name__c") + '>';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">' + record.get("SRN_Field_Label__c") + '&nbsp&nbsp&nbsp</span>';
+
+                                        // information icon
+                                        html += '<div class="slds-form-element__icon">';
+                                        html += '<a href="#" id='+ record.get("Id") +'>';
+                                        html += '<svg aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default">';
+                                        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>';
+                                        html += '</svg>';
+                                        html += '<span class="slds-assistive-text">Help</span>';
+                                        html += '</a>';
+                                        html += '</div>';
+
+                                        html += '</span>';
+                                        html += '</label>';
+                                        html += '</div>';
+
+                                        // help text
+                                        html += '<div class="slds-popover slds-hide" role="dialog" id=\'srnDesc_'+ record.get("Id") +'\'>';
+                                        html += '<div class="slds-popover__body">';
+                                        html += '<p>' + description + '</p>';
+                                        html += '</div>';
+                                        html += '</div>';
+
+                                        // Requested Due Date
+                                        html += '<div class="slds-form-element slds-m-top--medium slds-col slds-size--1-of-1 slds-medium-size--1-of-3 slds-large-size--1-of-11 slds-hide" id="rqstDateDiv_'+ record.get("SRN_API_Field_Name__c") +'">';
+                                        html += '<label class="slds-text-heading--small" for="Requested_Due_Date__c">Requested Due Date</label>';
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<input id="rqstDateVal_'+ record.get("SRN_API_Field_Name__c") +'" class="slds-input" type="date" placeholder="'+ defaultRqstedDate +'"  />';
+                                        html += '</div>';
+
+                                        // Number of Workstations
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-text-heading--small" for="Number_of_Workstations__c">Number of Workstations</label>';
+                                        html += '<input id="Number_of_Workstations__c" class="slds-input" type="number"/>';
+                                        
+
+                                        // Select Additional Options header
+                                        //html += '<div class="slds-m-top--medium">';
+                                        //html += '<h3 class="slds-section-title--divider">Select Additional Options</h3>';
+                                        //html += '</div>';
+
+                                        // Concept Design/Space Planning
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Concept_Space_Planning__c">';
+                                        html += '<input type="checkbox" name="check" id="Concept_Space_Planning__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Concept Design/Space Planning &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // 2D Floor Plan
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_X2D_Floor_Plan__c">';
+                                        html += '<input type="checkbox" name="check" id="X2D_Floor_Plan__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">2D Floor Plan &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Bird_s_Eye_3D_Floor_Plan__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Bird_s_Eye_3D_Floor_Plan__c">';
+                                        html += '<input type="checkbox" name="check" id="Bird_s_Eye_3D_Floor_Plan__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Bird'+"'"+'s Eye 3D Floor Plan&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Application_Standard_3D__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Application_Standard_3D__c">';
+                                        html += '<input type="checkbox" name="check" id="Application_Standard_3D__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Application Standard 3D&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Application High Level 3D
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Application_High_Level_3D__c">';
+                                        html += '<input type="checkbox" name="check" id="Application_High_Level_3D__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Application High Level 3D&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Room_Perspective_Standard_3D__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Room_Perspective_Standard_3D__c">';
+                                        html += '<input type="checkbox" name="check" id="Room_Perspective_Standard_3D__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Room Perspective Standard 3D&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Room_Perspective_High_Level_3D__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Room_Perspective_High_Level_3D__c">';
+                                        html += '<input type="checkbox" name="check" id="Room_Perspective_High_Level_3D__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Room Perspective High Level 3D&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+
+                                        // Other Deliverables header
+                                        html += '<div class="slds-m-top--medium">';
+                                        html += '<h3 class="slds-section-title--divider">Other Deliverables</h3>';
+                                        html += '</div>';
+
+                                        // Multi_Content_Image__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Multi_Content_Image__c">';
+                                        html += '<input type="checkbox" name="check" id="Multi_Content_Image__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Multi Content Image&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // X360_Panoramic_View_EMEA__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_X360_Panoramic_View_EMEA__c">';
+                                        html += '<input type="checkbox" name="check" id="X360_Panoramic_View_EMEA__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Panoramic 360 View&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // 3D PDF
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_X3D_PDF__c">';
+                                        html += '<input type="checkbox" name="check" id="X3D_PDF__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">3D PDF&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Animation
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_X3D_PDF__c">';
+                                        html += '<input type="checkbox" name="check" id="Animation__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Animation&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+
+                                        // WT+R Support header
+                                        html += '<div class="slds-m-top--medium">';
+                                        html += '<h3 class="slds-section-title--divider">WT+R Support</h3>';
+                                        html += '</div>';
+                                        
+                                          // WT_R_ALES_Workshop__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_WT_R_ALES_Workshop__c">';
+                                        html += '<input type="checkbox" name="check" id="WT_R_ALES_Workshop__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">WT+R - ALES Workshop (Summary Report PPT Presentation-DELIVERABLES ONLY)&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Design_Deliverables_Play_3_Clbrtv_EMEA__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Design_Deliverables_Play_3_Clbrtv_EMEA__c">';
+                                        html += '<input type="checkbox" name="check" id="Design_Deliverables_Play_3_Clbrtv_EMEA__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">WT+R - Collaborative Situations Workshop (Summary Report PPT Presentation-DELIVERABLES ONLY)&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Design_Deliverables_Play_5ConceptRvwEMEA__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Design_Deliverables_Play_5ConceptRvwEMEA__c">';
+                                        html += '<input type="checkbox" name="check" id="Design_Deliverables_Play_5ConceptRvwEMEA__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">WT+R - Concept Review (Summary Report PPT Presentation-DELIVERABLES ONLY)&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+                                        
+                                               // WT_R_Ecosystem_Assessment_EMEA__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_WT_R_Ecosystem_Assessment_EMEA__c">';
+                                        html += '<input type="checkbox" name="check" id="WT_R_Ecosystem_Assessment_EMEA__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">WT+R - Ecosystem Assessment (Summary Report PPT Presentation- DELIVERABLES ONLY)&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';    
+
+                                        // Design_Deliverables_Play_14_Privacy_EMEA__c
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Design_Deliverables_Play_14_Privacy_EMEA__c">';
+                                        html += '<input type="checkbox" name="check" id="Design_Deliverables_Play_14_Privacy_EMEA__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">WT+R - Privacy Preferences Workshop (Summary Report PPT Presentation-DELIVERABLES ONLY)&nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';                                                                         
+                                        
+                                                                   
+
+
+                                        html += '</div>';   // end Requested Due Date div
+
+                                    // EMEA mockup designs
+                                    } else if (svcType === 'FOR MOCK-UP TEAM - Graphic Design') {
+
+                                        // fields
+
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<label class="slds-checkbox" id='+ record.get("Service_Type__c") +'>';
+                                        html += '<input type="checkbox" name="checkbox" id='+ record.get("SRN_API_Field_Name__c") + '>';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">' + record.get("SRN_Field_Label__c") + '&nbsp&nbsp&nbsp</span>';
+
+                                        // information icon
+                                        html += '<div class="slds-form-element__icon">';
+                                        html += '<a href="#" id='+ record.get("Id") +'>';
+                                        html += '<svg aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default">';
+                                        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>';
+                                        html += '</svg>';
+                                        html += '<span class="slds-assistive-text">Help</span>';
+                                        html += '</a>';
+                                        html += '</div>';
+
+                                        html += '</span>';
+                                        html += '</label>';
+                                        html += '</div>';
+
+                                        // help text
+                                        html += '<div class="slds-popover slds-hide" role="dialog" id=\'srnDesc_'+ record.get("Id") +'\'>';
+                                        html += '<div class="slds-popover__body">';
+                                        html += '<p>' + description + '</p>';
+                                        html += '</div>';
+                                        html += '</div>';
+
+                                        // Requested Due Date
+                                        html += '<div class="slds-form-element slds-m-top--medium slds-col slds-size--1-of-1 slds-medium-size--1-of-3 slds-large-size--1-of-11 slds-hide" id="rqstDateDiv_'+ record.get("SRN_API_Field_Name__c") +'">';
+                                        html += '<label class="slds-text-heading--small" for="Requested_Due_Date__c">Requested Due Date</label>';
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<input id="rqstDateVal_'+ record.get("SRN_API_Field_Name__c") +'" class="slds-input" type="date" placeholder="'+ defaultRqstedDate +'"  />';
+                                        html += '</div>';
+
+                                        // Select Additional Options header
+                                        html += '<div class="slds-m-top--medium">';
+                                        html += '<h3 class="slds-section-title--divider">Select Additional Options</h3>';
+                                        html += '</div>';
+
+                                        // Banner
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Banner__c">';
+                                        html += '<input type="checkbox" name="check" id="Banner__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Banner &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Booklet
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Booklet__c">';
+                                        html += '<input type="checkbox" name="check" id="Booklet__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Booklet &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Handouts
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Handouts__c">';
+                                        html += '<input type="checkbox" name="check" id="Handouts__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Handouts &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Invitations and Thank You Notes
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Invitations_and_Thank_You_Notes__c">';
+                                        html += '<input type="checkbox" name="check" id="Invitations_and_Thank_You_Notes__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Invitations and Thank You Notes &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Stickers
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Stickers__c">';
+                                        html += '<input type="checkbox" name="check" id="Stickers__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Stickers &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Signage
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Signage__c">';
+                                        html += '<input type="checkbox" name="check" id="Signage__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Signage &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+                                        html += '</div>';
+
+                                    // EMEA mockup applications
+                                    } else if (svcType === 'FOR MOCK-UP TEAM - Application Design') {
+
+                                        // fields
+
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<label class="slds-checkbox" id='+ record.get("Service_Type__c") +'>';
+                                        html += '<input type="checkbox" name="checkbox" id='+ record.get("SRN_API_Field_Name__c") + '>';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">' + record.get("SRN_Field_Label__c") + '&nbsp&nbsp&nbsp</span>';
+
+                                        // information icon
+                                        html += '<div class="slds-form-element__icon">';
+                                        html += '<a href="#" id='+ record.get("Id") +'>';
+                                        html += '<svg aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default">';
+                                        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>';
+                                        html += '</svg>';
+                                        html += '<span class="slds-assistive-text">Help</span>';
+                                        html += '</a>';
+                                        html += '</div>';
+
+                                        html += '</span>';
+                                        html += '</label>';
+                                        html += '</div>';
+
+                                        // help text
+                                        html += '<div class="slds-popover slds-hide" role="dialog" id=\'srnDesc_'+ record.get("Id") +'\'>';
+                                        html += '<div class="slds-popover__body">';
+                                        html += '<p>' + description + '</p>';
+                                        html += '</div>';
+                                        html += '</div>';
+
+                                        // Requested Due Date
+                                        html += '<div class="slds-form-element slds-m-top--medium slds-col slds-size--1-of-1 slds-medium-size--1-of-3 slds-large-size--1-of-11 slds-hide" id="rqstDateDiv_'+ record.get("SRN_API_Field_Name__c") +'">';
+                                        html += '<label class="slds-text-heading--small" for="Requested_Due_Date__c">Requested Due Date</label>';
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<input id="rqstDateVal_'+ record.get("SRN_API_Field_Name__c") +'" class="slds-input" type="date" placeholder="'+ defaultRqstedDate +'"  />';
+                                        html += '</div>';
+
+                                        // Select Additional Options header
+                                        html += '<div class="slds-m-top--medium">';
+                                        html += '<h3 class="slds-section-title--divider">Select Additional Options</h3>';
+                                        html += '</div>';
+
+                                        // High-Level Application
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_High_Level_Application__c">';
+                                        html += '<input type="checkbox" name="check" value="true" id="High_Level_Application__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">High-Level Application &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Standard Application
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Standard_Application__c">';
+                                        html += '<input type="checkbox" name="check" value="true" id="Standard_Application__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Standard Application &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+
+                                        // Technical Drawing
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Technical_Drawing__c">';
+                                        html += '<input type="checkbox" name="check" id="Technical_Drawing__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Technical Drawing &nbsp&nbsp&nbsp</span>';
+                                        html += '</div>';
+                                        html += '</div>';
+
+
+                                    // APAC DS&S
+                                    } else if (svcType === 'Design Solutions and Specifications') {
+
+                                        // show apac design services here
+
+                                        console.log('apac ds&s');
+
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<label class="slds-checkbox" id='+ record.get("Service_Type__c") +'>';
+                                        html += '<input type="checkbox" name="checkbox" id='+ record.get("SRN_API_Field_Name__c") + '>';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">' + record.get("SRN_Field_Label__c") + '&nbsp&nbsp&nbsp</span>';
+
+                                        // information icon
+                                        html += '<div class="slds-form-element__icon">';
+                                        html += '<a href="#" id='+ record.get("Id") +'>';
+                                        html += '<svg aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default">';
+                                        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>';
+                                        html += '</svg>';
+                                        html += '<span class="slds-assistive-text">Help</span>';
+                                        html += '</a>';
+                                        html += '</div>';
+
+                                        html += '</span>';
+                                        html += '</label>';
+                                        html += '</div>';
+
+                                        // help text
+                                        html += '<div class="slds-popover slds-hide" role="dialog" id=\'srnDesc_'+ record.get("Id") +'\'>';
+                                        html += '<div class="slds-popover__body">';
+                                        html += '<p>' + description + '</p>';
+                                        html += '</div>';
+                                        html += '</div>';
+
+                                        // Requested Due Date
+                                        html += '<div class="slds-form-element slds-m-top--medium slds-col slds-size--1-of-1 slds-medium-size--1-of-3 slds-large-size--1-of-11 slds-hide" id="rqstDateDiv_'+ record.get("SRN_API_Field_Name__c") +'">';
+                                        html += '<label class="slds-text-heading--small" for="Requested_Due_Date__c">Requested Due Date</label>';
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<input id="rqstDateVal_'+ record.get("SRN_API_Field_Name__c") +'" class="slds-input" type="date" placeholder="'+ defaultRqstedDate +'"  />';
+                                        html += '</div>';
+
+                                        // Technical Drawings
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Technical_Drawings__c">';
+                                        html += '<input type="checkbox" name="check" id="Technical_Drawings__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Technical Drawings &nbsp&nbsp&nbsp';
+                                        //html += '</div>';
+
+                                        // information icon
+                                        html += '<div class="slds-form-element__icon">';
+                                        html += '<a href="#" id="help_Technical_Drawings__c">';
+                                        html += '<svg aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default">';
+                                        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>';
+                                        html += '</svg>';
+                                        html += '<span class="slds-assistive-text">Help</span>';
+                                        html += '</a>';
+                                        html += '</div>';
+
+                                        html += '</span>';
+                                        html += '</label>';
+                                        html += '</div>';
+
+                                        // help text
+                                        html += '<div class="slds-popover slds-hide" role="dialog" id="srnDesc_help_Technical_Drawings__c">';
+                                        html += '<div class="slds-popover__body">';
+                                        html += '<p>Standard & Customized solutions, Typical development, Specification check & audit, Product & design consultation</p>';
+                                        html += '</div>';
+                                        html += '</div>';
+                                        
+                                        // Layout Test Fit
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_Layout_Test_Fit__c">';
+                                        html += '<input type="checkbox" name="check" id="Layout_Test_Fit__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">Layout Test Fit &nbsp&nbsp&nbsp';
+                                        //html += '</div>';
+
+                                        // information icon
+                                        html += '<div class="slds-form-element__icon">';
+                                        html += '<a href="#" id="help_Layout_Test_Fit">';
+                                        html += '<svg aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default">';
+                                        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>';
+                                        html += '</svg>';
+                                        html += '<span class="slds-assistive-text">Help</span>';
+                                        html += '</a>';
+                                        html += '</div>';
+
+                                        html += '</span>';
+                                        html += '</label>';
+                                        html += '</div>';
+
+                                        // help text
+                                        html += '<div class="slds-popover slds-hide" role="dialog" id="srnDesc_help_Layout_Test_Fit">';
+                                        html += '<div class="slds-popover__body">';
+                                        html += '<p>Layout test fit (LTF) 2D floor plan. Standard lead time 1-2 business days subject to change depending on complexity of request  subject to change depending on complexity of request</p>';
+                                        html += '</div>';
+                                        html += '</div>';
+
+                                      
+
+                                        // pCon Visalization
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_pCon_Visualization__c">';
+                                        html += '<input type="checkbox" name="check" id="pCon_Visualization__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">pCon Visualization &nbsp&nbsp&nbsp';
+                                        //html += '</div>';
+
+                                        // information icon
+                                        html += '<div class="slds-form-element__icon">';
+                                        html += '<a href="#" id="help_pCon_Visualization">';
+                                        html += '<svg aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default">';
+                                        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>';
+                                        html += '</svg>';
+                                        html += '<span class="slds-assistive-text">Help</span>';
+                                        html += '</a>';
+                                        html += '</div>';
+
+                                        html += '</span>';
+                                        html += '</label>';
+                                        html += '</div>';
+
+                                        // help text
+                                        html += '<div class="slds-popover slds-hide" role="dialog" id="srnDesc_help_pCon_Visualization">';
+                                        html += '<div class="slds-popover__body">';
+                                        html += '<p>Product pCon visualization showcased in standard white background or in a pre-defined interior scenes (templates). Standard lead time 1 business day.</p>';
+                                        html += '</div>';
+                                        html += '</div>';
+
+                                        // pCon Visualiztion etc
+                                        html += '<div class="slds-form-element__control slds-m-top--medium">';
+                                        html += '<label class="slds-checkbox" id="lbl_pCon_Visualization_Zones_Floor_Plans__c">';
+                                        html += '<input type="checkbox" name="check" id="pCon_Visualization_Zones_Floor_Plans__c">';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">pCon Visualization (Zones & Floor Plans) &nbsp&nbsp&nbsp';
+                                        //html += '</div>';
+
+                                        // information icon
+                                        html += '<div class="slds-form-element__icon">';
+                                        html += '<a href="#" id="help_pCon_Visualization_Zones_Floor_Plans__c">';
+                                        html += '<svg aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default">';
+                                        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>';
+                                        html += '</svg>';
+                                        html += '<span class="slds-assistive-text">Help</span>';
+                                        html += '</a>';
+                                        html += '</div>';
+
+                                        html += '</span>';
+                                        html += '</label>';
+                                        html += '</div>';
+
+                                        // help text
+                                        html += '<div class="slds-popover slds-hide" role="dialog" id="srnDesc_help_pCon_Visualization_Zones_Floor_Plans__c">';
+                                        html += '<div class="slds-popover__body">';
+                                        html += '<p>Zones or layout pCon visualization. Standard lead time 3-4 business days  subject to change depending on complexity of request</p>';
+                                        html += '</div>';
+                                        html += '</div>';
+
+
+                                        html += '</div>';   // end additional options div
+
+                                    // services without description text
+                                    } else if (description === 'No Description Available') {
+
+                                        // fields
+
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<label class="slds-checkbox slds-m-bottom--small" id='+ record.get("Service_Type__c") +'>';
+                                        html += '<input type="checkbox" name="checkbox" id='+ record.get("SRN_API_Field_Name__c") + '>';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+
+                                        // label
+                                        html += '<span class="slds-text-heading--small">' + record.get("SRN_Field_Label__c") + '&nbsp&nbsp&nbsp</span>';
+
+                                        // Requested Due Date
+                                        html += '<div class="slds-form-element slds-m-top--medium slds-col slds-size--1-of-1 slds-medium-size--1-of-3 slds-large-size--1-of-11 slds-hide" id="rqstDateDiv_'+ record.get("SRN_API_Field_Name__c") +'">';
+                                        html += '<label class="slds-text-heading--small" for="Requested_Due_Date__c">Requested Due Date</label>';
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<input id="rqstDateVal_'+ record.get("SRN_API_Field_Name__c") +'" class="slds-input" type="date" placeholder="'+ defaultRqstedDate +'"  />';
+                                        html += '</div>';
+                                        html += '</div>';
+
+                                    // all other services (from srn assignments)
+                                    } else {
+
+                                        // fields
+                                        //html += '<div class="slds-form-element slds-m-bottom--small">';
+
+                                        console.log('service type: ' + record.get("Service_Type__c"));
+
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<label class="slds-checkbox" id='+ record.get("Service_Type__c") +'>';
+                                        html += '<input type="checkbox" name="checkbox" id='+ record.get("SRN_API_Field_Name__c") + '>';
+                                        html += '<span class="slds-checkbox--faux"></span>';
+                                        html += '<span class="slds-text-heading--small">' + record.get("SRN_Field_Label__c") + '&nbsp&nbsp&nbsp</span>';
+
+                                        // information icon
+                                        html += '<div class="slds-form-element__icon">';
+                                        html += '<a href="#" id='+ record.get("Id") +'>';
+                                        html += '<svg aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default">';
+                                        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>';
+                                        html += '</svg>';
+                                        html += '<span class="slds-assistive-text">Help</span>';
+                                        html += '</a>';
+                                        html += '</div>';
+
+                                        html += '</span>';
+                                        html += '</label>';
+                                        html += '</div>';
+
+                                        // help text
+                                        html += '<div class="slds-popover slds-hide" role="dialog" id=\'srnDesc_'+ record.get("Id") +'\'>';
+                                        html += '<div class="slds-popover__body">';
+                                        html += '<p>' + description + '</p>';
+                                        html += '</div>';
+                                        html += '</div>';
+
+                                        // Requested Due Date
+                                        html += '<div class="slds-form-element slds-m-top--medium slds-col slds-size--1-of-1 slds-medium-size--1-of-3 slds-large-size--1-of-11 slds-hide" id="rqstDateDiv_'+ record.get("SRN_API_Field_Name__c") +'">';
+                                        html += '<label class="slds-text-heading--small" for="Requested_Due_Date__c">Requested Due Date</label>';
+                                        html += '<div class="slds-form-element__control">';
+                                        html += '<input id="rqstDateVal_'+ record.get("SRN_API_Field_Name__c") +'" class="slds-input" type="date" placeholder="'+ defaultRqstedDate +'"  />';
+                                        html += '</div>';
+                                        html += '</div>';
+                                    }
+                                    
+
+                                    html += '</div>';
+                                }
+                            });
+                        }
+                    }
+                    //html += '</form>';
+                    //html += '<button class="slds-button slds-button--brand" id="submitForm">Submit</button>';
+                    outputDiv.innerHTML = html;
+                }
+            }
+        );
+
+        j$( "#srnServiceRqst" ).on( "click", "a", function(e) {
+            var elemId = j$( this ).attr("id");
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            elemId = 'srnDesc_' + elemId;
+                j$("#" + elemId).slideToggle( "slow" );
+
+        });
+
+    }
+
+    // validates form submittal 
+    function validForm() {
+
+        var rqstByDate = document.getElementById("Requested_Due_Date__c"),
+            valid = false;
+
+        if (rqstByDate.value != "") {
+            valid = true;
+        } else {
+            rqstByDate.parentNode.parentNode.setAttribute("class","slds-form-element slds-m-top--medium is-required slds-has-error");
+            rqstByDate.focus();
+        }
+        return valid;
+    }
+
+    // triggered from 'submit' button
+    function submitForm() {
+        
+        var form = document.getElementById('srnServiceRqst'),
+            scsSpinner = document.getElementById('scsSpinner'),
+            scsSpinner_btm = document.getElementById('scsSpinner_btm'),
+            inputFields = j$("#srnForm :input"), //$(":input"),  // put inputs into an array
+            srnRqst = new SObjectModel.SRN_Request__c(),
+            optyId = document.getElementById("Opportunity_Name__c").innerHTML,
+            actId = document.getElementById("Account__c").innerHTML,
+            recordTypeId = document.getElementById('RecordTypeId').innerHTML,
+            srnRqstDtls = {},
+            fields = [], 
+            i, j, fieldName, dateFieldName, dateElmId, dateValue, val, Number_of_Workstations, X2D_Floor_Plan, X3D_PDF, Animation, Application_High_Level_3D, Application_Standard_3D, Bird_s_Eye_3D_Floor_Plan, Multi_Content_Image, X360_Panoramic_View_EMEA, Room_Perspective_High_Level_3D, Room_Perspective_Standard_3D, Design_Deliverables_Play_3_Clbrtv_EMEA, Design_Deliverables_Play_5ConceptRvwEMEA, Design_Deliverables_Play_14_Privacy_EMEA, Layout_Test_Fit, pCon_Visualization, pCon_Visualization_Zones_Floor_Plans, Technical_Drawings, WT_R_ALES_Workshop, WT_R_Ecosystem_Assessment_EMEA;
+
+            console.log("form elm: " + inputFields.length);
+
+        scsSpinner.setAttribute('class','slds-spinner_container');
+        scsSpinner_btm.setAttribute('class','slds-spinner_container');
+            
+            for (i = 0, j = inputFields.length; i < j; i = i + 1) {
+
+                // set the field value depending on the type of field in the loop
+                val = inputFields[i].getAttribute("name") != "checkbox" ?  inputFields[i].value : inputFields[i].checked;
+
+                fieldName = inputFields[i].getAttribute('id');
+                dateFieldName = fieldName.length < 38 ? fieldName.slice(0,fieldName.length -3) : fieldName.slice(0,37);
+                dateFieldName += "_DT__c";
+
+                if (fieldName === 'Comments__c') {
+                    srnRqstDtls[fieldName] = val;
+                    comments = val;
+                } 
+
+                // loop through form's checkboxes to find the selected services
+                // checkboxes for EMEA Workplace Design Services have a name attribute of 'check', so are excluded
+                if (inputFields[i].getAttribute("name") === "checkbox" && val === true) {
+
+                    // find the corresponding date field for the checkbox
+                    dateElmId = "rqstDateVal_" + fieldName;
+                    dateValue = document.getElementById(dateElmId).value;
+
+                    if (dateValue.length === 10) {
+                        dateValue = dateValue + 'T12:00:00';
+                    } else {
+                        dateValue = defaultRqstDate();
+                    }
+                    console.log('date elm id: ' + dateElmId + ' - date: ' + dateValue);
+                    console.log('date field name: ' + dateFieldName);
+                    
+                    srnRqstDtls[fieldName] = val; 
+                    srnRqstDtls[dateFieldName] = dateValue;
+
+                    // set emea mockup graphic design values
+                    try {
+                        // find
+                        Banner = document.getElementById('Banner__c').checked;
+                        Booklet = document.getElementById('Booklet__c').checked;
+                        Handouts = document.getElementById('Handouts__c').checked;
+                        Invitations_and_Thank_You_Notes = document.getElementById('Invitations_and_Thank_You_Notes__c').checked;
+                        Stickers = document.getElementById('Stickers__c').checked;
+                        Signage = document.getElementById('Signage__c').checked;
+
+                        // transform
+                        Banner = Banner != true ? 'false' : 'true';
+                        Booklet = Booklet != true ? 'false' : 'true';
+                        Handouts = Handouts != true ? 'false' : 'true';
+                        Invitations_and_Thank_You_Notes = Invitations_and_Thank_You_Notes != true ? 'false' : 'true';
+                        Stickers = Stickers != true ? 'false' : 'true';
+                        Signage = Signage != true ? 'false' : 'true';
+
+                        // set
+                        srnRqstDtls.Banner__c = Banner;
+                        srnRqstDtls.Booklet__c = Booklet;
+                        srnRqstDtls.Handouts__c = Handouts;
+                        srnRqstDtls.Invitations_and_Thank_You_Notes__c = Invitations_and_Thank_You_Notes;
+                        srnRqstDtls.Stickers__c = Stickers;
+                        srnRqstDtls.Signage__c = Signage;
+                    } catch(e) {
+                        console.log('error catching emea mockup graphic design fields: ' + e);
+                    }
+
+
+                    // set emea mockup application design values
+                    try {
+                        // find
+                        High_Level_Application = document.getElementById('High_Level_Application__c').checked;
+                        Standard_Application = document.getElementById('Standard_Application__c').checked;
+                        Technical_Drawing = document.getElementById('Technical_Drawing__c').checked;
+
+                        // transform
+                        High_Level_Application = High_Level_Application != true ? 'false' : 'true';
+                        Standard_Application = Standard_Application != true ? 'false' : 'true';
+                        Technical_Drawing = Technical_Drawing != true ? 'false' : 'true';
+
+                        // set
+                        srnRqstDtls.High_Level_Application__c = High_Level_Application;
+                        srnRqstDtls.Standard_Application__c = Standard_Application;
+                        srnRqstDtls.Technical_Drawing__c = Technical_Drawing;
+                    } catch(e) {
+                        console.log('error catching emea mockup application design fields: ' + e);
+                    }
+
+                    // set emea visualization values
+                    try {
+                        // find
+                        Number_of_Workstations = document.getElementById('Number_of_Workstations__c').value;
+                        Concept_Space_Planning = document.getElementById('Concept_Space_Planning__c').checked;
+                        X2D_Floor_Plan = document.getElementById('X2D_Floor_Plan__c').checked;
+                        X3D_PDF = document.getElementById('X3D_PDF__c').checked;
+                        Animation = document.getElementById('Animation__c').checked;
+                        Application_High_Level_3D = document.getElementById('Application_High_Level_3D__c').checked;
+                        Application_Standard_3D = document.getElementById('Application_Standard_3D__c').checked;
+                        Bird_s_Eye_3D_Floor_Plan = document.getElementById('Bird_s_Eye_3D_Floor_Plan__c').checked;
+                        Multi_Content_Image = document.getElementById('Multi_Content_Image__c').checked;
+                        X360_Panoramic_View_EMEA = document.getElementById('X360_Panoramic_View_EMEA__c').checked;
+                        Room_Perspective_High_Level_3D = document.getElementById('Room_Perspective_High_Level_3D__c').checked;
+                        Room_Perspective_Standard_3D = document.getElementById('Room_Perspective_Standard_3D__c').checked;
+                        Design_Deliverables_Play_3_Clbrtv_EMEA = document.getElementById('Design_Deliverables_Play_3_Clbrtv_EMEA__c').checked;
+                        Design_Deliverables_Play_5ConceptRvwEMEA = document.getElementById('Design_Deliverables_Play_5ConceptRvwEMEA__c').checked;
+                        Design_Deliverables_Play_14_Privacy_EMEA = document.getElementById('Design_Deliverables_Play_14_Privacy_EMEA__c').checked;
+                        WT_R_ALES_Workshop = document.getElementById('WT_R_ALES_Workshop__c').checked;
+                        WT_R_Ecosystem_Assessment_EMEA = document.getElementById('WT_R_Ecosystem_Assessment_EMEA__c').checked
+
+                        // transform
+                        Concept_Space_Planning = Concept_Space_Planning != true ? 'false' : 'true';
+                        X2D_Floor_Plan = X2D_Floor_Plan != true ? 'false' : 'true';
+                        X3D_PDF = X3D_PDF != true ? 'false' : 'true';
+                        Animation = Animation != true ? 'false' : 'true';
+                        Application_High_Level_3D = Application_High_Level_3D != true ? 'false' : 'true';
+                        Application_Standard_3D = Application_Standard_3D != true ? 'false' : 'true';
+                        Bird_s_Eye_3D_Floor_Plan = Bird_s_Eye_3D_Floor_Plan != true ? 'false' : 'true';
+                        Multi_Content_Image = Multi_Content_Image != true ? 'false' : 'true';
+                        X360_Panoramic_View_EMEA = X360_Panoramic_View_EMEA != true ? 'false' : 'true';
+                        Room_Perspective_High_Level_3D = Room_Perspective_High_Level_3D != true ? 'false' : 'true';
+                        Room_Perspective_Standard_3D = Room_Perspective_Standard_3D != true ? 'false' : 'true';
+                        Design_Deliverables_Play_3_Clbrtv_EMEA = Design_Deliverables_Play_3_Clbrtv_EMEA != true ? 'false' : 'true';
+                        Design_Deliverables_Play_5ConceptRvwEMEA = Design_Deliverables_Play_5ConceptRvwEMEA != true ? 'false' : 'true';
+                        Design_Deliverables_Play_14_Privacy_EMEA =  Design_Deliverables_Play_14_Privacy_EMEA != true ? 'false' : 'true';
+                        WT_R_ALES_Workshop =  WT_R_ALES_Workshop != true ? 'false' : 'true';
+                        WT_R_Ecosystem_Assessment_EMEA =  WT_R_Ecosystem_Assessment_EMEA != true ? 'false' : 'true';
+                        
+
+                        // set
+                        srnRqstDtls.Number_of_Workstations__c = Number_of_Workstations;
+                        srnRqstDtls.Concept_Space_Planning__c = Concept_Space_Planning;
+                        srnRqstDtls.X2D_Floor_Plan__c = X2D_Floor_Plan;
+                        srnRqstDtls.X3D_PDF__c = X3D_PDF;
+                        srnRqstDtls.Animation__c = Animation;
+                        srnRqstDtls.Application_High_Level_3D__c = Application_High_Level_3D;
+                        srnRqstDtls.Application_Standard_3D__c = Application_Standard_3D;
+                        srnRqstDtls.Bird_s_Eye_3D_Floor_Plan__c = Bird_s_Eye_3D_Floor_Plan;
+                        srnRqstDtls.Multi_Content_Image__c = Multi_Content_Image;
+                        srnRqstDtls.X360_Panoramic_View_EMEA__c = X360_Panoramic_View_EMEA;
+                        srnRqstDtls.Room_Perspective_High_Level_3D__c = Room_Perspective_High_Level_3D;
+                        srnRqstDtls.Room_Perspective_Standard_3D__c = Room_Perspective_Standard_3D;
+                        srnRqstDtls.Design_Deliverables_Play_3_Clbrtv_EMEA__c = Design_Deliverables_Play_3_Clbrtv_EMEA;
+                        srnRqstDtls.Design_Deliverables_Play_5ConceptRvwEMEA__c = Design_Deliverables_Play_5ConceptRvwEMEA;
+                        srnRqstDtls.Design_Deliverables_Play_14_Privacy_EMEA__c = Design_Deliverables_Play_14_Privacy_EMEA;
+                        srnRqstDtls.WT_R_ALES_Workshop__c = WT_R_ALES_Workshop;
+                        srnRqstDtls.WT_R_Ecosystem_Assessment_EMEA__c = WT_R_Ecosystem_Assessment_EMEA;
+                        
+
+                    } catch(e) {
+                        console.log('error catching emea viz fields: ' + e);
+                    }
+
+                    // set apac ds&s values
+                    try {
+                        // find
+                        Technical_Drawings = document.getElementById('Technical_Drawings__c').checked;
+                        Layout_Test_Fit = document.getElementById('Layout_Test_Fit__c').checked;
+                        pCon_Visualization = document.getElementById('pCon_Visualization__c').checked;
+                        pCon_Visualization_Zones_Floor_Plans = document.getElementById('pCon_Visualization_Zones_Floor_Plans__c').checked;
+
+                        // transform
+                        Technical_Drawings = Technical_Drawings != true ? 'false' : 'true';
+                        Layout_Test_Fit = Layout_Test_Fit != true ? 'false' : 'true';
+                        pCon_Visualization = pCon_Visualization != true ? 'false' : 'true';
+                        pCon_Visualization_Zones_Floor_Plans = pCon_Visualization_Zones_Floor_Plans != true ? 'false' : 'true';
+
+                        // set
+                        srnRqstDtls.Technical_Drawings__c = Technical_Drawings;
+                        srnRqstDtls.Layout_Test_Fit__c = Layout_Test_Fit;
+                        srnRqstDtls.pCon_Visualization__c = pCon_Visualization;
+                        srnRqstDtls.pCon_Visualization_Zones_Floor_Plans__c = pCon_Visualization_Zones_Floor_Plans;
+
+                    } catch(e) {
+                        console.log('error catching apac ds&s fields: ' + e);
+                    }
+                }
+
+            }
+
+            srnRqstDtls.RecordTypeId = recordTypeId;
+            srnRqstDtls.Opportunity_Name__c = optyId;
+            srnRqstDtls.Account__c = actId;
+
+            // create srn_request__c record
+            srnRqst.create(srnRqstDtls, function(err) {
+                    if (err) { 
+                        console.log('srnRqstDtls: ' + err);
+                        console.log('srnRqstDtls: ' + err.message);
+                    } else {
+                        // navigate the user back to the account or opty record
+                        cancelForm();
+                    }
+            });
+    }
+
+    // returns the user to the opportunity or account
+    function cancelForm() {
+        var oppIdElm = document.getElementById('Opportunity_Name__c'),
+            actIdElm = document.getElementById('Account__c'),
+            oppId = oppIdElm.innerHTML,
+            actId = actIdElm.innerHTML;
+
+        console.log('optyId: ' + oppId);
+
+        if (oppId !== "") {
+
+            if(!sforce.one) {
+                console.log('backNav: no sforce.one object');
+            } else {
+                //sforce.one.back(true);  //doesn't take the user to opp after adding a partner
+                sforce.one.navigateToSObject(oppId);
+            }
+        } else {
+
+            if(!sforce.one) {
+                console.log('backNav: no sforce.one object');
+            } else {
+                //sforce.one.back(true);  //doesn't take the user to opp after adding a partner
+                sforce.one.navigateToSObject(actId);
+            }
+        }
+
+    }
+
+    // retrieves srn_request record types
+    function getRecordTypeId() {
+
+        var geo = document.getElementById('selectedGeo').innerHTML,
+            actRecordType = new SObjectModel.RecordType(),
+            where = {SobjectType: {eq: 'SRN_Request__c'}},
+            recordTypeElm = document.getElementById('RecordTypeId'),
+            RecordTypeId, RecordTypeName;
+
+        geo = geo != null ? geo : 'AMER';
+
+        actRecordType.retrieve(
+            { where },
+            function(error, records) {
+                if (error) {
+                    console.log(error.message);
+                } else {
+                    records.forEach(function(record) {
+                        RecordTypeId = record.get("Id");
+                        RecordTypeName = record.get("DeveloperName");
+
+                        if (RecordTypeName === geo) {
+
+                            // set the record type id in a hidden field
+                            recordTypeElm.innerHTML = RecordTypeId;
+                        }
+                    });
+                }
+            }
+        );
+    }
+
+    // puts the date in the correct format for srn_request__c
+    function fixTime(time) {
+       if(time < 10) {time = "0" + time};
+       return time;
+    }
+
+    function fixDate(date) {
+        var Month = fixTime(date.getMonth() + 1),
+            Day = fixTime(date.getDate()),
+            UTC = date.toUTCString(),
+            Time = UTC.substring(UTC.indexOf(':')-2, UTC.indexOf(':')+6),
+            Minutes = fixTime(date.getMinutes()),
+            Seconds = fixTime(date.getSeconds());
+        return date.getYear()+1900 + "-" + Month + "-" + Day + "T" + "12:00:00";  
+    }
+
+    // initialize the page
+    function init() {
+
+        var origin = getParameterByName('originType'),
+            recordOrigin = document.getElementById('scsRecordOrigin'),
+            optNameElm = document.getElementById('optyName'),
+            accountElm = document.getElementById("Account__c"),
+            optyElm = document.getElementById("Opportunity_Name__c"),
+
+            optyid = "{!Case.Opportunity__c}",
+            actid = "{!Case.AccountId}",
+            where = {Id: {eq: optyid}},
+            userId = "{!$User.Id}",
+            users = new SObjectModel.User(),
+            userWhere = {Id: {eq: userId}},
+            optyname, optyActId, userGeo, userRegion, opps, acts, rqstDate;
+
+            console.log('init: opty id = ' + optyid.length);
+
+        // set Account Name or Opportunity Name depending on case origin
+        if (optyid.length === 0) {
+
+            acts = new SObjectModel.Account(),
+            acts.retrieve(
+
+                { where : {Id: {eq: actid}} },
+
+                function(error, records) {
+                    if (error) {
+                        console.log('srNetwork request; init; act error: ' + error.message);
+                    } else {
+                        // get the opportunity  name and the account id
+                        if (records.length > 0) {
+                            records.forEach(function(record) {
+                                actname = record.get("Name");
+                                //actid = record.get("AccountId");
+                                console.log('srNetwork request; init; act name: ' + actname);
+                                recordOrigin.innerHTML = actname;
+                                accountElm.innerHTML = actid;
+                            });
+                        }
+                    }
+                }
+            );
+
+        } else {
+
+            // set the opportunity id and account id into html elements for later use
+            opps = new SObjectModel.Opportunity(),
+
+            opps.retrieve(
+
+                { where },
+
+                function(error, records) {
+                    if (error) {
+                        console.log('srNetwork request; init; opp error: ' + error.message);
+                    } else {
+                        // get the opportunity  name and the account id
+                        if (records.length > 0) {
+                            records.forEach(function(record) {
+                                optyname = record.get("Name");
+                                actid = record.get("AccountId");
+                                recordOrigin.innerHTML = optyname;
+                                optNameElm.innerHTML = optyname;
+                                accountElm.innerHTML = actid;
+                            });
+                        }
+                    }
+                }
+            );
+        }
+
+        // hide geography-select div whenever possible
+        users.retrieve(
+
+            { where: userWhere },
+
+            function(error, records) {
+                if (error) {
+                    console.log('srNetwork request; init; user error: ' + error.message);
+                } else {
+                    if (records.length > 0) {
+                        records.forEach(function(record) {
+
+                            userGeo = record.get("Sales_Geography__c");
+                            userRegion = record.get("Sales_Region__c");
+
+                            // for emea users default geography to EMEA
+                            if (userGeo === "EMEA" || userGeo === "APAC") {
+                                createForm(userGeo);
+
+                            } else if (userRegion === "Mexico") {  // only user's with sales region of Mexico use Mexico City services
+                                createForm("Mexico_City");
+
+                            } else if (userRegion === "Brazil" || userRegion === "Central and South America") {
+                                createForm("LatinAm");  
+
+                            } else {
+                                createForm("AMER");
+                            }
+
+                            console.log('geo: ' + userGeo + ' - region: ' + userRegion);
+                        });
+                    }
+                }
+            }
+        );
+
+
+        // change the page header values based on the selected geography
+        //recordOrigin.innerHTML = optNameElm.innerHTML;
+
+        if (optyid) {
+            optyElm.innerHTML = optyid;
+            //accountElm.innerHTML = actid;
+        } else {
+            accountElm.innerHTML = actid;
+            console.log('setting accountElm to: ' + actid);
+        }
+
+        // toggle the visibility of the checkbox's corresponding date field
+        j$( "#srnServiceRqst" ).on( "click", "input", function(e) {
+
+            var dateElmId = 'rqstDateDiv_';
+
+            if (this.checked && j$(this).attr("name") === "checkbox") {
+
+                dateElmId += j$(this).attr("id");
+
+                j$( "#" + dateElmId ).show( "slow", function() {
+                    //j$(this).removeClass("slds-hide").addClass("slds-show");
+                });
+
+                console.log('checkbox set to true: ' + dateElmId);
+
+            } else if (!this.checked && j$(this).attr("name") === "checkbox") {
+
+                dateElmId += j$(this).attr("id");
+
+                j$( "#" + dateElmId ).hide( "slow", function() {
+                    //j$(this).removeClass("slds-show").addClass("slds-hide");
+                });
+
+                console.log('checkbox set to false: ' + dateElmId);
+            }
+
+        });
+
+        j$( "#srnServiceRqst" ).on("blur", "input", function(e) {
+
+            // validate the date is future
+            if (j$(this).attr("type") === "date") {
+
+                rqstDate = j$(this).val();
+                
+                if (rqstDate === "") {
+                    // no date is ok
+                } else {
+                    // check if there's a date problem
+                    if ( dateDiff(rqstDate) ) {
+                        // date is ok
+                    } else {
+                        // show date problem
+                        j$(this).after('<p id="tempP" style="color:red">* Please select a future date</p>');
+                    }
+                }
+            }
+        });
+
+        // delete the date error message if it exists
+        j$( "#srnServiceRqst" ).on("focus", "input", function(e) {
+
+            if (j$(this).attr("type") === "date") {
+
+                var next = j$( this ).next();
+
+                if (j$(next).attr("id") == "tempP") {
+
+                    j$(next).empty();
+                }
+            }
+
+        });
+    }
+
+    // return true if the dateString is on or after today's date
+    function dateDiff(dateString) {
+
+        var dateToday = new Date(),
+            dateStatus = false,
+            year, month, day, rqstDate, today, requestedDate, diff;
+
+        year = dateString.substring(0,4);
+        month = dateString.substring(5,7) - 1;
+        day = dateString.substring(8,10);
+        todayYear = dateToday.getFullYear();
+        todayMonth = dateToday.getMonth();
+        todayDay = dateToday.getDate();
+
+        // set today's date minus the elapsed milliseconds
+        todayDate = new Date(todayYear,todayMonth,todayDay);
+
+        rqstDate = new Date(year,month,day);
+
+        today = Number(todayDate);
+        requestedDate = Number(rqstDate);
+        diff = requestedDate - today;
+
+
+        if (diff >= 0) {
+            dateStatus = true;
+        } else {
+            dateStatus = false;
+        }
+
+        return dateStatus;
+    }
+
+j$ = jQuery.noConflict();
+
+j$(document).ready(function() {
+
+   init();
+
+});
+
+</script>
+</html>
+</apex:page>

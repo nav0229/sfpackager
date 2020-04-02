@@ -1,0 +1,65 @@
+<apex:page id="B2B_Footer_STEX"   controller="B2B_FooterControllerExt_STEX"    docType="html-5.0" sideBar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+
+
+    
+<script>
+    jQuery(function($){
+        let currSite = localStorage.getItem('siteParam');
+        function getFooterLinksRA() {
+            // if (!CCRZ.pagevars.isGuest){
+                let remote = _.extend(CCRZ.RemoteInvocation, { className: 'B2B_FooterControllerExt_STEX'});
+                remote.invokeCtx('getFooterLinksSite', currSite,
+                (result) => {
+                    if (result) {
+                        let data = result.data;
+                        $('#terms-of-use-link').attr('href', data.termsOfUseURL);
+                        $('#privacy-policy-link').attr('href', data.privacyPolicyURL);
+                        $('#accessibility-statement-link').attr('href', data.accessibilityStatementURL);
+                        if (data.dealerTermsOfUseURL) {
+                            $('#dealer-terms-of-use-link').attr('href', data.dealerTermsOfUseURL);
+                            $('#dealer-terms-of-use-link').removeClass('hidden');
+                        }
+                    }
+                },
+                {
+                    nmsp: false,
+                    escape: false,
+                    buffer: false
+                });
+            // }  
+        }
+        if (currSite) {
+            CCRZ.pubSub.on('view:headerView:refresh', function () {
+                if ($('#terms-of-use-link').attr('href')==='javascript:'){
+                    getFooterLinksRA();
+                }
+            });
+        }
+    });   
+</script>
+    <div class="footer-copyright">
+        <div class="row footer-row legal-notices-row white-bg">
+            <div class="col-md-2">
+                <h4>Legal Notices</h4>
+                <p><a href="javascript:" id="terms-of-use-link">Terms of Use</a></p>
+                <p><a href="javascript:" id="privacy-policy-link">Privacy Policy</a></p>
+                <p><a href="javascript:" id="accessibility-statement-link">Accessibility Statement</a></p>
+                <p><a href="javascript:" id="dealer-terms-of-use-link" class="hidden">Dealer Terms of Use</a></p>
+            </div>
+            <div class="col-md-10"></div>
+        </div>
+            <div class="row footer-row copyright-row grey-bg">
+            <div class="col-md-3">
+                <img id="footer-logo" src="https://b2b.steelcase.com/skin/frontend/steelcase/enterprise/images/logo-footer.png" />
+            </div>
+            <div class="col-md-5"></div>
+            <div class="col-md-4">
+                <span class="small-text" id="copyright-statement">
+                    © 1996 - 2019 Steelcase Inc. is the global leader in office furniture, 
+                    interior architecture and space solutions for offices, hospitals and classrooms. 
+                    Our furniture is inspired by innovative research in workspace design.
+                </span>
+            </div>
+        </div>
+    </div>  
+</apex:page>

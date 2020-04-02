@@ -1,0 +1,21 @@
+<apex:page id="B2B_FormFlow_STEX" controller="B2B_FormFlowController_STEX" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+	<head>
+		<apex:includeLightning />
+	</head>
+	<div id="flowContainer"></div>
+	<apex:includeScript value="{!$Resource.B2B_FlowCreator_js}" />
+	<script>
+		jQuery(function($) {
+			const remote = _.extend(CCRZ.RemoteInvocation, {className: 'B2B_FormFlowController_STEX'});
+			remote.invokeCtx('getStexFormInputs',
+				(result) => {
+                    FormFlow.createFlow(result);/* do not remove */
+				},
+				{
+					buffer: false,
+					nmsp: false
+				}
+			);
+		});
+	</script>
+</apex:page>

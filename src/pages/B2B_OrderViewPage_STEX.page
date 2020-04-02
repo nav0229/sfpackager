@@ -1,0 +1,4 @@
+<apex:page id="B2B_OrderViewPage_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+    <c:B2B_EffAcctSelector_STEX />
+    <c:B2B_OrderView_STEX />
+</apex:page>

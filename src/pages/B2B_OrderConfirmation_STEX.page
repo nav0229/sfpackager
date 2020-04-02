@@ -1,0 +1,3 @@
+<apex:page id="B2B_OrderConfirmation_STEX">
+	<c:B2B_OrderConfirmation_STEX CartIdAttr="a4d54000000HKF8AAO"/>
+</apex:page>

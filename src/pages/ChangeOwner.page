@@ -1,0 +1,297 @@
+<apex:page standardController="APP_Engagements__c" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0"> 
+    
+    <!--   enable support for the SVG icon sprite maps within Visualforce  -->
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+    <head>
+        <title>Sales Regions</title>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+
+    </head>
+
+    <apex:remoteObjects >
+        <apex:remoteObjectModel name="APP_Engagements__c" fields="Id,OwnerId"/>
+        <apex:remoteObjectModel name="User" fields="Id,Alias,CommunityNickname,FirstName,LastName"/>
+        <apex:remoteObjectModel name="Profile" fields="Id,Name"/>
+    </apex:remoteObjects>
+
+    <body id="ChngOwnr">
+        <apex:form >
+            <apex:pageBlock >
+            	<apex:pageBlockSection columns="1">
+            	</apex:pageBlockSection>
+            </apex:pageBlock>  
+        </apex:form>
+        <!-- required slds wrapper -->
+        <div class="slds">
+
+            <!-- primary content wrapper -->
+            <div class="myapp">
+
+            	<!-- search box if user does not have necessary permissions to query profile & user  -->
+            	<div class="slds-text-heading--small slds-m-bottom--medium slds-hide" id="searchBox"></div>
+                    <div id="scsSearchBox" class="slds-col slds-form-element slds-size--2-of-4 slds-m-left--large slds-m-bottom--medium slds-m-top--medium">
+                        <label class="slds-form-element__label slds-text-body--regular" for="lookup">Owners</label>
+                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+                            <svg aria-hidden="true" class="slds-input__icon">
+                                <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#search')}"></use>
+                            </svg>
+                            <input id="scsUserSearch" class="slds-input" type="text" placeholder="type to search available owners" onKeyUp="searchBox()" />
+                        </div>
+                    </div>
+                    <div id="ownerList" class="slds-p-vertical--medium"></div>
+
+
+            	<!--  user list  -->
+                <div class="slds-text-heading--small slds-m-bottom--medium" id="displayAvailableOwnrs"></div>
+
+                <!--  save  -->
+				<button class="slds-button slds-button--brand slds-m-top--medium slds-hide" id="scsSave" type="button" onClick="changeOwner()">save selection</button>
+
+				<!--  cancel -->
+				<button class="slds-button slds-button--brand slds-m-top--medium" id="scsCancel" type="button" onClick="cancelNav()">Cancel</button>
+
+				<!-- stores selected value -->
+				<div class="slds-hide" id="selection"></div>
+
+            </div> <!-- / primary content wrapper -->
+
+        </div> <!-- / required slds wrapper -->
+    </body>
+        
+    <!-- javascript -->
+    <script>
+	
+    function cancelNav() {
+        var recordId = "{!NBI_Engagements__c.Id}";
+        if(!sforce.one) {
+            console.log('no sforce.one object');
+        } else {
+            //sforce.one.back(true);  //doesn't take the user back 
+            sforce.one.navigateToSObject(recordId);
+        }
+    }
+
+    function selectOwner(id, name) {
+
+    	var saveBtn = document.getElementById('scsSave'),
+    		selectionElm = document.getElementById('selection');
+
+		// set hidden text to the user's selection
+        selectionElm.innerHTML = id;
+
+        // set the save button's text
+        saveBtn.innerHTML = "Set  " + name + "  as the new owner";
+
+        // set the button to visible
+        saveBtn.className = "slds-button slds-button--brand slds-m-top--medium slds-show";
+    }
+
+    function changeOwner() {
+
+    	var selectionElm = document.getElementById('selection'),
+    		nbiId = "{!NBI_Engagements__c.Id}",
+    		nbiRecord, newOwnerId;
+
+    	newOwnerId = selectionElm.innerHTML;
+
+    	//nbiId = 'a0063000000kbi9AAA';
+
+        nbiRecord = new SObjectModel.NBI_Engagements__c({ Id: nbiId, OwnerId: newOwnerId });
+
+        console.log(nbiId);
+
+        nbiRecord.update(function(err,records) {
+        	if (err) {
+        		console.log('changeOwner: ' + err);
+        	} else {
+        		console.log('changeOwner success');
+
+        		//  do what?  close the window?
+        		cancelNav();
+        	}
+        });
+
+    }
+
+    //retrieves the profile Id for a given profile name
+    function retrieveProfiles(profileName) {
+
+    	var where = {Name: {eq: profileName}},
+    		profiles = new SObjectModel.Profile();
+
+		profiles.retrieve(
+			{ where },
+			function(err, records) {
+				if (err) {
+					console.log('retrieveProfiles: ' + err);
+					retrieveUsers('00e63000000DgfOAAS');  // profile id must be set manually.
+				} else {
+					// send the profile name to retrieveUsers
+					if (records.length > 0) {
+						retrieveUsers(records[0].get("Id"));
+					}
+				}
+			}
+		);
+    }
+
+    function retrieveUsers(profileId) {
+
+    	var where = {ProfileId: {eq: profileId}},
+    		users = new SObjectModel.User();
+
+		users.retrieve(
+			{ where },
+			function(err, records) {
+				if (err) {
+					console.log('retrieveUsers: ' + err);
+					showUserSearchBox();
+				} else {
+					// display users
+					if (records.length > 0) {
+						displayUsers(records);
+					}
+				}
+			}
+		);
+    }
+
+    function displayUsers(users) {
+    	
+    	var ownersDiv = document.getElementById('displayAvailableOwnrs'),
+    		html;
+
+        if (users.length > 0) {
+
+            // if available NBI user records exist for this account
+
+            html = '<h3 class="slds-section-title--divider"><span class="slds-text-heading--small">Select the new owner below:</span></h3>';
+            html += '<div class="slds-scrollable--x"><table class="slds-table slds-table--bordered">';
+            html += '<thead><tr class="slds-text-heading--label">';
+            html += '<th scope="col"></th><th scope="col"></th>';
+            html += '</tr></thead><tbody>';
+
+            users.forEach(function(record) {
+                userId = record.get("Id");
+                userAlias = record.get("Alias");
+                userName = record.get("CommunityNickname");
+
+        			
+                    //html += '<tr>';
+                    //html += '<td class=\'slds-cell-shrink\' data-label=\'select Row\'>';
+                    //html += '<label class=\'slds-checkbox\'>';
+                    //html += '<input type=\'checkbox\' name=\'options\'>';
+                    //html += '<span class=\'slds-checkbox--faux\'></span>';
+                    //html += '<span class=\'slds-assistive-text\'>select row</span>';
+                    //html += '</label>';
+                    //html += '<td id=\'userId_'+ userId +'\' onClick="changeOwner(\''+userId+'\')">' + userId + '</td>';
+                    html += '<td id=\'name_'+ userId +'\' onClick="selectOwner(\''+userId+ '\',\'' + userName +  '\')">' + userName + '</td>';
+                    html += '<td></td>';
+                    html += '</tr>';
+
+                });
+
+        html = html + '</tbody></table></div>';
+        ownersDiv.innerHTML = html;
+
+        } else {
+
+            html = '<h3 class="slds-section-title--divider">avaiable NBI users</h3>';
+            html += '<h2 class="slds-text-heading--small slds-m-left--small slds-m-top--small">0 available NBI users...</h2>';
+            ownersDiv.innerHTML = html;
+        }
+    }
+
+    // displayed only for admin users because normal users do not have access to Profile and User.ProfileId
+    function showUserSearchBox() {
+
+    	var searchBox = document.getElementById("searchBox");
+
+    	searchBox.className = "slds-text-heading--small slds-m-bottom--medium slds-show";
+    }
+
+    // triggered by typing in the search box.  retrieves the query results
+    function searchBox() {
+
+    	var searchVal = document.getElementById("scsUserSearch").value,
+    		Users = new SObjectModel.User(),
+    		nameParm = '%' + searchVal + '%',
+    		where1 = { CommunityNickname: {like:nameParm}},
+    		where2 = { CommunityNickname: {like:'%'}},
+    		where = searchVal != null ? where1 : where2,
+    		outputDiv = document.getElementById('ownerList'),
+    		html, userId, userName;
+
+    		Users.retrieve(
+    			{ 	where,
+    				orderby: [{CommunityNickname: 'ASC'}], limit: 100
+    			},
+    				function(err, records) {
+    					if (err) {
+    						console.log('searchBox: ' + err);
+    					} else {
+	                        html = '<div class="slds-scrollable--x"><table class="slds-table slds-table--bordered">';
+	                        html += '<thead><tr class="slds-text-heading--label"><th scope="col"></th>';
+	                        html += '<th scope="col">NAME</th>';
+	                        
+	                        records.forEach(function(record) {
+	                        	userId = record.get("Id");
+	                        	userName = record.get("CommunityNickname")
+
+                                html += '<tr><td><button style="margin:0;" class="slds-button slds-button--brand slds-m-top--medium" type="button" onClick="saveNewOwner(\''+ userId + '\',\'' + userName + '\')">Select</button></td>';
+                                html += '<td id=\'name_'+ userId +'\' onClick="saveNewOwner(\''+ userId + '\',\'' + userName + '\')">' + userName + '</td>';
+	                        });
+
+	                        html = html + '</tbody></table></div>';
+	                        outputDiv.innerHTML = html;
+    					}
+    				}
+			);
+
+    }
+
+    // used with the search box
+    function saveNewOwner(id, name) {
+
+    	var nbiId = "{!NBI_Engagements__c.Id}", nbiRecord;
+
+        nbiRecord = new SObjectModel.NBI_Engagements__c({ Id: nbiId, OwnerId: id });
+
+        console.log('nbi id: ' + nbiId + ' -- owner id: ' + id);
+
+        nbiRecord.update(function(err,records) {
+        	if (err) {
+        		console.log('changeOwner: ' + err);
+        	} else {
+        		console.log('changeOwner success');
+        		// return to the record
+        		cancelNav();
+        	}
+        });
+    }
+
+    // displays the query results in a table on the screen
+    function showOwners() {
+
+    	var listElmId = 'ownerList',
+    		listElm;
+
+		listElm = document.getElementById(listElmId);
+
+
+
+    }
+
+	// initialize
+	function init() {
+
+	    //retrieveProfiles('NBI User');
+	    showUserSearchBox();
+	}
+
+	init();
+
+	</script>
+</html>
+</apex:page>

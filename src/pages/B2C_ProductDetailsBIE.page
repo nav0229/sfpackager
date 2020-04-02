@@ -1,0 +1,3 @@
+<apex:page id="B2C_ProductDetailsBIE" docType="html-5.0" sideBar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+	<c:B2C_ProductDetailTemplate />
+</apex:page>

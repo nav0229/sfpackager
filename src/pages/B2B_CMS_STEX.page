@@ -1,0 +1,7 @@
+<!--
+ - Created by arosenb1 on 2019-10-09.
+ -->
+
+<apex:page id="B2B_CMS_STEX" docType="html-5.0" sideBar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+    <c:B2B_CMS_Content_STEX />
+</apex:page>

@@ -1,0 +1,32 @@
+<apex:page sidebar="false" showHeader="false" standardController="Account" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">  
+
+<!-- 2019.06.04: Created to integrate a set of tabular Tableau visualizations used to identify and sanitize Salesforce data   - jz   -->
+<!-- 2019.06.24: Moved to Production - alex   -->
+<head>
+      <script type="text/javascript"
+        src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+    <script type="text/javascript">
+        function initViz() {
+            var containerDiv = document.getElementById("vizContainer"),
+                url = "https://tableau.steelcase.com/t/production/views/CRMAccountCleanup/CRMAccountClean-upReports",
+                options = {                    
+                    hideTabs: false,
+                    hideToolbar: false,
+                    device: "desktop",
+                    onFirstInteractive: function () {
+                        console.log("Run this code when the viz has finished loading.");
+                    }
+                };
+
+            var viz = new tableau.Viz(containerDiv, url, options);
+            // Create a viz object and embed it in the container div.
+        }
+    </script>
+</head>
+
+<body onload="initViz();">
+    <div id="vizContainer" style="width:1600px; height:1024px;"></div>
+</body>
+</html>
+</apex:page>

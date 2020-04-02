@@ -1,0 +1,215 @@
+<apex:page standardController="Account" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">    
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">    
+
+<head>
+    <apex:includeScript value="{!$Resource.jquery0101203}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS200, 'assets/styles/salesforce-lightning-design-system.css')}" />
+    <style>
+        #scsToast_Success, #scsToast_Error, #scsWhatIsThis {
+            display: none;
+        }
+    </style>
+</head>
+<apex:remoteObjects >
+    <apex:remoteObjectModel name="Account" fields="Id,Name,Summary__c,RecordTypeId"/>
+</apex:remoteObjects>
+
+<apex:includeLightning />
+
+<body>    
+
+    <!-- REQUIRED SLDS WRAPPER -->
+    <div class="slds slds-m-left--xx-large">    
+
+
+        <!-- PRIMARY CONTENT WRAPPER -->
+        <div class="slds-grid slds-grid--pull-padded slds-m-top--small">
+            <div class="slds-col-padded slds-size--1-of-1 slds-medium-size--2-of-6 slds-large-size--4-of-12">
+                <span>
+                    <button class="slds-button slds-button--brand" id="scsSaveBtn-top" onclick="saveNarrative();">Save</button>
+                </span>
+                <span>&nbsp;&nbsp;* Click 'Save' when finished &nbsp;&nbsp;</span>
+            </div>
+
+            <!-- information icon  -->
+            <div class="slds-col-padded slds-size--1-of-1 slds-medium-size--1-of-8 slds-large-size--1-of-12">
+                <div class="slds-form-element__icon">
+                    <a href="#" onClick="showWhatIsThis();">
+                        <svg aria-hidden="true" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                            <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="slds-col-padded slds-size--1-of-1 slds-medium-size--1-of-4 slds-large-size--1-of-12">
+
+                <span id="scsWhatIsThis">
+                    <div class="slds-popover slds-nubbin--left-top" role="dialog">
+                        <div class="slds-popover__body">
+                            <code><br/>What's a Summary?</code>
+                            <p>A summary provides relevant information you might typically share with someone new to this Account or Opportunity which may include an overview of the company, history with Steelcase, key business issues, play-to-win strategy, competitive situation, key decision makers, etc.</p>
+                        </div>
+                    </div>
+                </span>
+            </div>
+        </div>
+
+        <!-- Textarea -->
+        <div class="slds-grid slds-grid--pull-padded">
+            <div class="slds-col-padded slds-size--1-of-1 slds-medium-size--6-of-6 slds-large-size--8-of-12 slds-m-bottom--small">
+                <!-- Account Summary text field -->
+                <div class="slds-form-element slds-m-top--large">
+                    <div class="slds-form-element__control">
+
+                        <!--  Narrative text box  -->
+                        <textarea id="scsAccountNarrative" class="slds-textarea" placeholder="Type your Account Summary here." rows="17"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-grid slds-grid--pull-padded">
+            <div class="slds-col-padded slds-size--1-of-1 slds-medium-size--1-of-6 slds-large-size--8-of-12">
+                <button class="slds-button slds-button--brand" id="scsSaveBtn" onclick="saveNarrative();">Save</button>
+
+                <div class="slds-spinner_container slds-hide" id="scsSpinner">
+                    <div class="slds-spinner slds-spinner--small" aria-hidden="false" role="alert">
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--  success message -->
+        <div id="scsToast_Success">
+            <div class="slds-notify_container slds-m-top--xx-large">
+                <div class="slds-notify slds-notify--toast slds-theme--success" role="alert">
+                    <span class="slds-assistive-text">Info</span>
+                    <button class="slds-button slds-button--icon-inverse slds-notify__close" onclick="closeToast();">
+                        <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+                            <use xlink:href="{!URLFOR($Resource.SLDS100,'/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <div class="slds-notify__content slds-grid">
+                        <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+                            <use xlink:href="{!URLFOR($Resource.SLDS100,'/assets/icons/utility-sprite/svg/symbols.svg#notification')}"></use>
+                        </svg>
+                        <div class="slds-col slds-align-middle">
+                            <h2 class="slds-text-heading--small ">Your changes were successfully saved.</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  error message -->
+        <div id="scsToast_Error">
+            <div class="slds-notify_container">
+                <div class="slds-notify slds-notify--toast slds-theme--error" role="alert">
+                    <span class="slds-assistive-text">Info</span>
+                    <button class="slds-button slds-button--icon-inverse slds-notify__close" onclick="closeToast();">
+                        <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+                            <use xlink:href="{!URLFOR($Resource.SLDS100,'/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                        </svg>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <div class="slds-notify__content slds-grid">
+                        <svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col slds-no-flex">
+                            <use xlink:href="{!URLFOR($Resource.SLDS100,'/assets/icons/utility-sprite/svg/symbols.svg#warning')}"></use>
+                        </svg>
+                        <div class="slds-col slds-align-middle">
+                            <h2 class="slds-text-heading--small ">Your changes failed to successfully save.</h2>
+                            <p id="scsErrorDetails"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- / PRIMARY CONTENT WRAPPER -->    
+
+    </div>
+    <!-- / REQUIRED SLDS WRAPPER -->    
+
+</body>
+
+<script>
+function showWhatIsThis(){
+    j$("#scsWhatIsThis").fadeToggle("slow");
+}
+
+function closeToast() {
+    j$("#scsToast_Success").fadeOut(1000);
+    j$("#scsToast_Error").fadeOut(1000);
+}
+
+function saveNarrative() {
+    var narrativeElm = document.getElementById('scsAccountNarrative'),
+        narrative = narrativeElm.value,
+        actId = "{!Account.Id}",
+        scsSpinner = document.getElementById('scsSpinner'),
+        act;
+
+    scsSpinner.setAttribute('class','slds-spinner_container');
+
+    narrative = narrative.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    
+    act = new SObjectModel.Account(
+        {
+            Id: actId,
+            Summary__c: narrative
+        }
+    );
+    act.update(actUpdateCallback);
+}
+
+function actUpdateCallback(err, ids) {
+
+    var scsSpinner = document.getElementById('scsSpinner');
+
+    if (err) {
+        errMsg = err.message;
+        console.log('error saving narrative changes: ' + err.message);
+        scsSpinner.setAttribute('class','slds-spinner_container slds-hide');
+        document.getElementById('scsErrorDetails').innerHTML = "Error message: " + errMsg.substring(0,100);
+
+        // show error message
+        j$("#scsToast_Error").fadeIn("slow");
+    } else {
+        console.log('changes saved');
+        scsSpinner.setAttribute('class','slds-spinner_container slds-hide');
+
+        // show success message
+        j$("#scsToast_Success").fadeIn("slow").fadeOut("slow");
+    }
+}
+
+function undoChanges() {
+    var narrativeElm = document.getElementById('scsAccountNarrative'),
+        oldNarrative = "{!JSINHTMLENCODE(Account.Summary__c)}";
+
+        console.log('oldNarrative: ' + oldNarrative);
+
+    narrativeElm.value = oldNarrative;
+}
+
+function init() {
+    var narrativeElm = document.getElementById('scsAccountNarrative'),
+        oldNarrative = "{!JSINHTMLENCODE(Account.Summary__c)}";
+
+    narrativeElm.value = oldNarrative;
+}
+
+j$ = jQuery.noConflict();
+
+j$(document).ready(function() {
+
+    init();
+
+});
+</script>
+</html>
+</apex:page>

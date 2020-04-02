@@ -1,0 +1,19 @@
+<apex:page controller="testURLController" action="{!getParam}">
+
+
+  <apex:form >
+      <p/>
+      <apex:commandButton value="Click me" action="{!getCookieValue}" rerender="paramArea"/>
+      This is your parameter.<p/>
+      <apex:outputText id="paramArea">{!myDisplayParam}
+      </apex:outputText> 
+      <p/>
+      <p/>
+  
+      <apex:pageblock >
+          <apex:pageblockButtons >
+              <apex:commandButton value="Click me to go on" action="{!goToPage}"/>
+          </apex:pageblockButtons>
+      </apex:pageblock>
+  </apex:form>
+</apex:page>

@@ -1,0 +1,22 @@
+<apex:page showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">    
+    
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">  
+    <head>  
+    </head>
+    <body>
+        
+ 
+<button class="slds-button slds-button--neutral slds-show" > 
+        <div class="slds-grid">
+            <div id="listLink" class="slds-col slds-text-align--right slds-m-right--small">
+                <h3 class="slds-section-title--divider slds-m-top-medium slds-m-bottom--medium">
+                <a href="https://steelcase.lightning.force.com/one/one.app#/sObject/00O37000001wOi4EAE/view?t=1468240209337">  Team Member Opportunities</a></h3>
+            </div>
+        </div>
+        </button>
+    </body>
+    <script>
+    </script>
+    </html>    
+    
+</apex:page>

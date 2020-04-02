@@ -1,0 +1,17 @@
+<apex:page standardController="Case" lightningStylesheets="true">
+    
+    <div class="demo-only" style="background-color:#dddbda;width:50%;height:50%;margin-top:5%;margin-left:10%;padding-top:2em;padding-bottom:3em">
+
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <h2 id="modal-heading-01" style="text-align:center">Action Disabled</h2>
+            </header>
+            <div style="margin-left:20%" id="modal-content-id-1">
+                <p>Please submit your service request from an account or opportunity.</p>
+                <p>Thanks!</p>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    
+</apex:page>

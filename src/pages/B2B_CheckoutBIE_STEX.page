@@ -1,0 +1,93 @@
+<apex:page id="B2B_CheckoutBIE_STEX" controller="B2B_UserInformationController_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+        <script>console.log("TESTING CHECKOUT: effective account selector");</script>
+        <c:B2B_EffAcctSelector_STEX />
+        <script>console.log("TESTING CHECKOUT: checkout header");</script>
+        <c:B2B_CheckoutHeader_STEX />
+        <script>console.log("TESTING CHECKOUT: user information tab");</script>
+        <c:B2B_UserInformationTab_STEX />
+        <script>console.log("TESTING CHECKOUT: shipping tab");</script>
+        <c:B2B_ShippingTab_STEX />
+        <script>console.log("TESTING CHECKOUT: order review tab");</script>
+        <c:B2B_OrderReviewTab_STEX />
+        <script>console.log("TESTING CHECKOUT: payment tab");</script>
+        <c:B2B_PaymentTab_STEX />
+        <script>console.log("TESTING CHECKOUT: order complete tab");</script>
+        <c:B2B_OrderCompleteTab_STEX />
+    <script>
+        
+
+        jQuery(function ($) {
+            loadCheckoutViews();
+
+            const remote = _.extend(CCRZ.RemoteInvocation, { className: 'B2B_UserInformationController_STEX' });
+			remote.invokeCtx('getCartClassification',
+            CCRZ.pagevars.currentCartID,
+            (classification) =>{
+                if (classification){
+                    CCRZ.pagevars.STEXCartClassification = classification;
+                } else {
+                    CCRZ.pagevars.STEXCartClassification = 'Cart';
+                }
+            },
+            {
+                nmsp: false
+            });
+
+            // STANDARD FLOW
+            function registerCustomViews(displayShipping){
+                CCRZ.pubSub.on('view:cartCheckoutView:awaitingSubViewInit', function (theView) {
+                    if (CCRZ.pagevars.STEXCartClassification=='Cart'){
+                        if (CCRZ.Checkout.userInfo) {
+                        CCRZ.Checkout.CustomUserInfo.register(theView);
+                        // CCRZ.Checkout.userInfo.register(theView);
+                        }
+                        if (CCRZ.Checkout.shipping && displayShipping) {
+                            console.log('here at check shipping', displayShipping);
+                            CCRZ.Checkout.CustomShipping.register(theView);
+                            // CCRZ.Checkout.shipping.register(theView);
+                        }
+                        if (CCRZ.Checkout.review) {
+                            CCRZ.Checkout.CustomReview.register(theView);
+                            // CCRZ.Checkout.review.register(theView);
+                        }
+                        if (CCRZ.Checkout.payment) {
+                            // CCRZ.Checkout.payment.register(theView);
+                            CCRZ.Checkout.CustomPayment.register(theView);
+                        }
+                    } else if (CCRZ.pagevars.STEXCartClassification=='RFQ'){
+                        if (CCRZ.Checkout.userInfo) {
+                            CCRZ.Checkout.CustomUserInfo.register(theView);
+                            // CCRZ.Checkout.userInfo.register(theView);
+                        }
+                        if (CCRZ.Checkout.review) {
+                            CCRZ.Checkout.CustomReview.register(theView);
+                            // CCRZ.Checkout.review.register(theView);
+                        }
+                    } else if (CCRZ.pagevars.STEXCartClassification=='Quote' ){
+                        if (CCRZ.Checkout.payment) {
+                            // CCRZ.Checkout.payment.register(theView);
+                            CCRZ.Checkout.CustomPayment.register(theView);
+                        }
+                    }
+                    CCRZ.pubSub.trigger('view:cartCheckoutView:subViewInit');
+                });
+            }
+            $('a').each(function(i, el) {
+                let lastActive = localStorage.getItem('lastActive');
+                el.href += '&lastActive=' + lastActive;
+            });
+
+            function loadCheckoutViews(){
+                //check if there are any Shipping Tab questions
+                var remoteCall= _.extend(CCRZ.RemoteInvocation,{className:'B2B_UserInformationController_STEX'});
+                    remoteCall.invokeCtx('checkShippingQ',CCRZ.pagevars.STEXCartClassification,(res, err)=>{
+                        //Register Views
+                        registerCustomViews(res);
+                    },
+                    {
+                        nmsp: false
+                    });   
+            }
+        });
+    </script>
+</apex:page>

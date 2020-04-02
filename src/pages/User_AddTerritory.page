@@ -1,0 +1,163 @@
+<apex:page standardController="User" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">    
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">    
+
+    <head>
+        <title>Sales Regions</title>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+    </head>
+
+    <apex:remoteObjects >
+        <apex:remoteObjectModel name="Territory__c" fields="Id,Name,Sales_Business_Group__c,Sales_Geography__c,LastModifiedDate"/>
+        <apex:remoteObjectModel name="User" fields="Id,Sales_Region_Id__c,Sales_Region__c,Sales_Business_Group__c,Sales_Geography__c"/>
+    </apex:remoteObjects>
+        
+    <body>
+        <!-- required slds wrapper -->
+        <div class="slds">
+
+            <!-- primary content wrapper -->
+            <div class="myapp">
+                <apex:form ><apex:inputHidden id="scsUserId" value="{!User.Id}"/></apex:form>
+
+                <!-- search box -->
+                <div class="slds-form-element slds-size--1-of-2" id="scsSearchBox">
+                    <label class="slds-form-element__label" for="lookup">Sales Regions</label>
+                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+                        <svg aria-hidden="true" class="slds-input__icon">
+                            <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#search')}"></use>
+                        </svg>
+                        <input id="scsRegionSearch" class="slds-input" type="text" placeholder="type to search regions" onKeyUp="searchBox()"/>
+                    </div>
+                  </div>
+                
+                
+                <!-- sales region list table -->
+                <div id="regionList" class="slds-p-vertical--medium">
+
+                </div>
+
+            </div> <!-- / primary content wrapper -->
+        </div> <!-- / required slds wrapper -->
+    </body>
+        
+    <!-- javascript -->
+    <script>
+        function searchBox() {
+            
+            // get value user is typing
+            var searchVal = document.getElementById('scsRegionSearch').value;
+            
+            // update the table with the new values that meet the above criteria
+            updateOutputDiv(searchVal);
+        }
+        
+        function selectRegion(regionId) {
+            
+            // updates the user's record when the 'select' button is clicked.
+            // user still needs to refresh the page to see the change reflected in the layout
+            var userId = document.getElementById('j_id0:j_id15:scsUserId').value,
+                region = document.getElementById('region_' + regionId).innerHTML,
+                bg = document.getElementById('bg_' + regionId).innerHTML,
+                geo = document.getElementById('geography_' + regionId).innerHTML,
+              user;
+      
+            // write the new region to the user's record
+            user = new SObjectModel.User({
+                    Id: userId,
+                    Sales_Region_Id__c: regionId,
+                    Sales_Region__c: region,
+                    Sales_Business_Group__c: bg,
+                    Sales_Geography__c: geo
+                });
+      user.update(updateCallback);
+    }
+        
+        // Callback to handle DML Remote Objects calls
+        function updateCallback(err, ids){
+            var outputDiv = document.getElementById("regionList"), 
+                searchBox = document.getElementById("scsSearchBox"), messageIcon, html;
+            
+            searchBox.className = "slds-hide";
+            
+            if (err) { 
+              messageIcon = '<div class="slds-notify-container">';
+                messageIcon += '<div class="slds-notify slds-notify--toast slds-theme--error" role="alert">';
+                messageIcon += '<span class="slds-assistive-text">Error</span>';
+                messageIcon += '<div class="notify__content slds-grid">';
+                messageIcon += '<svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col" >';
+                messageIcon += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#warning')}"></use></svg>';
+                messageIcon += '<div class="slds-col slds-align-middle">';
+                messageIcon += '<h2 class="slds-text-heading--small">';
+                messageIcon += '<span>' + err + '</span></h2></div></div>';
+
+        outputDiv.innerHTML = messageIcon;
+            } else {
+              messageIcon = '<div class="slds-notify-container">';
+                messageIcon += '<div class="slds-notify slds-notify--toast slds-theme--success" role="alert">';
+                messageIcon += '<span class="slds-assistive-text">Success</span>';
+                messageIcon += '<div class="notify__content slds-grid">';
+                messageIcon += '<svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col" >';
+                messageIcon += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#notification')}"></use></svg>';
+                messageIcon += '<div class="slds-col slds-align-middle">';
+                messageIcon += '<h2 class="slds-text-heading--small">';
+                messageIcon += '<span>Sales Region successfully changed, please refresh page to see results.</span></h2></div></div>';
+                
+                //html = messageIcon + '<div class="slds-scrollable--x">';
+                //html += '<p class="slds-text-heading--medium">Sales Region successfully changed, please refresh page to see results.</p></div>';
+        outputDiv.innerHTML = messageIcon;
+            }
+        }
+        function updateOutputDiv(regionName) {
+
+            var region = new SObjectModel.Territory__c(),
+                regionNameParm = '%' + regionName + '%',
+                where1 = { Name: {like:regionNameParm}},
+                where2 = { Name: {like:'%'}},
+                where = regionName !=null ? where1 : where2,
+              outputDiv = document.getElementById("regionList"), 
+                html = null;
+            
+            if (regionName === undefined || regionName.length < 1) {
+              console.log('undefined for sure');
+                outputDiv.innerHTML = html;
+                return;
+            } else {
+                console.log('defined: ' + typeof regionName);
+            }
+            
+            // retrieves the sales regions from Sales_Region__c object
+            // populates the 'regionList' div with the new html table
+
+            console.log(regionName);
+            
+            region.retrieve(
+                {where,
+                orderby: [{Sales_Geography__c: 'ASC'}], limit: 100},
+                function(error, records) {
+                    if (error) {
+                        alert(error.message);
+                    } else {
+                        html = '<div class="slds-scrollable--x"><table class="slds-table slds-table--bordered">';
+                        html += '<thead><tr class="slds-text-heading--label"><th scope="col"></th>';
+                        html += '<th scope="col">SALES REGION</th>';
+                        html += '<th scope="col">BUSINESS GROUP</th>';
+                        html += '<th scope="col">GEOGRAPHY</th></tr></thead><tbody>';
+                        
+                        records.forEach(function(record) {
+                            html += '<tr><td><button style="margin:0;" class="slds-button slds-button--brand slds-m-top--medium" type="button" onClick="selectRegion(\''+ record.get("Id") +'\')">Select</button></td>';
+                            html += '<td id=\'region_'+ record.get("Id") +'\'>' + record.get("Name") + '</td>';
+                            html += '<td id=\'bg_'+ record.get("Id") +'\'>' + record.get("Sales_Business_Group__c") + '</td>';
+                            html += '<td id=\'geography_'+ record.get("Id") +'\'>' + record.get("Sales_Geography__c") + '</td></tr>';
+                        });
+                        html = html + '</tbody></table></div>';
+                        outputDiv.innerHTML = html;
+                    }
+                }
+            );
+        }
+        
+        updateOutputDiv();
+    </script>
+</html>
+</apex:page>

@@ -1,0 +1,1158 @@
+<apex:page standardController="Opportunity_Product__c"  showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">    
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">    
+
+<head>
+<title>Add Products</title>
+<apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+<apex:includeScript value="{!$Resource.jquery0101203}"/>
+</head>    
+
+
+
+<apex:remoteObjects >
+    <apex:remoteObjectModel name="User" fields="Id,Sales_Geography__c"/>
+    <apex:remoteObjectModel name="Product2" fields="Id,Name,Status__c,Pinch_point_geography__c,IsActive"/>
+    <apex:remoteObjectModel name="Opportunity" fields="Id,Name"/>
+    <apex:remoteObjectModel name="Opportunity_Product__c" fields="Id,OpportunityName__c,Owner__c,ProductName__c,Total_Est_Disc_Sales__c,Quantity__c,Product_Portfolio__c"/>
+</apex:remoteObjects>
+<body>    
+
+<!-- REQUIRED SLDS WRAPPER -->
+<div class="slds">    
+
+    <!-- MASTHEAD
+    <h1 class="slds-text-heading--label slds-m-bottom--small">
+        Add Products
+    </h1>
+    / MASTHEAD -->    
+
+    <!-- PRIMARY CONTENT WRAPPER -->
+    <div class="slds-grid">
+    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+    <div class="slds-col--padded">
+
+        <!-- page header -->
+        <!-- toast modal -->
+        <div class="slds-notify_container slds-hide" id="scsToast">
+            <div class="slds-notify slds-notify--toast slds-theme--success" role="alert">
+                <span class="slds-assistive-text">Info</span>
+                <button class="slds-button slds-button--icon-inverse slds-notify__close">
+                <svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+                <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                </svg>
+                <span class="slds-assistive-text">Close</span>
+                </button>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading--small" id="scsToastMessage">New products added</h2>
+                </div>
+            </div>
+        </div>
+
+        <!--  this is a process header -->
+        <div class="slds-wizard" role="navigation">
+            <ol class="slds-wizard__list">
+                <li class="slds-wizard__item slds-is-active" id="scsPnchProducts">
+                    <a href="javascript:void(0);" class="slds-wizard__link">
+                        <span class="slds-wizard__marker"></span>
+                        <span class="slds-wizard__label slds-text-heading--label slds-truncate">Key Products</span>
+                    </a>
+                </li>
+                <li class="slds-wizard__item" id="scsOtherProducts">
+                    <a href="javascript:void(0);" class="slds-wizard__link">
+                        <span class="slds-wizard__marker"></span>
+                        <span class="slds-wizard__label slds-text-heading--label slds-truncate">Other Products</span>
+                    </a>
+                </li>
+                <li class="slds-wizard__item" id="scsSaveProducts">
+                    <a href="javascript:void(0);" class="slds-wizard__link">
+                        <span class="slds-wizard__marker"></span>
+                        <span class="slds-wizard__label slds-text-heading--label slds-truncate">Save</span>
+                    </a>
+                </li>
+            </ol>
+            <span class="slds-wizard__progress">
+                <span class="slds-wizard__progress-bar" id="scsProgressBar" style="width:0%;"></span>
+            </span>
+        </div>
+        <!-- / page header -->
+
+        <!-- add other products question -->
+        <div id="scsMoreQstn" class="slds-hide slds-m-top--xx-large slds-m-bottom--xx-large" style="border: 1px solid #16325c">
+            <h3 class="slds-section__title slds-m-bottom--medium slds-m-top--small slds-m-left--small slds-m-right--small">
+                <span class="slds-text-heading--medium">Do you want to add other products at this time?</span>
+            </h3>
+
+            <section class="slds-clearfix">
+                <div class="slds-float--left slds-form-element slds-size--1-of-3 slds-m-left--xx-large slds-m-top--small slds-m-bottom--small slds-m-right--small">
+                    <label class="slds-form-element__label" for="btn_scsYesAddMore"></label>
+                    <button id="btn_scsYesAddMore" class="slds-button slds-button--brand" type="button">Yes, add more</button>
+                </div>
+
+                <div class="slds-float--right slds-form-element slds-size--1-of-3 slds-m-right--xx-large slds-m-top--small slds-m-bottom--small slds-m-left--small">
+                    <label class="slds-form-element__label" for="btn_scsNoMore"></label>
+                    <button id="btn_scsNoMore" class="slds-button slds-button--brand" type="button">No, I'm done</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- add new 'normal' product -->
+        <div id="addNewPrctDiv" class="slds-hide">
+            <h3 class="slds-section-title--divider slds-m-bottom--medium slds-m-top--medium">
+                <span class="slds-text-heading--small">Add other products</span>
+            </h3>
+            <div id="selectNewProduct">
+                <div id="scsSearchBox" class="slds-form-element slds-lookup slds-is-open slds-size--1-of-1">
+                    <label class="slds-form-element__label slds-text-body--regular" for="scsProductSearch">PRODUCT LINE</label> 
+                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+                        <svg aria-hidden="true" class="slds-input__icon">
+                            <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#search')}"></use>
+                        </svg>
+                        <input id="scsProductSearch" class="slds-input" type="text" placeholder="Search Products" name=""/>
+                    </div>
+                    <!-- product search results div -->
+                    <div class="slds-lookup__menu slds-m-top--none slds-hide" role="listbox" id="scsPrdctSrchRslts">
+                        <ul class="slds-lookup__list slds-m-left--small slds-m-right--small slds-m-bottom--small" role="presentation">
+                            <li class="slds-m-top--small">
+                                <a class="slds-lookup__item-action slds-media slds-media--center" href="javascript:void(0);" role="option" id="462 Leap Seating">
+                                    <svg aria-hidden="true" class="slds-icon slds-icon-standard-product slds-icon--small slds-media__figure">
+                                        <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/standard-sprite/svg/symbols.svg#product')}"></use>
+                                    </svg>
+                                    <div class="slds-media__body">
+                                        <div class="slds-lookup__result-text">462 Leap Seating</div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li class="slds-m-top--small">
+                                <a class="slds-lookup__item-action slds-media slds-media--center" href="javascript:void(0);" role="option" id="Think - Task Seating">
+                                    <svg aria-hidden="true" class="slds-icon slds-icon-standard-product slds-icon--small slds-media__figure">
+                                        <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/standard-sprite/svg/symbols.svg#product')}"></use>
+                                    </svg>
+                                    <div class="slds-media__body">
+                                        <div class="slds-lookup__result-text">Think - Task Seating</div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <fieldset class="slds-form--compound">
+                    <div class="form-element__group">
+                        <div class="slds-form-element__row">
+                            <div class="slds-form-element slds-size--1-of-2">
+                                <label class="slds-form-element__label" for="scsNewAmnt">Total Product Disc Sales</label>
+                                <input id="scsNewAmnt" class="slds-input" type="number" />
+                            </div>
+                            <div class="slds-form-element slds-size--1-of-2">
+                                <label class="slds-form-element__label" for="scsNewQty">Quantity</label>
+                                <input id="scsNewQty" class="slds-input" type="number" />
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="slds-form-element slds-size--1-of-4 slds-m-top--small slds-m-bottom--small">
+                    <label class="slds-form-element__label" for="btn_scsNewPrd"></label>
+                    <button id="btn_scsNewPrd" class="slds-button slds-button--brand" type="button">Add</button>
+                </div>
+            </div>
+            <h3 class="slds-section-title--divider slds-m-bottom--small slds-m-top--xx-large"><span class="slds-text-heading--small">Selected products</span></h3>
+        </div>
+
+        <!-- begin form -->
+        <div class="slds-button-group slds-m-bottom--medium slds-m-top--small slds-m-left--xx-large" role="group">
+            <button class="slds-button slds-button--neutral slds-show" id="btnCancel_top">Cancel</button>
+            <button class="slds-button slds-button--neutral slds-show" id="btnNext_top">Next</button>
+            <button class="slds-button slds-button--neutral slds-hide" disabled="true" id="btnSave_top">Submit</button>
+        </div>
+
+        <!-- begin step 1 - the pinch point product selection -->
+        <div id="pinchProductGroup" class="slds-show">
+            <div class="slds-tabs--scoped">
+                <ul class="slds-tabs--scoped__nav" role="tablist">
+                    <li class="slds-tabs--scoped__item slds-text-heading--label slds-active" title="AMER" role="presentation">
+                        <a class="slds-tabs--scoped__link" href="javascript:void(0);" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-scoped-1" id="AMER">AMER</a>
+                    </li>
+                    <li class="slds-tabs--scoped__item slds-text-heading--label" title="EMEA" role="presentation">
+                        <a class="slds-tabs--scoped__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-scoped-2" id="EMEA">EMEA</a>
+                    </li>
+                    <li class="slds-tabs--scoped__item slds-text-heading--label" title="APAC" role="presentation">
+                        <a class="slds-tabs--scoped__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-scoped-3" id="APAC">APAC</a>
+                    </li>
+                    <li class="slds-tabs--scoped__item slds-text-heading--label" title="Design Portfolio" role="presentation">
+                        <a class="slds-tabs--scoped__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-scoped-4" id="Ancillary">Design Portfolios</a>
+                    </li>
+                </ul>
+                <div id="pinchProductContent">
+                    <div id="AMER_content" class="slds-tabs--scoped__content slds-show" role="tabpanel" aria-labelledby="AMER_content">
+                        <!-- table built in 'updateOutputDiv()' code -->
+                    </div>
+                    <div id="EMEA_content" class="slds-tabs--scoped__content slds-hide" role="tabpanel" aria-labelledby="EMEA_content">
+                        <!-- table built in 'updateOutputDiv()' code -->
+                    </div>
+                    <div id="APAC_content" class="slds-tabs--scoped__content slds-hide" role="tabpanel" aria-labelledby="APAC_content">
+                        <!-- table built in 'updateOutputDiv()' code -->
+                    </div>
+                    <div id="Ancillary_content" class="slds-tabs--scoped__content slds-hide" role="tabpanel" aria-labelledby="Ancillary_content">
+                        <!-- table built in 'updateOutputDiv()' code -->
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <!-- / end pinchProductGroup -->
+
+        <!-- confirm selections -->
+        <div id="productConfirm" class="slds-hide slds-m-top--medium">
+            <!-- displays the selected products. db commit sourced from here -->
+            <div id="selectedProducts">
+            </div>
+
+            <!-- bottom nav -->
+            <div class="slds-button-group slds-m-top--medium slds-m-left--xx-large" role="group">
+                <button class="slds-button slds-button--neutral slds-show" id="btnCancel_bottom">Cancel</button>
+                <button class="slds-button slds-button--neutral slds-show" id="btnNext_bottom">Next</button>
+                <button class="slds-button slds-button--neutral slds-hide" disabled="true" id="btnSave_bottom">Submit</button>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    <!-- spinner  -->
+    <div class="slds-spinner_container slds-hide" id="scsSpinner">
+        <div class="slds-spinner--brand slds-spinner slds-spinner--medium" aria-hidden="false" role="alert">
+            <div class="slds-spinner__dot-a"></div>
+            <div class="slds-spinner__dot-b"></div>
+        </div>
+    </div>
+
+    </div>
+    <!-- / PRIMARY CONTENT WRAPPER -->
+    <p id="selectedCount" class="slds-hide">0</p>
+    <p id="userGeo" class="slds-hide"></p>
+
+</div>
+<!-- / REQUIRED SLDS WRAPPER -->    
+
+</body>
+<script>
+
+// setup page events
+function setupEvents() {
+
+    var cntElm = document.getElementById("selectedCount"),
+        elemId, cntElm;
+
+    // body
+    j$("body").click(function(e) {
+        if ( j$("#scsPrdctSrchRslts").hasClass("slds-show")) {
+            j$("#scsPrdctSrchRslts").removeClass("slds-show").addClass("slds-hide");
+        }
+    });
+
+    // tab toggles
+    j$( "#AMER, #EMEA, #APAC, #Ancillary" ).click(function(e) {
+        elemId = j$( this ).attr("id");
+
+        e.preventDefault();
+        e.stopPropagation();
+
+
+        j$(this).parent('li').addClass("slds-active");
+        j$("#"+elemId+"_content").removeClass("slds-hide").addClass("slds-show");
+
+        if (elemId === "AMER") {
+
+            j$("#EMEA").parent().removeClass("slds-active");
+            j$("#EMEA_content").removeClass("slds-show").addClass("slds-hide");
+            j$("#APAC").parent().removeClass("slds-active");
+            j$("#APAC_content").removeClass("slds-show").addClass("slds-hide");
+            j$("#Ancillary").parent().removeClass("slds-active");
+            j$("#Ancillary_content").removeClass("slds-show").addClass("slds-hide");
+
+        } else if (elemId === "EMEA") {
+
+            j$("#AMER").parent().removeClass("slds-active");
+            j$("#AMER_content").removeClass("slds-show").addClass("slds-hide");
+            j$("#APAC").parent().removeClass("slds-active");
+            j$("#APAC_content").removeClass("slds-show").addClass("slds-hide");
+            j$("#Ancillary").parent().removeClass("slds-active");
+            j$("#Ancillary_content").removeClass("slds-show").addClass("slds-hide");
+
+        } else if (elemId === "APAC") {
+
+            j$("#AMER").parent().removeClass("slds-active");
+            j$("#AMER_content").removeClass("slds-show").addClass("slds-hide");
+            j$("#EMEA").parent().removeClass("slds-active");
+            j$("#EMEA_content").removeClass("slds-show").addClass("slds-hide");
+            j$("#Ancillary").parent().removeClass("slds-active");
+            j$("#Ancillary_content").removeClass("slds-show").addClass("slds-hide");
+
+        } else if (elemId === "Ancillary") {
+
+            j$("#AMER").parent().removeClass("slds-active");
+            j$("#AMER_content").removeClass("slds-show").addClass("slds-hide");
+            j$("#EMEA").parent().removeClass("slds-active");
+            j$("#EMEA_content").removeClass("slds-show").addClass("slds-hide");
+            j$("#APAC").parent().removeClass("slds-active");
+            j$("#APAC_content").removeClass("slds-show").addClass("slds-hide");
+
+        } else {
+            console.log('another tab selected...?');
+        }
+    });
+
+    // nav buttons
+    j$("#btnNext_top, #btnNext_bottom").click(function(e) {
+
+        btnNext();
+    });
+
+    j$("#btnCancel_top, #btnCancel_bottom").click(function(e) {
+
+        j$("#scsSpinner").removeClass("slds-hide").addClass("slds-show");
+        btnCancel();
+    });
+
+    j$("#btnSave_top, #btnSave_bottom").click(function(e) {
+
+        j$("#scsSpinner").removeClass("slds-hide").addClass("slds-show");
+        btnSubmit();
+    });
+
+    // new product search
+    j$("#scsProductSearch").keyup(function(e) {
+
+        searchBox();
+    });
+
+    // add new product
+    j$("#btn_scsNewPrd").click(function(e) {
+
+        // do some error checking
+
+        addProduct()
+    });
+
+
+    // count selected elements
+    j$( "#pinchProductContent" ).on( "click", "input", function(e) {
+        cntElm = document.getElementById("selectedCount");
+
+        // iterate as necessary
+        if (this.checked && j$(this).attr("name") === "checkbox") {
+            cntElm.innerHTML = parseInt(cntElm.innerHTML) + 1;
+        } else if (!this.checked && j$(this).attr("name") === "checkbox"){
+            cntElm.innerHTML = parseInt(cntElm.innerHTML) - 1;
+        }
+    });
+
+    // selectedProducts Delete icon
+    j$("#selectedProducts").on( "click", "svg", function(e) {
+        j$(this).closest("tr").remove();
+
+        rowCount = j$('#selectedProducts table tr').length;
+
+        // disable Save buttons if all products are deleted
+        if (rowCount === 1) {
+            j$("#btnCancel_top").click();
+            //j$("#btnSave_top, #btnSave_bottom").attr('disabled','true');
+        }
+    });
+
+    // yes, add more button
+    j$("#btn_scsYesAddMore").click(function(e) {
+
+        j$("#addNewPrctDiv").removeClass("slds-hide").addClass("slds-show");
+        j$("#scsMoreQstn").removeClass("slds-show").addClass("slds-hide");
+    });
+
+    // no, i'm done button
+    j$("#btn_scsNoMore").click(function(e) {
+
+        btnNext();
+    });
+
+    j$("#scsSearchBox a").click(function(e) {
+        console.log(j$(this).attr("id"));
+        j$("#scsPrdctSrchRslts").removeClass("slds-show").addClass("slds-hide");
+        j$("#scsProductSearch").val(j$(this).attr("id"));
+    });
+}
+
+// add the new product to the final table
+function addProduct() {
+
+    var outputId = 'selectedProducts',
+        rowCount, productId, productName, amtId, amtVal, qtyVal, qtyId, geo, html, userGeo;
+
+    // find the user's geography on the page
+    userGeo = document.getElementById("userGeo").innerHTML;
+    
+	if (userGeo === null || userGeo === '') {
+        geo = 'AMER';  // should be changed to reflect the user's geography
+    } else {
+        geo = userGeo;
+    }
+
+    // get product values
+    productId = j$("#scsProductSearch").attr("name").slice(0,18); // grab the row Id of the selected product 
+    productName = document.getElementById("scsProductSearch").value;
+    amtVal = document.getElementById("scsNewAmnt").value;
+    qtyVal = document.getElementById("scsNewQty").value;
+    
+    // set element ids and values for final table
+    amtId = productId + '_' + geo + '_Amount';
+    qtyId = productId + '_' + geo + '_Quantity';
+    productId += '_' + geo;
+
+    // add product row to final table
+    rowCount = j$('#selectedProducts table tr').length;
+
+    if (rowCount === 0) {
+
+        // need to start the table
+        html = returnTableTr(productId, productName, amtId, amtVal, qtyId, qtyVal, rowCount, geo);
+
+        // add to selected products div
+        document.getElementById(outputId).innerHTML = html;
+    } else {
+
+        // just need a tr
+        //html = returnTableTR(productId, productName, amtId, amtVal, rowCount, geo);
+        html = returnTableTr(productId, productName, amtId, amtVal, qtyId, qtyVal, rowCount, geo);
+
+        // add to selected products table
+        j$('#scsSlctdPrdTable tbody tr:first').before(html);
+    }
+
+    document.getElementById("scsProductSearch").value = "";
+    document.getElementById("scsNewAmnt").value = "";
+    document.getElementById("scsNewQty").value = "";
+}
+
+// creates HTML for a table header and first row
+function returnTableTr(chkId, chkName, amtId, amtVal, qtyId, qtyVal, rowCount, geo) {
+
+    var html = '';
+
+    if (geo != undefined) {
+        geo = geo;
+    } else {
+        // get the geography if the chkId contains the 18 character sfdc record id
+        geo = chkId.length > 24 ? chkId.slice(19,23) : chkId;
+    }
+
+    // add product to #selectedProducts
+    if (rowCount === 0) {
+        // add the table header and first row
+
+        //html += '<h3 class="slds-section-title--divider slds-m-bottom--medium"><span class="slds-text-heading--small">Selected products</span></h3>';
+        html += '<table class="slds-table slds-table--bordered slds-table--cell-buffer" id="scsSlctdPrdTable">';
+        html += '<thead>';
+        html += '<tr class="slds-text-heading--label">';
+        html += '<th scope="col" title="Product LIne">';
+        html += '<div class="slds-truncate">Product Line</div>';
+        html += '</th>';
+        html += '<th scope="col" title="Est Disc Sales">';
+        html += '<div class="slds-truncate">Total Product Disc Sales</div>';
+        html += '</th>';
+        html += '<th scope="col" title="Quantity">';
+        html += '<div class="slds-truncate">Quantity</div>';
+        html += '</th>';
+        html += '<th scope="col" title="delete">';
+        html += '<div class="slds-truncate"></div>';
+        html += '</th>';
+        html += '</tr>';
+        html += '</thead>';
+        html += '<tbody>';
+        html += '<tr>';
+
+        html += '<td data-label="Product Line" title="Product Line">';
+        html += '<div class="slds-truncate" id="'+ chkId +'_final">';
+        //html += '<span class="slds-badge slds-theme--info slds-m-right--xx-small">'+ geo +'</span>';
+        html += chkName +'</div>';
+        html += '</td>';
+
+        html += '<td data-label="Amount" title="Est Disc Sales">';
+        html += '<div class="slds-truncate">';
+        html += '<div class="slds-form-element">';
+        html += '<div class="slds-form-element__control">';
+        html += '<input id="'+ amtId +'_final" class="slds-input" type="number" placeholder="'+ amtVal +'" value="'+ amtVal +'" />';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</td>';
+
+        html += '<td data-label="Quantity" title="Quantity">';
+        html += '<div class="slds-form-element slds-size--1-of-2 slds-float--left">';
+        html += '<div class="slds-form-element__control">';
+        html += '<input id="'+ qtyId +'_Quantity" class="slds-input" type="number" placeholder="'+ qtyVal +'" value="'+ qtyVal +'" />';
+        html += '</div></div>';
+        html += '</td>';
+
+        html += '<td data-label="Action" title="Remove this product" class="scsIcon">';
+        html += '<span class="slds-icon_container">';
+        html += '<svg aria-hidden="true" class="slds-icon slds-icon-text-error slds-icon--x-small">';
+        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>';
+        html += '</svg>';
+        html += '</span>';
+        html += '<span class="slds-assistive-text">Delete Icon</span>';
+        html += '</td>';
+
+        html += '</tr>';
+        //html += '</tbody>';
+        //html += '</table>';
+    } else if (rowCount > 0) {
+        // add a row
+        html += '<tr>';
+        html += '<td data-label="Product Line" title="Product Line">';
+        html += '<div class="slds-truncate" id="'+ chkId +'_final">';
+        //html += '<span class="slds-badge slds-theme--info slds-m-right--xx-small">'+ geo +'</span>';
+        html += chkName +'</div>';
+        html += '</td>';
+
+        html += '<td data-label="Amount" title="Est Disc Sales">';
+        html += '<div class="slds-truncate">';
+        html += '<div class="slds-form-element">';
+        html += '<div class="slds-form-element__control">';
+        html += '<input id="'+ amtId +'_final" class="slds-input" type="number" placeholder="'+ amtVal +'" value="'+ amtVal +'" />';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</td>';
+
+        html += '<td data-label="Quantity" title="Quantity">';
+        html += '<div class="slds-form-element slds-size--1-of-2 slds-float--left">';
+        html += '<div class="slds-form-element__control">';
+        html += '<input id="'+ chkId +'_Quantity" class="slds-input" type="number" placeholder="'+ qtyVal +'" value="'+ qtyVal +'" />';
+        html += '</div></div>';
+        html += '</td>';
+
+        html += '<td data-label="Action" title="Remove this product" class="iconDelete">';
+        html += '<span class="slds-icon_container">';
+        html += '<svg aria-hidden="true" class="slds-icon slds-icon-text-error slds-icon--x-small">';
+        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>';
+        html += '</svg>';
+        html += '</span>';
+        html += '<span class="slds-assistive-text">Delete Icon</span>';
+        html += '</td>';
+
+        html += '</tr>';
+    }
+
+    return html;
+    //document.getElementById(outputId).innerHTML = html;
+}
+
+// process the selected pinch point products into the final table
+function btnClick_OtherPrdcts() {
+
+    var selectedProducts = {},
+        outputId = 'selectedProducts',
+        html = '',
+        countSelectedProducts = 0,  
+        inputFields, i, j, chkId, chkName, val, amtVal, amtId, qtyVal, qtyId, geo, userGeo;
+    
+    // find the user's geography on the page
+    userGeo = document.getElementById("userGeo").innerHTML;
+
+    // get selected products and their amounts
+    inputFields = j$("#pinchProductContent :input");  // pinchProductContent does search through the hidden divs
+    for (i = 0, j = inputFields.length - 1; i < j; i = i + 1) {
+
+        // set a checkbox value
+        val = inputFields[i].getAttribute("name") != "checkbox" ?  inputFields[i].value : inputFields[i].checked;
+
+        // if the element was checked then start adding to #productConfirm
+        if (val === true) {
+
+            // iterates the selected products so that the first product creates the table header tags
+            countSelectedProducts += 1; 
+
+            amtVal = inputFields[i+1].value;
+            amtId = inputFields[i+1].getAttribute('id');
+            qtyVal = inputFields[i+2].value;
+            qtyId = inputFields[i+2].getAttribute('id');
+            chkId = inputFields[i].getAttribute('id');
+            chkName = inputFields[i].nextSibling.nextSibling.innerHTML;
+            //geo = chkId.slice(19,23);
+            geo = userGeo;   // added 8.22.18 tb
+
+            // add product to #selectedProducts
+            if (countSelectedProducts === 1) { 
+
+                // add the table header and first row
+                html += returnTableTr(chkId, chkName, amtId, amtVal, qtyId, qtyVal, 0, geo);
+
+            } else if (countSelectedProducts > 1) {
+
+                // add just a row
+                html += returnTableTr(chkId, chkName, amtId, amtVal, qtyId, qtyVal, 1, geo);
+            }
+        }   
+    }
+
+    // populate #selectedProducts with that data
+    html += '</tbody>';
+    html += '</table>';
+    document.getElementById(outputId).innerHTML = html;
+
+    // unhide next sections
+    j$("#productConfirm").removeClass("slds-hide").addClass("slds-show");
+    //j$("#addNewPrctDiv").removeClass("slds-hide").addClass("slds-show");
+    j$("#scsMoreQstn").removeClass("slds-hide").addClass("slds-show");
+    j$("#pinchProductGroup").removeClass("slds-show").addClass("slds-hide");
+    j$("#selectNewProduct").removeClass("slds-hide").addClass("slds-show");
+    j$("#scsTitle").html("Step 2: finalize product selection");
+    j$("#scsOtherProducts").addClass("slds-is-active");
+    j$("#scsProgressBar").attr("style","width:50%");
+}
+
+// retrieves the pinch point products and passes to 'updateOutputDiv'
+function loadPinchPrdcts() {
+
+    var products = new SObjectModel.Product2(),
+    where = {Status__c: {in: ['Orderable','Presell']}, Pinch_point_geography__c: {like: '%A%'}},
+    orderBy = [{Name: 'ASC'}],
+    productList = [],
+    pnchPrds = {};
+
+    products.retrieve(
+        { where, orderby: orderBy, limit: 100 },
+        function(error, records) {
+            if (error) {
+                console.log(error.message);
+            } else {
+                records.forEach(function(record) {
+                    productList.push(record.get("Id"));
+                    productList.push(record.get("Name"));
+                    productList.push(record.get("Pinch_point_geography__c"));
+                });
+            }
+            // display the results
+            updateOutputDiv(productList);
+        }
+    );
+}
+    
+// find user's geography
+function findUserGeo() {
+
+    var users = new SObjectModel.User(),
+    userID = '{!$user.id}',
+    where = {Id: {eq:userID}},
+    productList = [],
+    pnchPrds = {};
+
+    users.retrieve(
+        { where, limit: 1 },
+        function(error, records) {
+            if (error) {
+                console.log(error.message);
+            } else {
+                records.forEach(function(record) {
+                    var geo = record.get("Sales_Geography__c");
+                    // update the hidden <p> with the user's geo
+                    if (geo === null || geo === 'null') {
+                        geo = 'AMER';
+                        document.getElementById("userGeo").innerHTML = geo;
+                    } else {
+                        document.getElementById("userGeo").innerHTML = geo;
+                    }
+                });
+            }
+        }
+    );
+}
+
+// displays the pinch point products by geography
+function updateOutputDiv(products) {
+
+    var AMER_content = document.getElementById("AMER_content"),
+        EMEA_content = document.getElementById("EMEA_content"),
+        APAC_content = document.getElementById("APAC_content"),
+        Ancillary_content = document.getElementById("Ancillary_content"),
+        html_AMER = AMER_content.innerHTML, 
+        html_EMEA = EMEA_content.innerHTML, 
+        html_APAC = APAC_content.innerHTML,
+        html_Ancillary = Ancillary_content.innerHTML,
+        i, j;
+
+    // build AMER list
+    html_AMER += '<table class="slds-table slds-table--cell-buffer slds-no-row-hover">';
+    html_AMER += '<thead>';
+    html_AMER += '<tr class="slds-text-heading--label">';
+    html_AMER += '<th scope="col" title="Key product">';
+    html_AMER += '<div class="slds-truncate">Key product</div>';
+    html_AMER += '</th>';
+    html_AMER += '<th scope="col" title="Est Disc Sales">';
+    html_AMER += '<div class="slds-truncate">Total Product Disc Sales</div>';
+    html_AMER += '</th>';
+    html_AMER += '<th scope="col" title="Quantity">';
+    html_AMER += '<div class="slds-truncate slds-m-left--xx-large">Quantity</div>';
+    html_AMER += '</th>';
+    html_AMER += '</tr>';
+    html_AMER += '</thead>';
+    html_AMER += '<tbody>';
+
+    for (i = 0, j = products.length * 3; i < j; i = i + 3) {
+        if (typeof products[i] != 'undefined') {
+            prodId = products[i];
+            prodName = products[i+1];
+            prodGeo = products[i+2];
+
+            if (prodId.length === 18 && prodId.slice(0,3) === '01t') {
+                // pinch point products in AMER
+                if (prodGeo.search(/AMER/i) > -1) {
+
+                    prodName = prodName.slice(0,prodName.lastIndexOf("|")-1);
+
+                    html_AMER += '<tr>';
+                    html_AMER += '<td scope="row" data-label="Pinch point product" title="'+ prodName +'">';
+                    html_AMER += '<div class="slds-form-element slds-m-bottom--small slds-float--left">';
+                    html_AMER += '<div class="slds-form-element__control">';
+                    html_AMER += '<label class="slds-checkbox">';
+                    html_AMER += '<input type="checkbox" name="checkbox" id="'+ prodId +'_AMER"/>';
+                    html_AMER += '<span class="slds-checkbox--faux"></span>';
+                    html_AMER += '<span class="slds-form-element__label">'+ prodName +'</span>';
+                    html_AMER += '</label>';
+                    html_AMER += '</div></div>';
+                    html_AMER += '</td>';
+
+                    html_AMER += '<td scope="row" data-label="Amount" title="'+ prodName +' Amount">';
+                    html_AMER += '<div class="slds-form-element slds-size--1-of-1 slds-float--left">';
+                    html_AMER += '<div class="slds-form-element__control">';
+                    html_AMER += '<input id="'+ prodId +'_AMER_Amount" class="slds-input" type="number" />';
+                    html_AMER += '</div></div>';
+                    html_AMER += '</td>';
+
+                    html_AMER += '<td scope="row" data-label="Quantity" title="'+ prodName +' Quantity">';
+                    html_AMER += '<div class="slds-form-element slds-size--1-of-2 slds-float--left slds-m-left--xx-large">';
+                    html_AMER += '<div class="slds-form-element__control">';
+                    html_AMER += '<input id="'+ prodId +'_AMER_Quantity" class="slds-input" type="number" />';
+                    html_AMER += '</div></div>';
+                    html_AMER += '</td>';
+
+                    html_AMER += '</tr>';
+                }
+            }
+        } else {
+            //console.log('end of array');
+        }
+    }
+
+    html_AMER += '</tbody></table>';
+    AMER_content.innerHTML = html_AMER;
+
+    // build EMEA list
+    html_EMEA += '<table class="slds-table slds-table--cell-buffer slds-no-row-hover">';
+    html_EMEA += '<thead>';
+    html_EMEA += '<tr class="slds-text-heading--label">';
+    html_EMEA += '<th scope="col" title="Key product">';
+    html_EMEA += '<div class="slds-truncate">Key product</div>';
+    html_EMEA += '</th>';
+    html_EMEA += '<th scope="col" title="Est Disc Sales">';
+    html_EMEA += '<div class="slds-truncate">Total Product Disc Sales</div>';
+    html_EMEA += '</th>';
+    html_EMEA += '<th scope="col" title="Quantity">';
+    html_EMEA += '<div class="slds-truncate slds-m-left--xx-large">Quantity</div>';
+    html_EMEA += '</th>';
+    html_EMEA += '</tr>';
+    html_EMEA += '</thead>';
+    html_EMEA += '<tbody>';
+
+    for (i = 0, j = products.length * 3; i < j; i = i + 3) {
+        if (typeof products[i] != 'undefined') {
+            prodId = products[i];
+            prodName = products[i+1];
+            prodGeo = products[i+2];
+
+            if (prodId.length === 18 && prodId.slice(0,3) === '01t') {
+                // pinch point products in EMEA
+                if (prodGeo.search(/EMEA/i) > -1) {
+
+                    prodName = prodName.slice(0,prodName.lastIndexOf("|")-1);
+
+                    html_EMEA += '<tr>';
+                    html_EMEA += '<td scope="row" data-label="Pinch point product" title="'+ prodName +'">';
+                    html_EMEA += '<div class="slds-form-element slds-m-bottom--small slds-float--left">';
+                    html_EMEA += '<div class="slds-form-element__control">';
+                    html_EMEA += '<label class="slds-checkbox">';
+                    html_EMEA += '<input type="checkbox" name="checkbox" id="'+ prodId +'_EMEA"/>';
+                    html_EMEA += '<span class="slds-checkbox--faux"></span>';
+                    html_EMEA += '<span class="slds-form-element__label">'+ prodName +'</span>';
+                    html_EMEA += '</label>';
+                    html_EMEA += '</div></div>';
+                    html_EMEA += '</td>';
+
+                    html_EMEA += '<td scope="row" data-label="Amount" title="'+ prodName +' Amount">';
+                    html_EMEA += '<div class="slds-form-element slds-size--1-of-1 slds-float--left">';
+                    html_EMEA += '<div class="slds-form-element__control">';
+                    html_EMEA += '<input id="'+ prodId +'_EMEA_Amount" class="slds-input" type="number" />';
+                    html_EMEA += '</div></div>';
+                    html_EMEA += '</td>';
+
+                    html_EMEA += '<td scope="row" data-label="Quantity" title="'+ prodName +' Quantity">';
+                    html_EMEA += '<div class="slds-form-element slds-size--1-of-2 slds-float--left slds-m-left--xx-large">';
+                    html_EMEA += '<div class="slds-form-element__control">';
+                    html_EMEA += '<input id="'+ prodId +'_EMEA_Quantity" class="slds-input" type="number" />';
+                    html_EMEA += '</div></div>';
+                    html_EMEA += '</td>';
+
+                    html_EMEA += '</tr>';
+                }
+            }
+        } else {
+            //console.log('end of array');
+        }
+    }
+
+    html_EMEA += '</tbody></table>';
+    EMEA_content.innerHTML = html_EMEA;
+
+    // build APAC list
+    html_APAC += '<table class="slds-table slds-table--cell-buffer slds-no-row-hover">';
+    html_APAC += '<thead>';
+    html_APAC += '<tr class="slds-text-heading--label">';
+    html_APAC += '<th scope="col" title="Key product">';
+    html_APAC += '<div class="slds-truncate">Key product</div>';
+    html_APAC += '</th>';
+    html_APAC += '<th scope="col" title="Est Disc Sales">';
+    html_APAC += '<div class="slds-truncate">Total Product Disc Sales</div>';
+    html_APAC += '</th>';
+    html_APAC += '<th scope="col" title="Quantity">';
+    html_APAC += '<div class="slds-truncate slds-m-left--xx-large">Quantity</div>';
+    html_APAC += '</th>';
+    html_APAC += '</tr>';
+    html_APAC += '</thead>';
+    html_APAC += '<tbody>';
+
+    for (i = 0, j = products.length * 3; i < j; i = i + 3) {
+        if (typeof products[i] != 'undefined') {
+            prodId = products[i];
+            prodName = products[i+1];
+            prodGeo = products[i+2];
+
+            if (prodId.length === 18 && prodId.slice(0,3) === '01t') {
+                // pinch point products in APAC
+                if (prodGeo.search(/APAC/i) > -1) {
+
+                    prodName = prodName.slice(0,prodName.lastIndexOf("|")-1);
+
+                    html_APAC += '<tr>';
+                    html_APAC += '<td scope="row" data-label="Pinch point product" title="'+ prodName +'">';
+                    html_APAC += '<div class="slds-form-element slds-m-bottom--small slds-float--left">';
+                    html_APAC += '<div class="slds-form-element__control">';
+                    html_APAC += '<label class="slds-checkbox">';
+                    html_APAC += '<input type="checkbox" name="checkbox" id="'+ prodId +'_APAC"/>';
+                    html_APAC += '<span class="slds-checkbox--faux"></span>';
+                    html_APAC += '<span class="slds-form-element__label">'+ prodName +'</span>';
+                    html_APAC += '</label>';
+                    html_APAC += '</div></div>';
+                    html_APAC += '</td>';
+
+                    html_APAC += '<td scope="row" data-label="Amount" title="'+ prodName +' Amount">';
+                    html_APAC += '<div class="slds-form-element slds-size--1-of-1 slds-float--left">';
+                    html_APAC += '<div class="slds-form-element__control">';
+                    html_APAC += '<input id="'+ prodId +'_APAC_Amount" class="slds-input" type="number" />';
+                    html_APAC += '</div></div>';
+                    html_APAC += '</td>';
+
+                    html_APAC += '<td scope="row" data-label="Quantity" title="'+ prodName +' Quantity">';
+                    html_APAC += '<div class="slds-form-element slds-size--1-of-2 slds-float--left slds-m-left--xx-large">';
+                    html_APAC += '<div class="slds-form-element__control">';
+                    html_APAC += '<input id="'+ prodId +'_APAC_Quantity" class="slds-input" type="number" />';
+                    html_APAC += '</div></div>';
+                    html_APAC += '</td>';
+
+                    html_APAC += '</tr>';
+                }
+            }
+        } else {
+            //console.log('end of array');
+        }
+    }
+
+    html_APAC += '</tbody></table>';
+    APAC_content.innerHTML = html_APAC;
+
+    // build Ancillary list
+    html_Ancillary += '<table class="slds-table slds-table--cell-buffer slds-no-row-hover">';
+    html_Ancillary += '<thead>';
+    html_Ancillary += '<tr class="slds-text-heading--label">';
+    html_Ancillary += '<th scope="col" title="Key product">';
+    html_Ancillary += '<div class="slds-truncate">Key product</div>';
+    html_Ancillary += '</th>';
+    html_Ancillary += '<th scope="col" title="Est Disc Sales">';
+    html_Ancillary += '<div class="slds-truncate">Total Product Disc Sales</div>';
+    html_Ancillary += '</th>';
+    html_Ancillary += '<th scope="col" title="Quantity">';
+    html_Ancillary += '<div class="slds-truncate slds-m-left--xx-large">Quantity</div>';
+    html_Ancillary += '</th>';
+    html_Ancillary += '</tr>';
+    html_Ancillary += '</thead>';
+    html_Ancillary += '<tbody>';
+
+    for (i = 0, j = products.length * 3; i < j; i = i + 3) {
+        if (typeof products[i] != 'undefined') {
+            prodId = products[i];
+            prodName = products[i+1];
+            prodGeo = products[i+2];
+
+            if (prodId.length === 18 && prodId.slice(0,3) === '01t') {
+                // pinch point products for Ancillary
+                if (prodGeo.search(/Ancillary/i) > -1) {
+
+                    prodName = prodName.slice(0,prodName.lastIndexOf("|")-1);
+
+                    console.log('ancillary: ' + prodName);
+
+                    html_Ancillary += '<tr>';
+                    html_Ancillary += '<td scope="row" data-label="Pinch point product" title="'+ prodName +'">';
+                    html_Ancillary += '<div class="slds-form-element slds-m-bottom--small slds-float--left">';
+                    html_Ancillary += '<div class="slds-form-element__control">';
+                    html_Ancillary += '<label class="slds-checkbox">';
+                    html_Ancillary += '<input type="checkbox" name="checkbox" id="'+ prodId +'_AMER"/>';
+                    html_Ancillary += '<span class="slds-checkbox--faux"></span>';
+                    html_Ancillary += '<span class="slds-form-element__label">'+ prodName +'</span>';
+                    html_Ancillary += '</label>';
+                    html_Ancillary += '</div></div>';
+                    html_Ancillary += '</td>';
+
+                    html_Ancillary += '<td scope="row" data-label="Amount" title="'+ prodName +' Amount">';
+                    html_Ancillary += '<div class="slds-form-element slds-size--1-of-1 slds-float--left">';
+                    html_Ancillary += '<div class="slds-form-element__control">';
+                    html_Ancillary += '<input id="'+ prodId +'_Ancillary_Amount" class="slds-input" type="number" />';
+                    html_Ancillary += '</div></div>';
+                    html_Ancillary += '</td>';
+
+                    html_Ancillary += '<td scope="row" data-label="Quantity" title="'+ prodName +' Quantity">';
+                    html_Ancillary += '<div class="slds-form-element slds-size--1-of-2 slds-float--left slds-m-left--xx-large">';
+                    html_Ancillary += '<div class="slds-form-element__control">';
+                    html_Ancillary += '<input id="'+ prodId +'__Ancillary_Amount_Quantity" class="slds-input" type="number" />';
+                    html_Ancillary += '</div></div>';
+                    html_Ancillary += '</td>';
+
+                    html_Ancillary += '</tr>';
+                }
+            }
+        } else {
+            //console.log('end of array');
+        }
+    }
+
+    html_Ancillary += '</tbody></table>';
+    Ancillary_content.innerHTML = html_Ancillary;
+}
+
+// displays the product search results
+function findProducts(searchVal) {
+
+    var product = new SObjectModel.Product2(),
+        nameParm = '%' + searchVal + '%',
+        where1 = { Name: {like:nameParm}},
+        where2 = { Name: {like:'%'}},
+        where3 = { IsActive: {eq: true}},
+        where = searchVal !=null ? where1 : where2, 
+        html = '';
+
+    product.retrieve(
+        { where: 
+            {
+                Name: {like: nameParm},
+                IsActive: {eq: true}
+            },
+        orderby: [{Name: 'ASC'}], limit: 100},
+        function(error, records) {
+            if (error) {
+                console.log(error.message);
+            } else {
+                html += '<ul class="slds-lookup__list slds-m-left--small slds-m-right--small slds-m-bottom--small" role="presentation">';
+
+                records.forEach(function(record) {
+                    html += '<li class="slds-m-top--small">';
+                    html += '<a class="slds-lookup__item-action slds-media slds-media--center" href="javascript:void(0);" role="option" id="'+ record.get("Id") + record.get("Name") +'">';
+                    html += '<svg aria-hidden="true" class="slds-icon slds-icon-standard-product slds-icon--small slds-media__figure">';
+                    html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/standard-sprite/svg/symbols.svg#product')}"></use>';
+                    html += '</svg>';
+                    html += '<div class="slds-media__body">';
+                    html += '<div class="slds-lookup__result-text">'+ record.get("Name") +'</div>';
+                    html += '</div>';
+                    html += '</a>';
+                    html += '</li>';
+                });
+
+                html += '</ul>';
+                j$("#scsPrdctSrchRslts").removeClass("slds-hide").addClass("slds-show");
+                j$("#scsPrdctSrchRslts").html(html);
+
+                j$("#scsPrdctSrchRslts a").click(function(e) {
+                    productSelect(j$( this ).attr("id"));
+                });
+            }
+        }
+    );
+}
+
+// displays the selected products in the product search box
+function productSelect(elmId) {
+
+    var productName = elmId.slice(18,elmId.length);
+
+    j$("#scsProductSearch").attr("name",elmId);
+    j$("#scsProductSearch").val(productName);
+}
+
+// Next button
+function btnNext() {
+
+    //cntElm = document.getElementById("selectedCount");
+    var cntFinalRows = j$("#scsSlctdPrdTable tbody tr").length;
+
+    console.log('product table rows: ' + cntFinalRows);
+
+    if (j$("#scsOtherProducts").hasClass("slds-is-active")) {
+
+        // other products already added.  show 'save' screen
+        j$("#btnSave_top, #btnSave_bottom").removeClass("slds-hide").addClass("slds-show");
+        j$("#btnNext_top, #btnNext_bottom").removeClass("slds-show").addClass("slds-hide");
+        // show 'save' screen
+        j$("#addNewPrctDiv").removeClass("slds-show").addClass("slds-hide");
+        j$("#scsMoreQstn").removeClass("slds-show").addClass("slds-hide");
+        // progress bar
+        j$("#scsSaveProducts").addClass("slds-is-active");
+        j$("#scsProgressBar").attr("style","width:100%");
+        
+    } else {
+
+        // pinch point products just added. show 'other products' screen
+        btnClick_OtherPrdcts();
+    }
+
+    // enable save buttons as necessary
+    if (cntFinalRows > 0) {
+        document.getElementById("btnSave_top").removeAttribute("disabled");
+        document.getElementById("btnSave_bottom").removeAttribute("disabled");
+    } else {
+        document.getElementById("btnSave_top").setAttribute("disabled","true");
+        document.getElementById("btnSave_bottom").setAttribute("disabled","true");
+    }
+}
+
+// returns the user to the opportunity
+function btnCancel() {
+
+    var oppId = "{!Opportunity_Product__c.OpportunityName__c}";
+
+    j$("#scsSpinner").removeClass("slds-hide").addClass("slds-show");
+
+    if (!sforce.one) {
+        console.log('backNav: no sforce.one object');
+    } else {
+        sforce.one.navigateToSObject(oppId);
+    }
+}
+
+// submits the product selections to Opportunity_Product__c
+function btnSubmit() {
+
+    var finalProductsElmId = 'productConfirm',
+        oppId = "{!Opportunity_Product__c.OpportunityName__c}",
+        opOwner = "{!$User.Id}",
+        inputFields = j$("#productConfirm :input"),
+        opObject = new SObjectModel.Opportunity_Product__c(),
+        opDetails, i, j, productId, estDiscSales, quantity, opPortfolio; 
+
+    console.log('1. attempting to save new products.');
+
+    // loop through the input fields. increment by 2 because there r 2 fields per product row
+    for (i = 0, j = inputFields.length; i < j; i = i + 2) {
+
+        // find the field values
+        if ( inputFields[i].getAttribute("type") === "number" ) {
+
+            productId = inputFields[i].getAttribute("id").slice(0,18);
+            estDiscSales = inputFields[i].value;
+            quantity = inputFields[i+1].value;
+            opPortfolio = inputFields[i].getAttribute("id").slice(19,23);
+
+            // create the opportunity product object
+            if (opPortfolio === 'Anci') {
+                opDetails = { OpportunityName__c: oppId,
+                Owner__c: opOwner,
+                ProductName__c: productId,
+                Total_Est_Disc_Sales__c: estDiscSales,
+                Quantity__c: quantity
+                };
+            } else {
+                opDetails = { OpportunityName__c: oppId,
+                    Owner__c: opOwner,
+                    ProductName__c: productId,
+                    Total_Est_Disc_Sales__c: estDiscSales,
+                    Quantity__c: quantity,
+                    Product_Portfolio__c: opPortfolio
+                };
+            }
+
+
+            console.log('2. attempting to save new products.');
+
+            // commit to db
+            opObject.create(opDetails, function(e, results, event) {
+
+                j$("#scsToast").removeClass("slds-hide").addClass("slds-show");
+
+                if (e) {
+                    // show error
+                    console.log('btnSubmit: error' + e);
+                    j$("#scsToast:first-child").removeClass("slds-theme--success").addClass("slds-theme--error");
+                    j$("#scsToastMessage").html("Error adding products: " + e);
+                    j$("#scsSpinner").removeClass("slds-show").addClass("slds-hide");
+                } else {
+                    console.log('new opty product id: ' + opObject.get('Id'));
+                    console.log('successfully added new products. log: ' + opObject.log());
+                    j$("#scsToastMessage").html("Products successfully added.");
+                }
+            });
+        }
+    }
+
+    setTimeout(function(){ 
+        // redirect the user to the opportunity
+        //sforce.one.navigateToSObject(oppId);
+        sforce.one.navigateToRelatedList('Opportunity_Products__r',oppId);
+    }, 5000);
+}
+
+// retrieves the search value from product box and passes to 'findProducts' to query
+function searchBox() {
+
+    var searchBoxElm = document.getElementById("scsProductSearch"),
+        searchVal;
+
+    try {
+        searchVal = searchBoxElm.value;
+        findProducts(searchVal);
+    } catch (e) {
+        console.log('searchBox error: ' + e);
+    }
+}
+
+function init() {
+    setupEvents();
+    loadPinchPrdcts();
+    findUserGeo();
+}
+
+
+j$ = jQuery.noConflict();
+
+j$(document).ready(function() {
+
+   init();
+});
+
+</script>
+</html>
+</apex:page>

@@ -1,0 +1,12 @@
+<apex:page >
+    {!$Api.Partner_Server_URL_290}<br/>
+        {!$Api.Partner_Server_URL_280}<br/>
+        {!$Api.Partner_Server_URL_270}<br/>
+        {!$Api.Partner_Server_URL_260}<br/>
+        {!$Api.Partner_Server_URL_250}<br/>
+        {!$Api.Partner_Server_URL_240}<br/>
+        {!$Api.Partner_Server_URL_230}<br/>
+        {!$Api.Partner_Server_URL_220}<br/>
+        {!$Api.Partner_Server_URL_210}<br/>
+{!$Api.Partner_Server_URL_470}<br/>
+</apex:page>

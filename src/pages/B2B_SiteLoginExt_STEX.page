@@ -1,0 +1,324 @@
+<apex:page controller="B2B_SiteLoginControllerExt_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false"
+ cache="false" applyHtmlTag="false" id="B2B_SiteLoginExt_STEX">
+
+
+    <script id="SiteLogin-Desktop" type="text/template">
+
+        <div class="messagingSection-Error" style="display: none"></div>
+        <div class="messagingSection-Info" style="display: none"></div>
+        <div class="messagingSection-Warning" style="display: none"></div>
+
+     <!--   {{#ifDisplay 'Login.DsplReg'}} -->
+
+        <div class="row">
+            <div>
+                <a style="max-width: 50px;height: 50px;float:center;border: 0;" href="#">
+                    <img id='customerLogoSelectorId' class="img-responsive center-block" style="max-width: 150px;height: 125px;float:center;border: 0px;" />
+                </a>
+            </div>
+        </div>
+        <!--    {{/ifDisplay}}  -->
+        <div class="row">
+            
+
+            <div class="col-md-6">
+                <div class="panel panel-default cc_panel cc_user_login ">
+                    <div class="panel-heading cc_heading">
+                        <h3 class="panel-title cc_title">{{pageLabelMap 'Component_ExistingCustomer_ExistingCustomer'}}</h3>
+                    </div>
+                    <div class="panel-body cc_body">
+                        <p class="cc_login">{{pageLabelMap 'SiteLogin_HaveAccount'}}</p>
+                        <form id="loginFormDsk" class="cc_login_form">
+
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label class="sr-only" for="emailField">{{pageLabelMap 'SiteLogin_UsernameEmail'}} *</label>
+                                        <input id="emailField" name="emailField" type="email" class="loginInput form-control cc_login_input" title="{{pageLabelMap 'SiteLogin_UsernameEmail'}}" placeholder="{{pageLabelMap 'SiteLogin_UsernameEmail'}} *"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        <label class="sr-only" for="passwordField">{{pageLabelMap 'SiteLogin_Password'}} *</label>
+                                        <input id="passwordField" name="passwordField" type="password" class="loginInput form-control cc_password_input" placeholder="{{pageLabelMap 'SiteLogin_Password'}} *"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3 align-self-start">
+                                    <input type="button" id="send2Dsk" class="btn btn-default btn-sm cc_login_button" value="{{pageLabelMap 'Component_SiteHeader_Login'}}" />
+
+                                </div>
+                                <div class="col-md-9 align-self-center">
+                                    <p class="cc_forgot_password">
+                                        <a class="" id="customForgotPasswordButton">{{pageLabelMap 'ForgotPassword_ForgotPassword'}}</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default cc_panel cc_register_account">
+                    <div class="panel-heading cc_heading">
+                        <h3 class="panel-title cc_title">{{pageLabelMap 'SiteLogin_NewCustomers'}}</h3>
+                    </div>
+                    <div class="panel-body cc_body">
+                        <p class="cc_create_account">{{pageLabelMap 'SiteLogin_CreatingAccount'}}</p>
+                        <div class="form-group">
+                            <input type="button" class="btn btn-default btn-sm cc_register" id="createAccountButtonId" onclick="callRegistrationPage();" value="{{pageLabelMap 'SiteLogin_CreateAccount'}}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+
+
+    <script>
+        function callRegistrationPage() {
+                window.location.replace('/exchange/ccrz__CCSiteRegister?cartId=&portalUser=&store=&cclcl=en_US');
+            }
+        jQuery(function ($) {
+            
+            // let urlVars = getUrlVars();
+            // let site = urlVars['site'];
+            // if (site){
+            //     localStorage.setItem('siteParam',site);
+            // }
+            // function callRegistrationPage() {
+            //  window.location.replace('/exchange/ccrz__CCSiteRegister?cartId=&portalUser=&store=&cclcl=en_US');
+            // }
+            // listenerEvent = 'view:loginView:refresh'
+            // CCRZ.pubSub.on(listenerEvent, function (theView) {
+            //  theView.events["click .forgotPass"] = function () {
+            //      window.location.href = "/exchange/ForgotPassword";
+            //  }
+            //  theView.delegateEvents();
+            // });
+            // CCRZ.pubSub.on('view:loginView:refresh',function(){
+            //  $("#customForgotPasswordButton").click(function(){
+            //      window.location.replace('/exchange/B2B_ForgotPassword');
+            //  });
+            // });
+            CCRZ.models.SiteLogin = CCRZ.CloudCrazeModel.extend({
+                init: function (callback) {
+                    callback();
+                }
+            });
+
+            CCRZ.views.loginView = CCRZ.CloudCrazeView.extend({
+                templatePhone: CCRZ.util.template(CCRZ.uiProperties.loginView.phone.tmpl),
+                templateDesktop: CCRZ.util.template(CCRZ.uiProperties.loginView.desktop.tmpl),
+                viewName: "loginView",
+                events: {
+                    "click #send2Dsk": "doLoginDsk",
+                    "click #send2Ph": "doLoginPh",
+                    "keyup .loginInput": "enterPress",
+                    "keyup .contactInput": "enterPress",
+                    "click .register": "gotoSecureRegistration"
+                },
+                init: function () {
+                    var v = this;
+                    v.model = new CCRZ.models.SiteLogin();
+                    v.model.init(function () {
+                        v.render();
+                        if (v.getURLParameter('registrationSuccess') == 'true') {
+                            CCRZ.pubSub.trigger('pageMessage', CCRZ.createPageMessage('INFO', 'messagingSection-Info', 'SiteLogin_ThankYouForRegistering'));
+                        }
+                    });
+                },
+                getURLParameter: function (name) {
+                    return decodeURI(
+                        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]
+                    );
+                },
+                render: function () {
+                    var v = this;
+                    if (CCRZ.display.isPhone()) {
+                        this.setElement($(CCRZ.uiProperties.loginView.phone.selector));
+                        this.$el.html(this.templatePhone(v.model.toJSON()));
+                    } else {
+                        this.setElement($(CCRZ.uiProperties.loginView.desktop.selector));
+                        this.$el.html(this.templateDesktop(v.model.toJSON()));
+                    }
+                    var qsErr = queryString("error");
+                    if (qsErr && _.isArray(qsErr)) {
+                        var errorStr = _.escape(qsErr[0]);
+                        if (errorStr) {
+                            CCRZ.pubSub.trigger('pageMessage', CCRZ.createPageMessage('ERROR', 'messagingSection-Error', errorStr));
+                        }
+                    }
+                    var qsInfo = queryString("message");
+                    if (qsInfo && _.isArray(qsInfo)) {
+                        var infoStr = _.escape(qsInfo[0]);
+                        if (infoStr) {
+                            CCRZ.pubSub.trigger('pageMessage', CCRZ.createPageMessage('INFO', 'messagingSection-Info', infoStr));
+                        }
+                    }
+                    CCRZ.pubSub.trigger("view:" + this.viewName + ":refresh", this);
+                },
+                renderViewChanged: function () {
+                    if (this.viewChanged()) {
+                        this.render();
+                    }
+                },
+                viewChanged: function () {
+                    if (this.currentView !== CCRZ.display.currentView) {
+                        this.currentView = CCRZ.display.currentView;
+                        return true;
+                    }
+                    return false;
+                },
+                enterPress: function (e) {
+                    var code = e.which; // recommended to use e.which, it's normalized across browsers
+                    if (code == 13) e.preventDefault();
+                    if (code == 13 || code == 186) {
+                        if (CCRZ.display.isPhone()) {
+                            this.doLoginPh(e);
+                        } else {
+                            this.doLoginDsk(e);
+                        }
+                    }
+                },
+                doLoginDsk: function (event) {
+                    let email = $('#emailField');
+                    if (!email.val().endsWith('.stex')) {
+                        email.val(email.val() + '.stex');
+                    }
+                    this.doLogin('#loginFormDsk', event);
+                },
+                doLoginPh: function (event) {
+                    this.doLogin('#loginFormPh', event);
+                },
+                doLogin: function (frmTarg, event) {
+                    var loginForm = $(frmTarg).serializeObject();
+                    var view = this;
+                    CCRZ.headerView.doLogin(loginForm.emailField, loginForm.passwordField, function (error) {
+                        CCRZ.pubSub.trigger('pageMessage', CCRZ.createPageMessage('ERROR', 'messagingSection-Error', _.escape(error)));
+                    });
+                },
+                gotoSecureRegistration: function (event) {
+                    var secureUrl = ('' || CCRZ.pagevars.storeSettings.Site_Secure_Domain__c).trim();
+                    if (0 != secureUrl.indexOf('https://')) {
+                        secureUrl = 'https://' + secureUrl;
+                    }
+                    secureUrl = secureUrl + '/exchange/ccrz__CCSiteRegister' + '?cartId=' + CCRZ.headerModel.get("cartId") + getCSRQueryString();
+                    if (CCRZ.getPageConfig('UR.DirLogin', true) && CCRZ.pagevars.queryParams["startURL"]) {
+                        secureUrl += '&startURL=' + CCRZ.pagevars.queryParams["startURL"];
+                    }
+                    window.location = secureUrl;
+                }
+            });
+            CCRZ.loginView = new CCRZ.views.loginView();
+            function getSite() {
+                if (localStorage.getItem('siteParam')) {
+                    CCRZ.setCookie('site', localStorage.getItem('siteParam'));
+                    CCRZ.setCookie('apex__site', localStorage.getItem('siteParam'));
+                }
+                return localStorage.getItem('siteParam');
+            }
+            function customLogin() {
+                let siteParam = getSite();
+                let username = document.getElementById('emailField').value;
+                let password = document.getElementById('passwordField').value;
+                if (username == '') {
+                    console.log('Username is required.');
+                    //alert("Email is required.");
+                    displayMessage("Username is required", 'Error');
+                    return false;
+                }
+                else if (password == '') {
+                    console.log('Password is required.');
+                    //alert("Email is required.");
+                    displayMessage("Password is required", 'Error');
+                    return false;
+                }
+                else if (siteParam == null) {
+                    console.log('Account is required.');
+                    //alert("This is not a correct URL for login. Please contact your administrator.");
+                    displayMessage("This is not a correct URL for login. Please contact your administrator.", 'Error');
+                    return false;
+                }
+                else {
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.B2B_SiteLoginControllerExt_STEX.customLogin}',
+                        { 'password': password, 'username': username, 'site': siteParam },
+                        function (result, event) {
+                            if (event.status) {
+                                console.log(result.result, 'Info');
+                                displayMessage(result.result, 'Info');
+                                $("#newCustomerForm").hide();
+                                //window.location.href='/exchange/ccrz__CCSiteLogin?site='+ site +'&cartId=&portalUser=&store=&cclcl=en_US';
+
+                            }
+                            else if (event.type === 'exception') {
+                                console.log('exception');
+
+                            }
+                            else {
+                                console.log('error response');
+                            }
+                        },
+                        { escape: true }
+                    );
+                }
+
+            }
+            function displayMessage(msg, type) {
+                var errName = $("#error_messages_section_id"); //Element selector
+                if (errName != null) {
+                    errName.removeClass('alert alert-danger alert-info');
+                }
+                if (type == 'Error') {
+                    errName.addClass('alert alert-danger');
+                } else {
+                    errName.addClass('alert alert-info');
+                }
+                errName.html(msg); // Put the message content inside div
+
+            }
+            var GetDealerInfo = CCRZ.CloudCrazeView.extend({
+                id: 'get-dealer-info',
+                viewName: 'displayDealerLogo',
+                template: CCRZ.util.template('SiteLogin-Desktop'),
+                initialize: function () {
+                    _.bindAll(this, 'renderDesktop', 'getDealerInfo');
+                    this.getDealerInfo(this);
+                },
+                renderDesktop: function (data) {
+                    console.log('result.data:' + data);
+                    //$('#loginPageContentId').append(this.template);
+                    var img = $('#customerLogoSelectorId');
+                    img.attr('src', data);
+                },
+                getDealerInfo: function (currentView) {
+                    var siteParam = getSite();
+                    console.log('Site name from pagevars: ' + siteParam);
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.B2B_SiteLoginControllerExt_STEX.getSiteInfo}',
+                        { 'site': siteParam },
+                        function (result, event) {
+                            if (event.status) {
+                                // console.log('result.logoUrl',result.logoUrl);
+                                currentView.renderDesktop(result.logoUrl);
+                            } else if (event.type === 'exception') {
+                                console.log('exception');
+                            } else {
+                                console.log('error response');
+                            }
+                            $("#customForgotPasswordButton").click(function () {
+                                window.location.replace('/exchange/apex/B2B_ForgotPassword');
+                            });
+                        },
+                        { escape: true }
+                    );
+                }
+
+            });
+            var getDealerInfoView = new GetDealerInfo();
+        });
+    </script>
+</apex:page>

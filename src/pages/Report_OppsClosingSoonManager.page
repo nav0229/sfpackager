@@ -1,0 +1,306 @@
+<apex:page showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">    
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">    
+
+<head>
+    <title>Next Opportunities</title>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS_Steelcase_20103, 'assets/styles/salesforce-lightning-design-system-ltng.css')}" />
+</head>
+<apex:remoteObjects >
+    <apex:remoteObjectModel name="Opportunity" fields="Id,Name,OwnerId,Manager_Boolean__c,Amount,CloseDate,Decision_Date__c,AccountId,StageName,CurrencyIsoCode"/>
+    <apex:remoteObjectModel name="Account" fields="Id,Name"/>
+</apex:remoteObjects>
+
+
+<body>    
+
+    <!-- REQUIRED SLDS WRAPPER -->
+    <div class="steelcase">    
+
+        <!-- MASTHEAD
+        <h1 class="slds-text-heading--label slds-m-bottom--small">
+            Next Opportunities
+        </h1>
+        / MASTHEAD -->    
+
+        <!-- PRIMARY CONTENT WRAPPER -->
+        <div class="slds-grid " id="scsData">
+            <!-- placeholder for opportunity data -->
+            <div id="scsUserId" hidden="true">{!$User.Id}</div>
+            <div hidden="true">
+                <c:userLocale id="userLocale"></c:userLocale>
+            </div>
+        </div>
+        <div class="slds-grid">
+            <div id="listLink" class="slds-col slds-text-align--right slds-m-right--small">
+                <a href="https://steelcase.lightning.force.com/one/one.app?source=aloha#/sObject/Opportunity/list?filterName=00B37000002NeYuEAK&t=1473960418827">Full List</a>
+            </div>
+        </div>
+        <!-- / PRIMARY CONTENT WRAPPER -->    
+
+    </div>
+    <!-- / REQUIRED SLDS WRAPPER -->    
+
+</body>
+<script>
+
+    // returns account names 
+    function getActName(actId,trncCnt) {
+
+        var act = new SObjectModel.Account(),
+            actId, actName, actNameElm, actNameHtml, i=0;
+
+        act.retrieve (
+            { where:
+                {
+                    Id: {eq: actId}
+                }
+            },
+            function(error, records) {
+                if (error) {
+                    console.log('getActName: ' + error.message);
+                } else {
+                    records.forEach(function(record) {
+                        i += 1;
+                        // find the element ids for the account row and replace with the name
+                        console.log('getActName: ' + record.get("Name"));
+                        actId = record.get("Id");
+                        actName = record.get("Name");
+                        if (actName.length > trncCnt) {
+                            actName = record.get("Name").slice(0,trncCnt) + "...";
+                        }
+                        actNameHtml = '<a href="https://steelcase.lightning.force.com/one/one.app#/sObject/' + actId +'/view?t=1465172185930">' + actName +'</a></p>';
+                        actNameElm = document.getElementById(actId);
+                        actNameElm.innerHTML = actNameHtml;
+                        actNameElm.setAttribute("id", actId + i);
+                    });
+                }
+            }
+        );
+    }
+
+    function loadData() {
+
+        var userId = document.getElementById("scsUserId").innerHTML,
+            manager = 1,
+            opps = new SObjectModel.Opportunity(),
+            stage = ['Closed/Won','Closed/Won-Partial','Closed/Cancelled','Closed/Lost'],
+            today = new Date(),
+            where = {Manager_Boolean__c: {eq: manager}, StageName: {like: stage}, Decision_Date__c: {gte: today}},
+            orderBy = [{Decision_Date__c: 'ASC'}],
+            outputDiv = document.getElementById("scsData"),
+            html = outputDiv.innerHTML,
+            act = new SObjectModel.Account(),
+            actIds = [],
+            actNames = {},
+            closeDate, actId, oppName, i=0, trncCnt=0;
+
+            opps.retrieve(
+                { where: 
+                    {
+                        Manager_Boolean__c: {eq: manager},
+                        StageName: {nin: stage},
+                        Decision_Date__c: {gte: today}
+                    }, 
+                    orderby: orderBy, 
+                    limit: 6 
+                },
+                function(error, records) {
+                    if (error) {
+                        console.log('loadData: ' + error.message);
+                    } else {
+
+                        // if the user owns 0 closing opps
+                        if (records.length == 0) {
+                            html += '<p class="slds-text-body--regular slds-m-left--xx-large slds-m-top--xx-large" style="color:#5876a3">You do not own any opportunities closing soon</p>';
+
+                        // if the user owns 3 or fewer closing opps, then put in single column
+                        } else if (records.length <= 3) {
+                            trncCnt = 254;
+                            // begin generating html for cards
+                            html += '<div class="slds-col--padded slds-size--1-of-6">';
+                            html += '<div class="slds-text-align--left">';
+                            html += '<ul class="slds-has-dividers--around-space">';
+
+                            records.forEach(function(record) {
+                                console.log('opty id: ' + record.get("Id") + ' date: ' + record.get("Decision_Date__c"));
+                                closeDate = new Date(record.get("Decision_Date__c"));
+                                closeDate = timeToDate(closeDate);
+                                actId = record.get("AccountId");
+                                oppName = record.get("Name");
+                                if (oppName.length > trncCnt) {
+                                    oppName = record.get("Name").slice(0,trncCnt) + "...";
+                                }
+
+                                html += '<li class="slds-item slds-m-bottom--medium">';
+                                html += '<div class="slds-tile slds-tile--board">';
+                                html += '<p class="slds-tile__title slds-truncate"><a href="https://steelcase.lightning.force.com/one/one.app#/sObject/' + record.get("Id")+'/view?t=1465172185930">' + oppName + '</a></p>';
+                                html += '<div class="slds-tile__detail">';
+                                html += '<p class="slds-text-heading--medium">' + numberWithCommas(record.get("Amount")) + '  ' + record.get("CurrencyIsoCode") + '</p>';
+                                html += '<p class="slds-truncate" id="'+ actId +'"><a href="https://steelcase.lightning.force.com/one/one.app#/sObject/' + record.get("AccountId")+'/view?t=1465172185930">' + record.get("AccountId") +'</a></p>';
+                                html += '<p class="slds-truncate">Closing on '+ closeDate +'</p>';
+                                html += '</div>';
+                                html += '</div>';
+                                html += '</li>';
+                                
+                                getActName(actId,trncCnt);
+                            });
+                            // call getActNames to replace the act ids with names
+                            html += '</ul>';
+                            html += '</div></div>';
+
+                        // if the user owns 3 or more closing opps, then put in two columns
+                        } else {
+                            trncCnt = 60;
+                            // create column
+                            html += '<div class="slds-col--padded slds-size--1-of-6">';
+                            html += '<div class="slds-text-align--left">';
+
+                            // begin generating html for cards
+                            html += '<ul class="slds-has-dividers--around-space">';
+
+                            records.forEach(function(record) {
+                                i = i + 1;
+                                console.log('opty id: ' + record.get("Id") + ' date: ' + record.get("Decision_Date__c"));
+                                // handle opps without est disc sales
+                                estDiscSales = typeof record.get("Amount") === "undefined" ? 0 : numberWithCommas(record.get("Amount"));
+                                
+                                closeDate = new Date(record.get("Decision_Date__c"));
+                                closeDate = timeToDate(closeDate);
+                                actId = record.get("AccountId");
+                                oppName = record.get("Name");
+                                if (oppName.length > trncCnt) {
+                                    oppName = record.get("Name").slice(0,trncCnt) + "...";
+                                }
+
+                                // create a new column for the last three opps
+                                if (i === 4) {
+                                    // create column
+                                    html += '</ul></div></div>';
+                                    html += '<div class="slds-col--padded slds-size--1-of-6">';
+                                    html += '<div class="slds-text-align--left">';
+                                    html += '<ul class="slds-has-dividers--around-space">';
+
+                                }
+
+                                html += '<li class="slds-item slds-m-bottom--medium" id="'+i+'">';
+                                html += '<div class="slds-tile slds-tile--board">';
+                                html += '<p class="slds-tile__title slds-truncate"><a href="https://steelcase.lightning.force.com/one/one.app#/sObject/' + record.get("Id")+'/view?t=1465172185930">' + oppName + '</a></p>';
+                                html += '<div class="slds-tile__detail">';
+                                html += '<p class="slds-text-heading--medium">' + estDiscSales + '  ' + record.get("CurrencyIsoCode") + '</p>';
+                                html += '<p class="slds-truncate" id="'+ actId +'"><a href="https://steelcase.lightning.force.com/one/one.app#/sObject/' + record.get("AccountId")+'/view?t=1465172185930">' + record.get("AccountId") +'</a></p>';
+                                html += '<p class="slds-truncate">Closing on '+ closeDate +'</p>';
+                                html += '</div>';
+                                html += '</div>';
+                                html += '</li>';
+                                
+                                getActName(actId,trncCnt);
+                                
+                            });
+                            // call getActNames to replace the act ids with names
+                            html += '</ul>';
+                            html += '</div></div>';
+                        }
+                    }
+                    outputDiv.innerHTML = html;
+                }
+            );
+    }
+
+    // adds commas to Est Disc Sales
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }  
+
+    // changes full date/time to short date
+    function timeToDate(date) {
+
+        var date = new Date(date),
+            userLocale = getUserLocale(),
+            format = getUserFormat(userLocale),
+            closingDate, month, day, year;
+
+        console.log('locale: ' + userLocale + ' date: ' + date + ', format: ' + format);
+
+        month = date.getMonth() + 1;
+        day = date.getDate();
+        year = date.getFullYear();
+
+        console.log('month: ' + month + ', day: ' + day + ', year: ' + year);
+
+        closingDate = format.replace('mm', month);
+        closingDate = closingDate.replace('dd', day);
+        closingDate = closingDate.replace('yyyy', year);
+
+        return closingDate;
+        //return (date.getMonth() + 1) +
+        //"-" + date.getDate() +
+        //"-" + date.getFullYear();
+    }
+
+    // returns the user's locale from the apex component
+    function getUserLocale() {
+
+        var locale = document.getElementById('j_id0:userLocale').innerHTML;
+
+        if (locale == null) {
+            locale = 'en_US';
+        } else {
+            locale = locale.trim();
+        }
+
+        return locale;
+    }
+
+    // returns the data format he user's locale to 
+    function getUserFormat(locale) { 
+
+        var userFormat,
+            userFormattedDate = {
+                de : 'dd-mm-yyyy',
+                de_AT : 'dd-mm-yyyy',
+                de_AT_EURO : 'dd-mm-yyyy',
+                de_DE : 'dd-mm-yyyy',
+                de_DE_EURO : 'dd-mm-yyyy',
+                de_LU : 'dd-mm-yyyy',
+                de_LU_EURO : 'dd-mm-yyyy',
+                en_AU : 'dd-mm-yyyy',
+                en_B : 'mm-dd-yyyy',
+                en_BM : 'mm-dd-yyyy',
+                en_CA : 'dd-mm-yyyy',
+                en_GB : 'dd-mm-yyyy',
+                en_GH : 'mm-dd-yyyy',
+                en_HK : 'dd-mm-yyyy',
+                en_ID : 'mm-dd-yyyy',
+                en_IE : 'dd-mm-yyyy',
+                en_IE_EURO : 'dd-mm-yyyy',
+                en_IN : 'dd-mm-yyyy',
+                en_MY : 'dd-mm-yyyy',
+                en_NZ : 'dd-mm-yyyy',
+                en_SG : 'mm-dd-yyyy',
+                en_SG : 'dd-mm-yyyy',
+                en_US : 'mm-dd-yyyy',
+                en_ZA : 'yyyy-mm-dd',
+                es : 'dd-mm-yyyy',
+                es_MX : 'dd-mm-yyyy',
+                es_ES : 'dd-mm-yyyy',
+                es_ES_EURO : 'dd-mm-yyyy',
+                fr : 'dd-mm-yyyy',
+                fr_CA : 'yyyy-mm-dd',
+                fr_FR : 'dd-mm-yyyy',
+                fr_FR_EURO : 'dd-mm-yyyy'
+            }
+
+        userFormat = userFormattedDate[locale];
+
+        if (userFormat === undefined) {
+            userFormat = 'dd-mm-yyyy';
+        }
+
+        return userFormat;
+    }
+
+    loadData();
+</script>
+</html>
+</apex:page>

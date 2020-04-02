@@ -1,0 +1,48 @@
+<apex:page id="B2C_CheckoutBIE" controller="B2C_CheckoutBIEController" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+	<c:B2C_CheckoutHeader />
+	<c:B2C_UserInformationTab />
+	<c:B2C_ShippingTab />
+	<c:B2C_OrderReviewTab />
+	<c:B2C_PaymentTab />
+	<script src="https://www.paypal.com/sdk/js?client-id={!CLIENT}&disable-funding=credit,card" data-namespace="paypal_sdk"></script>
+	<script>
+		jQuery(function($){
+            const remote = _.extend(CCRZ.RemoteInvocation, { className: 'B2C_CheckoutBIEController' });
+            remote.invokeCtx('getCartClassification',
+            CCRZ.pagevars.currentCartID,
+            (classification) =>{
+                if (classification){
+                    CCRZ.pagevars.STEXCartClassification = classification;
+                } else {
+                    CCRZ.pagevars.STEXCartClassification = 'Cart';
+                }
+                registerCheckoutViews();             
+            },
+            {
+                nmsp: false
+            });
+
+            
+			function registerCheckoutViews() {
+            	CCRZ.pubSub.on('view:cartCheckoutView:awaitingSubViewInit', function (cartCheckoutView) {
+					if (CCRZ.Checkout.CustomUserInfoView) {
+                        CCRZ.Checkout.CustomUserInfoView.register(cartCheckoutView);
+					}
+                    if(CCRZ.Checkout.shipping && CCRZ.pagevars.STEXCartClassification == 'Cart'){
+      					CCRZ.Checkout.shipping.register(cartCheckoutView);
+    				}
+     				if(CCRZ.Checkout.review){
+      					CCRZ.Checkout.review.register(cartCheckoutView);
+     				}
+     				if(CCRZ.Checkout.payment){
+      					CCRZ.Checkout.payment.register(cartCheckoutView);
+     				}
+                	CCRZ.pubSub.trigger('view:cartCheckoutView:subViewInit');
+				});                
+            }
+            
+
+		});
+		
+	</script>
+</apex:page>

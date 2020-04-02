@@ -1,0 +1,3 @@
+<apex:page id="STEX_RPT" docType="html-5.0" sideBar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+    <c:STEX_RPT_Content />
+</apex:page>

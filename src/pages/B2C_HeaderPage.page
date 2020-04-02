@@ -1,0 +1,8 @@
+<apex:page id="B2C_HeaderPage" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+	<!-- <script type="text/javascript" src="{!$Resource.B2C_CategoriesMenu}" /> -->
+	<c:B2C_NavigationBar />
+	<c:B2C_CategoriesMenu />
+	<c:B2C_PricingRulesLogic />
+    <c:B2C_SetActiveCart />
+	<script type="text/javascript" src="{!$Resource.jquery_ui_touch_punch}" />   
+</apex:page>

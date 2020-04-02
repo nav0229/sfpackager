@@ -1,0 +1,3 @@
+<apex:page id="B2B_OrderConfirmationPDF_STEX" renderAs="pdf" controller="B2B_CreateOrderPDFController_STEX">
+   <c:B2B_OrderConfirmation_STEX OrderIdAttr="{!$CurrentPage.Parameters.OrderIdAttr}"/> 
+</apex:page>

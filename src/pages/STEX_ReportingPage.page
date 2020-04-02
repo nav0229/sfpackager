@@ -1,0 +1,48 @@
+<apex:page id="orderQuoteReport" showHeader="false" sideBar="false" >
+<!--    <apex:outputPanel id="currReport" rendered="{!(reportType == 'allOrders' || reportType == 'allQuotes')}">-->
+<!--        <pageBlock rendered="{!len(myCurrURL)}">-->
+<!--            Report URL not found-->
+<!--        </pageBlock>-->
+<!--        <script> location.href="{!myCurrURL}"; </script>--> 
+<!--    </apex:outputPanel>-->
+<!--    <div> -->
+<!--    </div>-->
+<!--    <apex:pageBlock id="userReport" rendered="{!(reportType == 'myOrders' || reportType == 'myQuotes')}">-->
+<!--        <apex:variable var="isMyOrdersReport" value="{!reportType == 'myOrders'}" />-->
+<!--        <apex:pageMessages />-->
+<!--        <apex:form >-->
+<!--            <apex:inputText rendered="{!(!isMyOrdersReport)}" disabled="true">Quotes For: </apex:inputText>-->
+<!--            <apex:inputText rendered="{!isMyOrdersReport}" value="{!currentEmail}"  disabled="true">Orders For: </apex:inputText>-->
+<!--            <apex:selectList value="{!soldToFilter}" multiSelect="true">-->
+<!--                Sold To:-->
+<!--                <apex:selectOptions value="{!soldToOptions}"/>-->
+<!--            </apex:selectList>-->
+<!--            <br/>-->
+<!--            <apex:inputText rendered="{!isMyOrdersReport}" value="{!orderNumberFilter}">Order #</apex:inputText>-->
+<!--            <apex:inputText rendered="{!(!isMyOrdersReport)}" value="{!orderNumberFilter}">Quote #</apex:inputText>-->
+<!--            <apex:inputText value="{!orderTitleFilter}">Order Title</apex:inputText>-->
+<!--            <apex:inputText value="{!projectIdFilter}">Project</apex:inputText>-->
+<!--            <apex:inputText value="{!projectTitleFilter}">Project Title</apex:inputText>-->
+<!--            <apex:commandButton action="{!filterGrid}" value="Filter"/>-->
+<!--            <apex:commandButton action="{!clearFilters}" value="Reset"/>-->
+<!--        </apex:form>-->
+<!--        <apex:pageBlockTable rendered="{!currentReport.size > 0}" value="{!currentReport}" var="report">-->
+<!--            <apex:column value="{!report.OrderID__c}"/>-->
+<!--            <apex:column value="{!report.OrderTitle__c}"/>-->
+<!--            <apex:column value="{!report.DealerProjectID__c}"/>-->
+<!--            <apex:column value="{!report.DealerProjectTitle__c}"/>-->
+<!--            <apex:column value="{!report.DealerOrderNumber__c}"/>-->
+<!--            <apex:column headerValue="Total Amount">-->
+<!--                <apex:outputText value="{0, Number, Currency}">-->
+<!--                    <apex:param value="{!report.TotalAmount__c}"/>-->
+<!--                </apex:outputText>-->
+<!--            </apex:column>-->
+<!--            <apex:column value="{!report.ExpectedDeliveryDate__c}"/>-->
+<!--            <apex:column value="{!report.ShipToName__c}"/>-->
+<!--        </apex:pageBlockTable>-->
+<!--    </apex:pageBlock>-->
+<!--    <apex:pageBlock rendered="{!reportType == ''}">-->
+<!--        Please ensure the url contains a valid report id-->
+<!--    </apex:pageBlock>-->
+
+</apex:page>

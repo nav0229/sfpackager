@@ -1,0 +1,159 @@
+<apex:page standardcontroller="Opportunity_Phases__c" recordSetVar="optyPhases" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">    
+
+<head>
+<title>Manually set phases</title>
+<apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+<apex:includeScript value="{!$Resource.jquery0101203}"/>
+</head>    
+<apex:remoteObjects >
+    <apex:remoteObjectModel name="Opportunity" fields="Id,Name,Automate_Opportunity_Phases__c"/>
+</apex:remoteObjects>
+<body>   
+
+
+<!-- REQUIRED SLDS WRAPPER -->
+<div class="slds"> 
+
+    <!-- PRIMARY CONTENT WRAPPER -->
+    <div class="slds-grid">
+    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+    <div class="slds-col--padded">
+
+        <!-- page header -->
+        <!-- toast modal -->
+        <div class="slds-notify_container slds-hide" id="scsToast">
+            <div class="slds-notify slds-notify--toast slds-theme--success" role="alert">
+                <span class="slds-assistive-text">Info</span>
+                <button class="slds-button slds-button--icon-inverse slds-notify__close">
+                	<svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+                		<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+                	</svg>
+                	<span class="slds-assistive-text">Close</span>
+                </button>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading--small" id="scsToastMessage">Success!  You may now edit the opportunity phases.</h2>
+                </div>
+            </div>
+        </div>
+
+
+<div role="dialog" tabindex="-1" aria-labelledby="header43" class="slds-modal slds-fade-in-open">
+  	<div class="slds-modal__container">
+    	<div class="slds-modal__header">
+      		<button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" id="btnClose">
+        		<svg aria-hidden="true" class="slds-button__icon slds-button__icon--large">
+          			<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#close')}"></use>
+        		</svg>
+        		<span class="slds-assistive-text">Close</span>
+      		</button>
+      		<h2 id="header43" class="slds-text-heading--medium">Please confirm your intent to switch from automated phasing to manual phase maintenance.</h2>
+	    </div>
+	    <div class="slds-modal__content slds-p-around--medium">
+	      	<div>
+	        	<p>Please note that this action cannot be undone.</p>
+	        	<p>Press 'Confirm' to manually determine the opportunity phases.  You will be returned to the Opportunity where you can begin adding new phases, editing existing phases, or deleting unnecessary phases.</p>
+	      	</div>
+	    </div>
+	    <div class="slds-modal__footer">
+	      	<button class="slds-button slds-button--neutral" id="btnCancel">Cancel</button>
+	      	<button class="slds-button slds-button--brand" id="btnConfirm">Confirm</button>
+	    </div>
+  	</div>
+</div>
+<div class="slds-backdrop slds-backdrop--open"></div>
+
+
+    </div>
+    </div>
+    </div>
+
+</div>
+</body>
+</html>
+
+<script>
+
+function setupEvents() {
+
+    j$("#btnCancel").click(function(e) {
+
+        btnCancel();
+    });
+
+    j$("#btnConfirm").click(function(e) {
+
+        btnConfirm();
+    });
+
+    j$("#btnClose").click(function(e) {
+
+        btnCancel();
+    });
+}
+
+function btnConfirm() {
+
+	var oppid = "{!$CurrentPage.parameters.Id}";
+
+    var record = new SObjectModel.Opportunity({
+        Id: oppid,
+        Automate_Opportunity_Phases__c: false
+    });
+
+    record.update(updateCallback);
+}
+
+// Callback to handle DML Remote Objects calls
+function updateCallback(err, ids) {
+
+	j$("#scsToast").removeClass("slds-hide").addClass("slds-show");
+
+    if (err) { 
+    	j$("#scsToast:first-child").removeClass("slds-theme--success").addClass("slds-theme--error");
+    	j$("#scsToastMessage").html(err);
+        //displayError(err); 
+    } else {
+        j$("#scsToastMessage").html("Success!  You may now edit the opportunity phases.");
+    }
+
+    // navigate back to the opportunity
+    btnCancel();
+}
+
+
+function btnCancel() {
+
+	var oppid = "{!$CurrentPage.parameters.Id}";
+
+    if (!sforce.one) {
+        console.log('backNav: no sforce.one object. classic??');
+    } else {
+        sforce.one.navigateToSObject(oppid);
+    }
+}
+
+function init() {
+
+	var oppid = "{!$CurrentPage.parameters.Id}";
+
+    if (!sforce.one) {
+        console.log('backNav: no sforce.one object. classic??');
+    } else {
+        console.log('Id: ' + oppid);
+        setupEvents();
+    }
+
+
+}
+
+j$ = jQuery.noConflict();
+
+j$(document).ready(function() {
+
+   init();
+});
+
+</script>
+</apex:page>

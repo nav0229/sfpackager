@@ -1,0 +1,6 @@
+<apex:page id="B2B_Stub_Support_STEX"  docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Support Page</h1>
+  
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

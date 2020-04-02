@@ -1,0 +1,93 @@
+<apex:page standardController="APP_Engagements__c" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head>
+            <title>Advance Gate</title>
+            <apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+            <style>
+                .scsBtn {
+                    padding-left: 16px;
+                    padding-right: 16px;
+                    text-align: center;
+                    vertical-align: middle;
+                    background-color: #0070d2;
+                    border: 1px solid #0070d2;
+                    color: white;
+                    display: inline-block;
+                    border-radius: 4px;
+                    font: 24px Arial;
+                    line-height: 34px;
+                    margin: 20px 0 0 20px;
+                }
+            </style>
+        </head>
+
+        <apex:remoteObjects >
+        	<apex:remoteObjectModel name="APP_Engagements__c" fields="Id,Update_Gate__c"/>
+        </apex:remoteObjects>
+
+        <body>
+
+            <!--  navigation button for the user to click when finished sending the email  -->
+            <!--  this is a backup plan in case the setTimeout function fails to go back to the account -->
+            <p id="scsMsgP">Bear with us one moment while we update the gate....Thank you for your patience!</p>
+
+			<div class="slds-spinner_container slds-m-top--large slds-m-bottom--large">
+				<div class="slds-spinner--brand slds-spinner slds-spinner--large" aria-hidden="false" role="alert">
+					<div class="slds-spinner__dot-a"></div>
+					<div class="slds-spinner__dot-b"></div>
+				</div>
+			</div>
+
+            <button class="scsBtn" type="button" onclick="backNav()">Back</button>
+
+        </body>
+
+        <script>
+            // function to take the user back to the account
+            function backNav() {
+
+                var recordId = "{!APP_Engagements__c.Id}";
+                if (!sforce.one) {
+                    console.log('backNav: no sforce.one object');
+                } else {
+                    //sforce.one.navigateToSObject(recordId);
+                    sforce.one.back(true);
+                }
+            }
+
+            // function to create, open and populate the email
+            function updateGateField() {
+
+                var id, updateGate, nbiRecord, scsMsgP;
+
+                id = "{!APP_Engagements__c.Id}";
+                updateGate = true;
+                scsMsgP = document.getElementById('scsMsgP');
+
+	            nbiRecord = new SObjectModel.APP_Engagements__c({
+	                    Id: "{!APP_Engagements__c.Id}",
+	                    Update_Gate__c: true
+	                });
+
+	            nbiRecord.update(function(err,records) {
+	                    if (err) {
+	                        console.log('updateGateField, error setting updateGate: ' + err);
+	                        scsMsgP.innerHTML = 'updateGateField, error setting updateGate: ' + err;
+	                    } else {
+	                    	scsMsgP.innerHTML = 'Good news...successfully updated the gate';
+	                    	setTimeout(backNav, 1000);
+	                    }
+	                }
+	            );
+                
+
+            }
+
+            // run the sendEmail function when the page loads
+            updateGateField();
+
+        </script>
+
+    </html>
+</apex:page>

@@ -1,0 +1,17 @@
+<!--
+ - Created by agearheart on 2019-09-04.
+ -->
+
+<apex:page id="B2B_CartPage_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+
+    <c:B2B_EffAcctSelector_STEX />
+    <c:B2B_CartHeaderView_STEX />
+    <c:B2B_CartDetailView_STEX />
+    <c:B2B_CartItemDetailView_STEX />
+    <c:B2B_CartItemQuantityDetailView_STEX />
+    <c:B2B_CartOrderTotal_STEX />
+    <c:B2B_CartOrderLogic_STEX />
+    <!-- <c:B2B_CartTotalSection_STEX /> -->
+
+<!--    <c:B2B_CartFeesJS_STEX />-->
+</apex:page>

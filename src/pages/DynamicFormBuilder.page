@@ -1,0 +1,44 @@
+<apex:page controller="DynamicFormController" >
+    <!-- Add static resources to page's <head> -->
+    <apex:stylesheet value="{!URLFOR($Resource.alpaca_js,'bootstrap.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.alpaca_js,'alpaca.min.css')}"/>
+    
+  <!--  <apex:includeScript value="{! $Resource.alpaca_js }"/> -->
+    
+    <apex:includeScript value="{!URLFOR($Resource.alpaca_js,'jquery-1.11.1.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.alpaca_js,'bootstrap.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.alpaca_js,'handlebars.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.alpaca_js,'alpaca.min.js')}"/>
+    
+    
+    <div id="form"></div>
+    <script type="text/javascript">
+    		var schemaJson = '{"schema": {        "type": "object",        "properties": {            "name": {                "type": "string",                "required": true            },            "birthday": {                "type": "text",                "format": "date",                "required": true            },            "preference": {                "type": "text",                "enum": ["orlando", "tokyo", "amsterdam"],                "default": "orlando",                "required": true            }        }    },    "options": {        "form": {            "buttons": {                "submit": {}            }        },        "fields": {            "name": {                "label": "Your Name",				"id":"name",				"class" : "inputField"            },            "birthday": {                "label": "Your Birthday",				"class" : "inputField",				"id":"birthday"            },            "preference": {                "label": "Your Destination",				"class" : "inputField",				"id":"preference",                "type": "select",                "optionLabels": ["Orlando, USA", "Tokyo, Japan", "Amsterdam, Netherlands"]            }        }    }}';
+            $(document).ready(function() {
+                $("#form").alpaca(JSON.parse( schemaJson ));
+            });
+
+            function callDynamicFormController() {
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.DynamicFormController.submit}', 
+                    {'password': password, 'username': username, 'site': siteParam }, 
+                    function(result, event) {
+                        if (event.status) {   
+                            console.log(result.result,'Info');                            
+                            $("#newCustomerForm").hide();                                  	
+                        } 
+                    	else if (event.type === 'exception') {
+                            console.log('exception');                    	
+                        } 
+                    	else {
+                            console.log('error response');
+                        }
+                    }, 
+                    {escape: true}
+                );
+
+            }
+
+        </script>
+    
+</apex:page>

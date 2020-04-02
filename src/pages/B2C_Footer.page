@@ -1,0 +1,54 @@
+<apex:page id="B2C_Footer" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+    <div class="footer-copyright">
+        <hr class="hpDivider" />
+        <div class="row footer-row legal-notices-row white-bg">
+            <div class="col-md-2">
+                <h4>Order Detail</h4>
+                <p><a href="/Store/ccrz__CCPage?pageKey=SCMS&CMSId=3532&Conn=TellerCMS" id="customer-service-link">Customer Service</a></p>
+                <p><a href="/Store/ccrz__CCPage?pageKey=SCMS&CMSId=3529&Conn=TellerCMS" id="order-information-link">Order Information</a></p>
+                <p><a href="/Store/ccrz__CCPage?pageKey=SCMS&CMSId=3521&Conn=TellerCMS" id="warranty-link">Warranty</a></p>
+            </div>
+            <div class="col-md-6">
+                <h4>Steelcase</h4>
+                <p><a href="/Store/ccrz__CCPage?pageKey=SCMS&CMSId=3523&Conn=TellerCMS" id="about-us-link">About Us</a></p>
+                <!--<p><a href="javascript:" id="site-map-link">Site Map</a></p>-->
+                <p><a href="https://www.steelcase.com/find-us/where-to-buy/dealers/" id="dealer-locator-link">Dealer Locator</a></p>
+                <p><a href="/Store/ccrz__CCPage?pageKey=SCMS&CMSId=3531&Conn=TellerCMS" id="privacy-policy-link">Privacy Policy</a></p>
+                <p><a href="/Store/ccrz__CCPage?pageKey=SCMS&CMSId=3541&Conn=TellerCMS" id="terms-of-use-link">Terms of Use</a></p>
+                <p><a href="/Store/ccrz__CCPage?pageKey=SCMS&CMSId=3528&Conn=TellerCMS" id="financing-link">Financing</a></p>
+                <p><a href="/Store/ccrz__CCPage?pageKey=SCMS&CMSId=3542&Conn=TellerCMS" id="trademarks-link">Trademarks</a></p>
+                <p><a href="/Store/ccrz__CCPage?pageKey=SCMS&CMSId=3527&Conn=TellerCMS" id="accessibility-statement-link">Accessibility Statement</a></p>
+            </div>
+            <div class="col-md-4">
+                <h4>Contact Us</h4>
+                <p><a href="tel:18005163454" id="customer-service-phone-link">1.800.516.3454</a></p>
+                <p>Mon - Fri, 8AM - 5PM EST</p>
+                <p><a href="mailto:customercare@steelcase.com" id="customer-care-email-link">customercare@steelcase.com</a></p>
+            </div>
+        </div>
+        <div class="row footer-row copyright-row grey-bg">
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-2 footer-logo">
+                    <!--<a href="javascript:"><img src="{!$Resource.steelcaselogofooter}" class="footer-logo" alt="steelcase"/></a>-->
+                    <img src="{!$Resource.steelcaselogofooter}" class="footer-logo" alt="steelcase"/>
+                </div>
+                <div class="col-md-3 footer-logo">
+                    <!--<a href="javascript:"><img src="{!$Resource.turnstonelogofooter}" class="footer-logo" alt="turnstone"/></a>-->
+                    <img src="{!$Resource.turnstonelogofooter}" class="footer-logo" alt="turnstone"/>
+                </div>
+                <div class="col-md-2 footer-logo">
+                    <!--<a href="javascript:"><img src="{!$Resource.coalesselogofooter}" class="footer-logo minus-40-left-margin" alt="coalesse"/></a>-->
+                    <img src="{!$Resource.coalesselogofooter}" class="footer-logo minus-40-left-margin" alt="coalesse"/>
+                </div>
+            </div>
+            <div class="row padding-above-40">
+                <div class="col-md-4">
+                    <span class="small-text" id="copyright-statement">
+                        Copyright © 2020 Steelcase Inc. All rights reserved.
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>  
+</apex:page>

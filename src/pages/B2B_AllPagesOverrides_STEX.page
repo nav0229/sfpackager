@@ -1,0 +1,9 @@
+<!--
+ - Created by agearheart on 2019-08-02.
+ -->
+
+<apex:page id="B2B_AllPagesOverrides_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+
+    <c:B2B_EffAcctSelector_STEX /> 
+
+</apex:page>

@@ -1,0 +1,54 @@
+<apex:page id="B2C_CreditCardPaypalPayment" controller="B2C_CreditCardPaypalPaymentController" applyHtmlTag="false" docType="html-5.0"
+					 sidebar="false" showHeader="false" standardStylesheets="false" cache="false">
+	<script id="PaymentCCPP-Both" type="text/template">
+    <style>
+        #NewCardFormContainer > iframe {
+    		min-height: 250px;
+    	}
+    </style>
+		<form id="creditCardForm">
+			<div id="SavedCards">
+				{{#if this.savedCards.length}}
+					{{#each this.savedCards}}
+
+						<p class="card-option">
+							<input id="{{this.Id}}" name="shipping-options-form" class="base-radio" type="radio" />
+							<label for="{{this.Id}}" class="blue-radio shipping-option-label card-label" id="{{this.Id}}-details">
+								<span class="bold">{{this.ccrz__PaymentType__c}}</span>
+								<span class="light"> ending in </span>
+								<span class="bold"> {{this.ccrz__AccountNumber__c}}</span>
+								<br/>
+								<span class="bold">Name on card:</span>
+								<span class="light"> {{this.Name_on_Card__c}} </span>
+								<span class="bold">Expires:</span>
+								<span class="light"> {{this.ccrz__ExpMonth__c}}/{{this.ccrz__ExpYear__c}}</span>
+							</label>
+
+							<div class="hidden cvv-container" id="{{this.Id}}-cvvContainer">
+								<label for="cvvInput">CVV: </label>
+								<input type="text" id="{{this.Id}}-cvvInput" name="cvvInput">
+							</div>
+						</p>
+					{{/each}}
+					<button id="SavedCardButton" class="btn btn-default btn-sm" type="button">Use This Card</button>
+				{{/if}}
+				{{#if this.isLoggedInUser}}
+				<button id="NewCardButton" class="btn btn-grey btn-sm" type="button">Add New Card</button>
+				{{/if}}
+				<div id="NewCardFormContainer">
+					<apex:iframe src="/Store/B2C_CreditCardInputForm" height="100%"/>
+					{{#if this.isLoggedInUser}}
+						<input type="checkbox" id="SaveCard" value="SaveCard">
+						<label for="SaveCard">Save Card</label>
+					{{/if}}
+				</div>
+			</div>
+		</form>
+		<div id="paypal-button-container"></div>
+	</script>
+
+	<script>
+		var userIpAddress = '{!UserIpAddress}';
+	</script>
+	<script src="{!$Resource.B2C_PaymentView}" ></script>
+</apex:page>

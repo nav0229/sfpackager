@@ -1,0 +1,93 @@
+<apex:page id="B2C_QuotePage_STEX" controller="B2C_QuoteDetailController_STEX" docType="html-5.0" sideBar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+    <div class="row" style="margin-top: 10px;">    
+        <button id="checkout" class="btn btn-default btn-sm pull-right" style="margin-right: 15px; padding-top:9px; padding-bottom: 7px">Checkout</button>
+        <button id="reject" class="btn btn-sm pull-right" style="margin-right: 10px; display:none;">Reject Quote</button>
+        <h2 class="title cc_title cartTitle pull-left" id="quoteTitle"></h2>
+    </div>
+    <div class="row">
+        <h5>Do you have questions or need a change in your quote? Please connect with your Sales Representatives</h5>
+    </div>
+    <div class="well" style="margin-left: -15px; margin-right: -15px;">
+        <div class="row">
+            <div class="col-sm-4">
+                <h5 id="quoteNumber"><strong>Quote Number</strong><br/></h5>
+            </div>
+            <div class="col-sm-4">
+                <h5 id="dealerReps"><strong>Sales Representatives</strong><br/></h5>
+            </div>
+            <div class="col-sm-4">
+                <h5 id="publishedDate"><strong>Date Published</strong><br/></h5>
+            </div>    
+        </div>
+        <div class="row">
+            <!--<div class="col-xs-4">
+                <h5 id="soldTo"><strong>Sold To</strong><br/></h5>
+            </div>
+            <div class="col-xs-4">
+                <h5 id="shipTo"><strong>Ship To</strong><br/></h5>
+            </div>-->
+            <div class="col-sm-4">
+                <h5 id="publishedFor"><strong>Published For</strong><br/></h5>
+            </div>
+            <div class="col-sm-4">
+            </div>
+            <div class="col-sm-4">
+                <h5 id="quoteSubTotal"><strong>Subtotal</strong><br/></h5>
+            </div>
+        </div>
+    </div>
+    <c:B2C_QuoteDetail_STEX />
+    <script>    
+        jQuery(function($){
+        	let urlVars = (function () {
+            	var vars = {};
+            	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                	vars[key] = value;
+                	if(value.substring(value.length - 1) === '#')
+                    	vars[key] = value.substring(0, value.length - 1);
+            		});
+            	return vars;
+        	})();
+            
+            $('.cc_main_content_col').css('margin-top', '0px');
+            $('.cc_content_body').css('padding-top', '0px');
+            $('.cc_content_body').css('padding-bottom', '0px');
+            
+            const remote = _.extend(CCRZ.RemoteInvocation, { className: 'B2C_QuoteDetailController_STEX'});            
+            remote.invokeCtx('getPublishedQuote', urlVars["quoteId"], (res, err) => {
+                    if(res && res.success) {
+                        let quote = res.data['quote'];
+                        let items = res.data['items'];
+                        let billTo = res.data['billTo'];
+                        let shipTo = res.data['shipTo'];
+                        let pricingComponents = res.data['pricingComponents'];
+                        populateHeader(quote, billTo, shipTo);
+                        renderQuoteDetails(quote, items, pricingComponents);
+                    }
+                },
+                {
+					buffer: false,
+                	nmsp: false
+				}
+        	);	
+
+        	$("#checkout").on('click', function() {
+            
+            	CCRZ.pagevars.currentCartID = urlVars["quoteId"];
+       			CCRZ.pubSub.trigger('cartChange', urlVars["quoteId"]);
+            	localStorage.setItem('lastActive', urlVars["cartId"]);   
+                          
+            	remote.invokeCtx('setActive', urlVars["quoteId"], (res, err) => {
+                    console.log(res);
+                    if(res && res.success) {
+                		window.location.href = "/Store/ccrz__CheckoutNew?cartId=" + urlVars["quoteId"] + getCSRQueryString();
+                    }
+                },
+                {
+					buffer: false,
+                	nmsp: false
+				});        
+        	});      
+        });
+    </script>
+</apex:page>

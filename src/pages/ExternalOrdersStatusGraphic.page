@@ -1,0 +1,43 @@
+<apex:page id="ExternalOrdersStatusGraphic" standardController="Orders__x" showHeader="false" lightningStylesheets="true">
+    <div>
+        <span class="larger-font">Order Status</span>
+        <table class="slds-table slds-table_cell-buffer slds-table_header-hidden">
+            <thead>
+                <tr>
+                    <td><strong>Processing</strong></td>
+                    <td><strong>Manufacturing</strong></td>
+                    <td><strong>Delivery</strong></td>
+                    <td><strong>Invoice</strong></td>
+                    <td><strong>Payment</strong></td>
+                </tr>
+                <tr>
+                    <td><apex:image value="{!Case(Orders__x.ProcessingStatus__c, "COMPLETE", $Resource.complete, "INPROCESS", $Resource.inProgress, 'NOTSTARTED', $Resource.notStarted, $Resource.notStarted)}" /></td>
+                    <td><apex:image value="{!Case(Orders__x.ManufacturingStatus__c, "COMPLETE", $Resource.complete, "INPROCESS", $Resource.inProgress, 'NOTSTARTED', $Resource.notStarted, $Resource.notStarted)}" /></td>
+                    <td><apex:image value="{!Case(Orders__x.DeliveryStatus__c, "COMPLETE", $Resource.complete, "INPROCESS", $Resource.inProgress, 'NOTSTARTED', $Resource.notStarted, $Resource.notStarted)}" /></td>
+                    <td><apex:image value="{!Case(Orders__x.InvoicingStatus__c, "COMPLETE", $Resource.complete, "INPROCESS", $Resource.inProgress, 'NOTSTARTED', $Resource.notStarted, $Resource.notStarted)}" /></td>
+                    <td><apex:image value="{!Case(Orders__x.PaymentStatus__c, "COMPLETE", $Resource.complete, "INPROCESS", $Resource.inProgress, 'NOTSTARTED', $Resource.notStarted, $Resource.notStarted)}" /></td>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    
+    <style>
+        table {
+            width: 100%;
+        }
+
+        td {
+            text-align: center;
+            width: 126px;
+        } 
+
+        img {
+            width: 25px;
+            height: 25px;
+        }
+
+        .larger-font {
+            font-size: 18pt;
+        }
+    </style>
+</apex:page>

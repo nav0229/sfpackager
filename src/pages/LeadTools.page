@@ -1,0 +1,256 @@
+<apex:page sidebar="false" showHeader="false" standardController="Lead" standardStylesheets="false" applyHtmlTag="false" lightningStylesheets="true" applyBodyTag="false" docType="html-5.0">
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<head>
+  <title>Lead Tools</title>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS_Steelcase_20103, 'assets/styles/salesforce-lightning-design-system-ltng.css')}" />
+    <apex:includeScript value="{!$Resource.jquery0101203}"/>
+    <style>
+
+	</style>
+</head>
+
+<apex:includeLightning />
+
+<body id="myAppBody">
+	<div class="steelcase">
+<!-- Sprint 2018.01.01: Created to accommodate custom links for the Predictive Lead initiative: jz	-->
+<!-- Sprint 2018.07.16: Updated Predictive Lead training link to point to SharePoint site: 2018.07.23:	jz	-->
+<!-- Sprint 2018.07.30: Updated Predictive Lead Vertical Market Product Mix report link to point to new SharePoint location: 2018.08.08:	jz	-->
+        
+        
+		<p class="slds-hide" id="scsLead"></p>
+        	<div class="myapp">
+            	<div align="left" style="padding-bottom:20px;">           
+		<!-- Lead Account Links section -->
+                <h3 class="slds-section-title--divider slds-m-top-medium slds-m-bottom--small">Account Links</h3>
+                   <div class="slds-box">
+                        <div class="slds-grid" style="padding-left:10px;">                 
+                            <div class="slds-col">
+      			<apex:pageBlock >
+                	<apex:pageBlockSection > 
+				<!-- Sales History Summary Link -->
+                    	<ul class="slds-has-dividers--bottom-space">
+                        	<li class="slds-list__item" id="liSalesSummary">   
+                                <a class="dynamicLink" id="scsSalesSummary" href="#" >Sales History Report (Summary)</a>                                
+                             	&nbsp; &nbsp;
+               		<!-- icon -->
+                            <div class="slds-form-element__icon">
+                                <a id="scsSalesHistorySummary" class="scsInfoIcon">
+                                <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                                    <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                                </svg>
+                                <span class="slds-assistive-text">Sales History Report (Summary) Help</span>
+                                </a>
+                            </div>
+                	<!-- end icon -->                                
+                	<!-- help text -->
+                        	<div id="scsSalesHistorySummary_help" class="slds-hide">
+                            	<div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="tooltip">
+                            		<div class="slds-popover__body">
+                                    	<p>High-level summary report on shipments to this site from 2005 to date.</p>
+                            		</div>
+                            	</div>
+                        	</div> 
+					<!-- end help text -->                                
+                        	</li>
+			<!-- Sales History Detail Link -->                            
+                        	<li class="slds-list__item" id="liSalesDetail">
+                                <a class="dynamicLink" id="scsSalesDetail" href="#" >Sales History Report (Detail)</a>
+		                     	&nbsp; &nbsp;
+               		<!-- icon -->
+                            <div class="slds-form-element__icon">
+                                <a id="scsSalesHistoryDetail" class="scsInfoIcon">
+                                <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                                    <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                                </svg>
+                                <span class="slds-assistive-text">Sales History Report (Detailed) Help</span>
+                                </a>
+                            </div>
+                	<!-- end icon -->                                
+                	<!-- help text -->
+                        	<div id="scsSalesHistoryDetail_help" class="slds-hide">
+                            	<div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="tooltip">
+                            		<div class="slds-popover__body">
+                                    	<p>Detailed report on shipments to this site from 2005 to date.</p>
+                            		</div>
+                            	</div>
+                        	</div> 
+					<!-- end help text -->                                
+                        	</li>                            
+                        </ul> 						
+					</apex:pageBlockSection>                    
+				</apex:pageBlock>                             
+                            </div>	<!-- end slds-col -->                                
+						</div>  <!-- end slds-grid -->                            
+					</div>  <!-- end slds-box -->
+                </div>  <!-- end primary content wrapper --> 
+
+	<!-- Lead Support Links section -->                
+                <div align="left" style="padding:0px;"> 
+                    <h3 class="slds-section-title--divider slds-m-top-medium slds-m-bottom--small">Support Links</h3>
+                    <div class="slds-box">
+                    	<div class="slds-grid">                 
+                        	<div class="slds-col">
+      			<apex:pageBlock >
+                	<apex:pageBlockSection >
+                		<apex:form id="scsleadTools"> 
+		<!-- Predictive Lead Training Link -->
+                    	<ul class="slds-has-dividers--bottom-space">
+                        	<li class="slds-list__item" id="liLeadTools">                           
+                    			<apex:commandLink action="https://steelcase.sharepoint.com/:f:/s/predictiveleads/EqT3VoOkWNFJgCIMsiJHbXQB2hdlbvAJTw_INk4fj-WtVA?e=lyuHDo" value="Predictive Lead Training" />
+                             	&nbsp; &nbsp;
+               		<!-- icon -->
+                            <div class="slds-form-element__icon">
+                                <a id="scsLeadTraining" class="scsInfoIcon">
+                                <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                                    <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                                </svg>
+                                <span class="slds-assistive-text">Predictive Lead Training Help</span>
+                                </a>
+                            </div>
+                	<!-- end icon -->                                
+                	<!-- help text -->
+                        	<div id="scsLeadTraining_help" class="slds-hide">
+                            	<div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            		<div class="slds-popover__body">
+                                    	<p>Predictive Leads slide-deck used during the training sessions.</p>
+                            		</div>
+                            	</div>
+                        	</div> 
+					<!-- end help text -->                                
+                        	</li>
+		<!-- Vertical Marekt Product Mix Report Link -->                    	
+                        	<li class="slds-list__item" id="liLeadTools">                           
+                    			<apex:commandLink action="https://steelcase.sharepoint.com/:b:/r/sites/predictiveleads/Shared%20Documents/Data%20Files/Vertical%20Market%20Product%20Mixes.pdf?csf=1&e=bXrZPD" value="Vertical Market Industry Product Mix Reports" />
+                             	&nbsp; &nbsp;
+               		<!-- icon -->
+                            <div class="slds-form-element__icon">
+                                <a id="scsVM" class="scsInfoIcon">
+                                <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                                    <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                                </svg>
+                                <span class="slds-assistive-text">Vertical Market Product Mix Help</span>
+                                </a>
+                            </div>
+                	<!-- end icon -->                                
+                	<!-- help text -->
+                        	<div id="scsVM_help" class="slds-hide">
+                            	<div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            		<div class="slds-popover__body">
+                                    	<p>Product Mix timeline by Vertical Market. Use this report to benchmark the Customer to its Industry.</p>
+                            		</div>
+                            	</div>
+                        	</div> 
+					<!-- end help text -->                                
+                        	</li>
+		<!-- Predictive Lead Internal SharePoint Site Link -->                            
+                        	<li class="slds-list__item" id="liLeadTools">                           
+                    			<apex:commandLink action="https://steelcase.sharepoint.com/sites/predictiveleads/" value="Predictive Leads Internal Site" />
+                             	&nbsp; &nbsp;
+               		<!-- icon -->
+                            <div class="slds-form-element__icon">
+                                <a id="scsPLsharepoint" class="scsInfoIcon">
+                                <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                                    <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                                </svg>
+                                <span class="slds-assistive-text">Predictive Leads Internal Site Help</span>
+                                </a>
+                            </div>
+                	<!-- end icon -->                                
+                	<!-- help text -->
+                        	<div id="scsPLsharepoint_help" class="slds-hide">
+                            	<div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            		<div class="slds-popover__body">
+                                    	<p>Site created to host information and documents to help you effectively pursue your leads.</p>
+                            		</div>
+                            	</div>
+                        	</div> 
+					<!-- end help text -->                                
+                        	</li>                            
+		<!-- Predictive Lead Marketing Materials Link -->                            
+                        	<li class="slds-list__item" id="liLeadTools">                           
+                    			<apex:commandLink action="https://steelcase.sharepoint.com/sites/predictiveleads/Shared%20Documents/Steelcase-New-Day-Lookbook.pdf" value="Marketing Materials" />
+                             	&nbsp; &nbsp;
+               		<!-- icon -->
+                            <div class="slds-form-element__icon">
+                                <a id="scsMktMaterials" class="scsInfoIcon">
+                                <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                                    <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                                </svg>
+                                <span class="slds-assistive-text">Marketing Materials Help</span>
+                                </a>
+                            </div>
+                	<!-- end icon -->                                
+                	<!-- help text -->
+                        	<div id="scsMktMaterials_help" class="slds-hide">
+                            	<div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            		<div class="slds-popover__body">
+                                    	<p>Flyer created by the Brand Communications team to help you engage the customer.</p>
+                            		</div>
+                            	</div>
+                        	</div> 
+					<!-- end help text -->                                
+                        	</li>
+                        </ul> 
+						</apex:form>
+					</apex:pageBlockSection>                    
+				</apex:pageBlock>                             
+                            </div>	<!-- end slds-col -->                                
+						</div>  <!-- end slds-grid -->                            
+					</div>  <!-- end slds-box -->
+                </div>  <!-- end primary content wrapper -->         
+            </div>  <!-- end myapp -->
+        </div>  <!-- end steelcase -->                
+</body>
+
+<script>
+
+// on click for information icons
+    $( ".scsInfoIcon" ).click(function(e) {
+        elemId = $( this ).attr( "id" );
+        e.preventDefault();
+        e.stopPropagation();
+
+        elemId = elemId + "_help";
+          $("#" + elemId).slideToggle( "fast" );
+
+        console.log('elemid: ' + elemId);
+    });
+    
+// on click for links
+    $( ".dynamicLink" ).click(function(e) {
+		elemId = $( this ).attr( "id" );
+        e.preventDefault();
+        e.stopPropagation();
+        
+		var siteid = "{!Lead.SiteID__c}", link;    
+		siteid = parseInt(siteid);
+
+        if (elemId == 'scsSalesSummary')	{
+            // link to Sales History Summary reports
+            link = "http://grrapiap153/succeed/predictive_leads/" + siteid + "_leads.pdf";
+        }	else if (elemId ==	'scsSalesDetail')	{
+            // link to Sales History Detail reports
+            	link = "http://grrapiap153/succeed/predictive_leads/" + siteid + "_leads_detail.pdf";
+            }
+			else {
+    	} 
+	
+    	window.open(link);        
+        console.log('elemid: ' + elemId);
+    });
+    
+window.onload = function() {
+    if (window.jQuery) {  
+        // jQuery is loaded 
+        console.log('jquery is loaded');
+    } else {
+        // jQuery is not loaded
+        console.log("jquery not loaded");
+    }
+}
+
+</script>
+    
+</html>
+</apex:page>

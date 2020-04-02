@@ -1,0 +1,4 @@
+<apex:page id="B2C_MyAccountBIE" controller="B2B_MyAccountController_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+    <c:B2C_MyAddressBook />
+    <c:B2C_MyWallet />
+</apex:page>

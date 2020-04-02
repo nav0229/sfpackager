@@ -1,0 +1,2 @@
+<apex:page id="B2B_LandingPage_STEX" controller="B2B_LandingPageController_STEX" action="{!forwardToStartPage}" title="STEX Landing">
+</apex:page>

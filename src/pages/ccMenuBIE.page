@@ -1,0 +1,12 @@
+<apex:page docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false"  id="ccMenuBIE">
+    <script>
+        if(CCRZ.pagevars.isGuest){
+            CCRZ.uiProperties.Menu.desktop.tmpl = 'submenu-desktop-template';
+            CCRZ.uiProperties.productSearchView.desktop.tmpl = 'submenu-desktop-template';
+            CCRZ.uiProperties.cartHeaderView.desktop.tmpl = 'submenu-desktop-template';
+        }
+    </script>
+    
+    <script id="submenu-desktop-template" type="text/template">       
+    </script>
+</apex:page>

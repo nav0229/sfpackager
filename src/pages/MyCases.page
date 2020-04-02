@@ -1,0 +1,189 @@
+<apex:page standardController="Case" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">    
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">    
+
+<head>
+    <title></title>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS_Steelcase_20103, 'assets/styles/salesforce-lightning-design-system-ltng.css')}" />
+</head>
+<apex:remoteObjects >
+    <apex:remoteObjectModel name="Case" fields="Id,Subject,Status,Type,Requested_Service__c,Requested_Completion_Date__c,Service_Requested_By__c,Account_Name_Text__c,Opportunity_Name__c,OwnerId" />
+    <apex:remoteObjectModel name="User" fields="Id,Alias,FirstName,LastName" />
+</apex:remoteObjects>
+<body>    
+
+    <!-- REQUIRED SLDS WRAPPER -->
+    <div class="steelcase">    
+
+        <!-- MASTHEAD 
+        <h1 class="slds-text-heading--label slds-m-bottom--small"></h1>  -->
+        <!-- / MASTHEAD -->    
+
+        <!-- PRIMARY CONTENT WRAPPER -->
+        <div class="slds-grid">    
+            <p class="slds-hide" id="userId">{!$User.Id}</p>
+            <div id="content">
+                You do not currently own any Cases
+            </div>
+        </div>
+        <!-- / PRIMARY CONTENT WRAPPER -->    
+
+    </div>
+    <!-- / REQUIRED SLDS WRAPPER -->    
+
+</body>
+
+<script>
+
+    // puts the date in the correct format
+    function fixTime(time) {
+       if(time < 10) {time = "0" + time};
+       return time;
+    }
+
+    function fixDate(date) {
+        var Month = fixTime(date.getMonth() + 1),
+            Day = fixTime(date.getDate());
+        return date.getYear()+1900 + "-" + Month + "-" + Day;  
+    }
+
+    // updates user ids to user names
+    function addAlias(userId) {
+        var users = new SObjectModel.User(),
+            where = {Id:{eq:userId}},
+            aliasElms, i, j;
+
+            console.log('userids: ' + userId);
+
+            users.retrieve(
+                {where},
+                function(error,records) {
+                    if (error) {
+                        console.log('addAlias: ' + error.message);
+                    } else {
+                        if (records.length > 0) {
+                            records.forEach(function(record) {
+                                console.log('alias: ' + record.get("Alias"));
+                                aliasElms = document.getElementsByClassName(record.get("Id"));
+
+                                for (i = 0, j = aliasElms.length; i < j; i = i + 1) {
+                                    aliasElms[i].innerHTML = record.get("FirstName") + " " + record.get("LastName");
+                                }
+                            });
+                        }
+                    }
+                }
+            );
+    }
+
+    function navigateToCase(id) {
+        //var id = document.getElementById(this.id);
+        //url = https://steelcase--201605a16.lightning.force.com/one/one.app#/sObject/' + record.get("Id")+'/view?t=1465172185930";
+        if(!sforce.one) {
+            //sforce.one.navigateToSObject(id);
+            console.log('navigateToCase in classic?');
+        }
+        else {
+            
+            console.log(id);
+            sforce.one.navigateToSObject(id);
+        }
+    }
+
+    function createList() {
+
+        var cases = new SObjectModel.Case(),
+            outputDiv = document.getElementById("content"),
+            userId = document.getElementById("userId").innerHTML,
+            status = ['Closed','Cancelled'],
+            where = { OwnerId:{eq: userId}, Status: {nin: status} },
+            html = '', date, userIdArray, usersWhere, users, userList, alias, caseId;
+
+        cases.retrieve(
+            {
+                where, 
+                orderby: [{Requested_Completion_Date__c: 'ASC'}], 
+                limit: 100
+            },
+            function(error,records) {
+                if (error) {
+                    console.log('createList: ' + error.message);
+                } else {
+
+                    if (records.length > 0) {
+                        console.log('records: ' + records);
+                    }
+                    
+                    // loop through cases
+                    if (records.length > 0) {
+                        html += '<table class="slds-table slds-table--bordered slds-table--cell-buffer">';
+                        html += '<thead>';
+                        html += '<tr class="slds-text-heading--label">';
+                        html += '<th scope="col" title="Subject">';
+                        html += '<div class="slds-truncate">Subject</div>';
+                        html += '<th scope="col" title="Requested Service">';
+                        html += '<div class="slds-truncate">Requested Service</div>';
+                        html += '</th><th scope="col" title="Requested By">';
+                        html += '<div class="slds-truncate">Requested By</div></th>';
+                        html += '<th scope="col" title="Requested by date">';
+                        html += '<div class="slds-truncate">Requested by date</div></th>';
+                        html += '<th scope="col" title="Account Name">';
+                        html += '<div class="slds-truncate">Account Name</div></th>';
+                        html += '<th scope="col" title="Opportunity Name">';
+                        html += '<div class="slds-truncate">Opportunity Name</div></th>';
+                        html += '</thead><tbody>';
+
+                        records.forEach(function(record) {
+
+                            caseId = "'" + record.get("Id") + "'";
+
+                            if ( record.get("Requested_Completion_Date__c") != undefined) {
+                                date = fixDate(new Date(record.get("Requested_Completion_Date__c")));
+                            } else {
+                                date = '';
+                            }
+
+                            html += '<tr><th scope="row" data-label="Subject" title="'+ record.get("Subject") +'">';
+                            html += '<div ><a href="#" onclick="navigateToCase(' +  caseId + ');">'+ record.get("Subject") +'</a></div></th>';
+                            html += '<td data-label="Type" title="'+ record.get("Requested_Service__c") +'">';
+                            html += '<div class="slds-truncate">'+ record.get("Requested_Service__c") +'</div></td>';
+                            //html += '<div ><a href="https://steelcase--201605a16.lightning.force.com/one/one.app#/sObject/' + record.get("Id")+'/view?t=1465172185930">'+ record.get("Subject") +'</a></div></th>';
+                            html += '<td data-label="Requested By" title="'+ record.get("Service_Requested_By__c") +'">';
+                            //html += '<div class="slds-truncate '+ record.get("Service_Requested_By__c") +'">'+ record.get("Service_Requested_By__c") +'</div></td>';
+                            html += '<div class="slds-truncate '+ record.get("Service_Requested_By__c") +'"></div></td>';
+                            html += '<td data-label="Requested by date" title="'+ date +'">';
+                            html += '<div class="slds-truncate">'+ date +'</div></td>';
+                            html += '<td data-label="Account Name" title="'+ record.get("Account_Name_Text__c") +'">';
+                            html += '<div class="slds-truncate">'+ record.get("Account_Name_Text__c") +'</div></td>';
+                            html += '<td data-label="Opportunity Name" title="'+ record.get("Opportunity_Name__c") +'">';
+                            html += '<div class="slds-truncate">'+ record.get("Opportunity_Name__c") +'</div></td>';
+                            //html += '<td data-label="Type" title="'+ record.get("AccountId") +'">';
+                            //html += '<div class="slds-truncate">'+ record.get("AccountId") +'</div></td>';
+                            html += '</tr>';
+
+                            if (record.get("Service_Requested_By__c") != undefined) {
+                                addAlias(record.get("Service_Requested_By__c"));
+                            }
+                        });
+                    }
+                    // end loop through cases
+                }
+                html += '</tbody></table>';
+                outputDiv.innerHTML = html;
+            }
+            // end retrieve cases
+        );
+    }
+
+    function init() {
+        var users = new SObjectModel.User(),
+            userList = {}, alias;
+
+        createList();
+    }
+
+    init();
+
+</script>
+</html>
+</apex:page>

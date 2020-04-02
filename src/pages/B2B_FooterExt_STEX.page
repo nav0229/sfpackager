@@ -1,0 +1,19 @@
+<apex:page id="B2B_FooterExt_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+	<script id="foot_desktop" type="text/template">
+		<div class="row text-center cc_text-center">
+			<div class="col-xs-3 cc_footer_col_left">
+        </div>
+				<div class="col-xs-6 cc_footer_col_center">
+					<ul class="list-inline cc_list_inline">
+    					{{#each this}}
+    
+						<li class="small cc_small">
+							<a href="{{this.href}}" class="navbar-link cc_footer_link" target="{{this.target}}">{{pageLabelMap this.label}}</a>&nbsp;
+						</li>
+   						{{/each}}
+					</ul>
+				</div>
+				<div class="col-xs-3 cc_footer_col_right"></div>
+				</div>				
+			</script>
+		</apex:page>

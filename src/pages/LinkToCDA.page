@@ -1,0 +1,43 @@
+<apex:page standardController="Opportunity" showHeader="false" sidebar="false">
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">  
+<head>
+	<!-- changed from API 34 to API 42. Also edited the PCM URLs to support their application changes - 2018-05-22 tb -->
+	
+	<apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+</head>
+<body>
+	<div class="slds"> 
+        <div class="slds-spinner_container slds-show" id="scsSpinner">
+            <div class="slds-spinner--brand slds-spinner slds-spinner--large" aria-hidden="false" role="alert">
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+	</div>
+</body>
+<script>
+
+var optyId = "{!Opportunity.Id}",
+	accountSiteId = "{!Opportunity.Account.Site_ID__c}",
+	host = window.location.hostname,
+	param1 = '/one/one.app#/sObject/',
+	param2 = '/view?t=1469644989042',
+	returnURL = host + param1 + optyId + param2,
+	paramSiteId = 'siteid=' + accountSiteId,
+	paramOptyId = 'OpportunityId=' + optyId,
+	testingURL = 'https://pcmqa.steelcase.com/CRM/SalesforceCDAList?',
+	productionURL = 'https://pcm.steelcase.com/CRM/SalesforceCDAList?';
+
+if ( (typeof sforce != 'undefined') && (sforce != null) ) {
+    sforce.one.navigateToSObject(optyId);
+} else {
+    // desktop
+    window.location.href = returnURL;
+}
+
+//window.open(testingURL + paramSiteId + '&type=C&' + paramOptyId,"_blank");
+window.open(productionURL + paramSiteId + '&type=C&' + paramOptyId,"_blank");
+
+</script>
+</html>
+</apex:page>

@@ -1,0 +1,839 @@
+<apex:page standardController="opportunity" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0"> 
+    
+    <!--   enable support for the SVG icon sprite maps within Visualforce  -->
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+    <head>
+        <title>Sales Regions</title>
+        <apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}"/>
+        <apex:includeScript value="{!$Resource.jquery0101203}"/>
+
+
+    </head>
+
+    <apex:remoteObjects >
+        <apex:remoteObjectModel name="Account" fields="Id,Name,RecordTypeId"/>
+        <apex:remoteObjectModel name="RecordType" fields="Id,Name,SobjectType"/>
+        <apex:remoteObjectModel name="Opportunity" fields="Id,Name"/>
+        <apex:remoteObjectModel name="OpportunityPartner__c" fields="Id,Opportunity__c,Partner__c,Role__c"/>
+        <!--  <apex:remoteObjectModel name="Partner" fields="OpportunityId,AccountToId,Role,IsPrimary"/> -->
+    </apex:remoteObjects>
+
+    <!-- notes  
+        this app does not write records to the standard Partner object because it requires user permissions
+        of Modify All Data (which brings the system configuration ability to the user which is not an option).
+        so a batchabale apex job needs to perform this function.
+        - 4.14.16 tb
+    -->
+        
+    <body id="myAppBody">
+        <apex:form >
+            <apex:pageBlock >
+            <apex:pageBlockSection columns="1">
+            </apex:pageBlockSection>
+                </apex:pageBlock>  
+        </apex:form>
+        <!-- required slds wrapper -->
+        <div class="slds">
+
+            <!-- primary content wrapper -->
+            <div class="myapp">
+                <!--<apex:form ><apex:inputHidden id="scsUserId" value="{!User.Id}"/></apex:form> -->
+
+                <div class="slds-text-heading--large" id="displayOppInfo"></div>
+
+                
+                <!-- existing partners  table -->
+                <div id="currentPtnrList" class="slds-p-vertical--medium"></div>
+
+
+                <!-- search box -->
+                <h3 class="slds-section-title--divider slds-m-top-medium"><span class="slds-text-heading--small">Add a new partner</span></h3>
+                <div class="slds-grid">
+                    <div id="scsPtnrRoleDiv" class="slds-form-element slds-col slds-size--1-of-4 slds-m-left--large slds-m-bottom--medium slds-m-top--medium slds-m-right--medium">
+                        <label class="slds-form-element__label slds-text-body--regular" for="lookup">OPPORTUNITY ROLE</label>
+                        <div class="slds-form-element__control">
+                            <div class="slds-select_container">
+                                <select id="newPartnerRole" class="slds-select">
+                                    <option>Dealer</option>
+                                    <option>Design Firm</option>
+                                    <option>Project Management Firm</option>
+                                    <option>Real Estate Management Firm</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="scsSearchBox" class="slds-col slds-form-element slds-size--2-of-4 slds-m-left--large slds-m-bottom--medium slds-m-top--medium">
+                        <label class="slds-form-element__label slds-text-body--regular" for="lookup">PARTNER NAME</label>
+                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right">
+                            <svg aria-hidden="true" class="slds-input__icon">
+                                <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#search')}"></use>
+                            </svg>
+                            <input id="scsPartnerSearch" class="slds-input" type="text" placeholder="type to search available partners" onKeyUp="searchBox()" />
+                        </div>
+                    </div>
+                    <!-- <div class="slds-m-top--large slds-text-body--regular">As a:</div> -->
+
+
+                  </div>
+
+                <!-- searched partners table -->
+                <div id="partnerList" class="slds-p-vertical--medium slds-m-bottom--large"></div>
+
+                <!-- need to fix this  4.4.16 tb -->
+                <button style="margin:0;" class="slds-button slds-button--brand slds-m-top--medium" type="button" onClick="backNav()">Back</button>
+
+            </div> <!-- / primary content wrapper -->
+            <apex:pageBlock >
+            
+            
+
+            </apex:pageBlock>
+        </div> <!-- / required slds wrapper -->
+    </body>
+        
+    <!-- javascript -->
+    <script>
+
+        //  **  Search results
+
+        // passes the user's search characters to getRecordTypes
+        function searchBox() {
+            
+            // get value user is typing
+            var searchVal = document.getElementById('scsPartnerSearch').value;
+            
+            // update the table with the new values that meet the above criteria
+            // get Account Record Types first because the account type field is just the row id
+            getRecordTypes(searchVal);
+        }
+
+        // required in order to show account type names (rather than IDs)
+        // passes user's search and record type names to updateOutputDiv
+        function getRecordTypes(searchVal) {
+            // retrieves the record type names
+            var actRecordType = new SObjectModel.RecordType(),
+            where = {SobjectType: {eq: 'Account'}},
+            recordTypes = [];
+
+            actRecordType.retrieve(
+                { where },
+                function(error, records) {
+                    if (error) {
+                        console.log(error.message);
+                    } else {
+                        records.forEach(function(record) {
+                            recordTypes.push(record.get("Id"));
+                            recordTypes.push(record.get("Name"));
+                        });
+                    }
+                    // pass these account record types to the function that will display the results
+                    updateOutputDiv(searchVal, recordTypes);
+                }
+            );
+        }
+
+        // updates screen with the list of searched-for partners
+        function updateOutputDiv(partnerName, accountTypes) {
+
+            var partner = new SObjectModel.Account(),
+                partnerNameParm = '%' + partnerName + '%',
+                where1 = { Name: {like:partnerNameParm}},
+                where2 = { Name: {like:'%'}},
+                where = partnerName !=null ? where1 : where2,
+                outputDiv = document.getElementById("partnerList"),
+                html = null,
+                recordTypeName = function(typeId) {
+                    var recordName, i, j;
+
+                    for (i = 0, j = accountTypes.length; i < j; i = i + 1) {
+                        if (typeId === accountTypes[i]) {
+                            recordName = accountTypes[i + 1];
+                        }
+                    }                       
+
+                    return recordName;
+                },
+                actRecordTypes, recordTypeId, typeName;
+            
+            outputDiv.className = "slds-show";
+
+            if (partnerName === undefined || partnerName.length < 1) {
+                console.log('undefined for sure');
+                outputDiv.innerHTML = html;
+                return;
+            } else {
+
+            }
+
+
+            // retrieves the accounts with a parter role from the account object
+            // populates the 'partnerList' div with the new html table
+
+            var num = 0;
+            for (id in actRecordTypes) {
+                //console.log(num ++);
+                if (actRecordTypes.hasOwnProperty(id)) {
+                    //console.log('id: ' + actRecordTypes.Id);
+                }
+            }
+
+            partner.retrieve(
+                {where,
+                orderby: [{Name: 'ASC'}], limit: 100},
+                function(error, records) {
+                    if (error) {
+                        console.log(error.message);
+                    } else {
+                        html = '<div class="slds-scrollable--x"><table class="slds-table slds-table--bordered">';
+                        html += '<thead><tr class="slds-text-heading--label"><th scope="col"></th>';
+                        html += '<th scope="col">ACCOUNT NAME</th>';
+                        html += '<th scope="col">ACCOUNT ROLE</th></tr></thead><tbody>';
+                        
+                        records.forEach(function(record) {
+                            recordTypeId = record.get("RecordTypeId");
+                            typeName = recordTypeName(recordTypeId);
+
+                            if (typeName === 'Inactive') {
+                                // do not show inactive accounts
+                            } else {
+                                html += '<tr><td><button style="margin:0;" class="slds-button slds-button--brand slds-m-top--medium" type="button" onClick="addOppPartner(\''+ record.get("Id") + ","+ record.get("Name") + ","+ typeName +'\')">Select</button></td>';
+                                html += '<td id=\'account_'+ record.get("Id") +'\'>' + record.get("Name") + '</td>';
+                                html += '<td id=\'type_'+ record.get("Id") +'\'>' + typeName + '</td></tr>';
+                            }
+                        });
+
+                        html = html + '</tbody></table></div>';
+                        outputDiv.innerHTML = html;
+                    }
+                }
+            );
+        }
+
+        //  **  add primary dealer to opportunity
+
+        function addPrimaryToOpty(oppId, role, ptnrId) {
+
+            var opp;
+
+            if (role === "Primary Dealer") {
+                opp = new SObjectModel.Opportunity({
+                    Id: oppId,
+                    Primary_Dealer__c: ptnrId
+                });
+            } else if (role === "Primary Design Firm") {
+                opp = new SObjectModel.Opportunity({
+                    Id: oppId,
+                    Primary_Design_Firm__c: ptnrId
+                });
+            }
+
+            opp.update(function(err) {
+                if (err) { 
+                    console.log('addPrimaryToOpty: error updating opty with primary info: ' + err);
+                    console.log('addPrimaryToOpty: error updating opty message: ' + err.message);
+                } else {
+                    // nothing to do if no error;
+                    console.log('addPrimaryToOpty: success adding ' + ptnrId + ' to ' + oppId);
+                }
+            });
+        }
+
+        //  **  add new opp partner record
+
+        // populates LastModified__c date/time in format "2009-007-02" 
+        function fixTime(time) {
+           if(time < 10) {time = "0" + time};
+           return time;
+        }
+        function fixDate(date) {
+          var Month = fixTime(date.getMonth() + 1);
+          var Day = fixTime(date.getDate());
+          var UTC = date.toUTCString();
+          var Time = UTC.substring(UTC.indexOf(':')-2, UTC.indexOf(':')+6);
+          var Minutes = fixTime(date.getMinutes());
+          var Seconds = fixTime(date.getSeconds());
+          return date.getYear()+1900 + "-" + Month + "-" + Day + "T" + Time;  
+        }
+
+        // creates new OpportunityPartner__c record.  
+        // callback is addOppPtnrCallback
+        function addOppPartner(partner) {
+
+            var optyId = "{!Opportunity.Id}",
+                partnerInfo = partner.split(","),
+                ptnrId = partnerInfo[0],
+                name = partnerInfo[1],
+                roleElm = document.getElementById("newPartnerRole"),
+                ptnrRole = roleElm.options[roleElm.selectedIndex].value,
+                searchBox = document.getElementById("scsPartnerSearch"),
+                oppModTime = fixDate(new Date());
+                oppPtnr = new SObjectModel.OpportunityPartner__c(),
+                oppPtnrDetails = { Partner__c: ptnrId, 
+                                    Role__c: ptnrRole, 
+                                    LastModified__c: oppModTime,
+                                    Opportunity__c: optyId
+                                },
+                //partner = new SObjectModel.Partner(),
+                outputhtml = null;
+
+            try {
+                //searchBox = document.getElementById("scsPartnerSearch"),
+                searchBox.value = '';
+            } catch(e) {
+                console.log('addOppPartner:' + e);
+            }
+
+            // create opportunityPartner__c record
+            // if successful, update opporunity with primary dealer or design firm
+            oppPtnr.create(oppPtnrDetails, function(err) {
+                if (err) { 
+                    console.log('addOppPartner: ' + err);
+                    console.log('addOppPartner: ' + err.message);
+                } else {
+                    if (ptnrRole === 'Primary Dealer' || ptnrRole === 'Primary Design Firm') {
+
+                        // create opportunityPartner__c record
+                        addPrimaryToOpty(optyId, ptnrRole, ptnrId);
+
+                        // create Partner record
+                        /* pulled out this code because api access to 'Partner' requires Modify All Data access
+                        partner.create(
+                                { 
+                                    OpportunityId: optyId,
+                                    AccountToId: ptnrId,
+                                    Role: ptnrRole
+                                },
+                                function(err, records) {
+                                    if (err) {
+                                        console.log('error creating Partner record:' + err);
+                                    } else {
+                                        console.log('success creating Partner record');
+                                    }
+                                }
+                            );
+                        */
+
+                        // show the updated partner list
+                        showOppPartners();
+                    } else {
+
+                        // create Partner record
+                        /* pulled out this code because api access to 'Partner' requires Modify All Data access
+                        partner.create(
+                                { 
+                                    OpportunityId: optyId,
+                                    AccountToId: ptnrId,
+                                    Role: ptnrRole
+                                },
+                                function(err, records) {
+                                    if (err) {
+                                        console.log('error creating Partner record:' + err);
+                                    } else {
+                                        console.log('success creating Partner record');
+                                    }
+                                }
+                            );
+                        */
+
+                        // no primary to update so just show the updated partner list
+                        showOppPartners();
+                    }
+                }
+            });
+        }
+
+        // callback to handle DML Remote Objects calls for addOppPartner
+        // calls addPrimaryDealerToOpp to add opportunity's primary dealer
+        // calls showOppPartners to display updated opty partner list
+        function addOppPtnrCallback(err, ids) {
+
+            var outputDiv = document.getElementById("partnerList"), 
+                searchBox = document.getElementById("scsSearchBox"), messageIcon, html;
+            
+            searchBox.className = "slds-hide";
+            
+            if (err) { 
+                messageIcon = '<div class="slds-notify-container">';
+                messageIcon += '<div class="slds-notify slds-notify--toast slds-theme--error" role="alert">';
+                messageIcon += '<span class="slds-assistive-text">Error</span>';
+                messageIcon += '<div class="notify__content slds-grid">';
+                messageIcon += '<svg aria-hidden="true" class="slds-icon slds-icon--small slds-m-right--small slds-col" >';
+                messageIcon += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#warning')}"></use></svg>';
+                messageIcon += '<div class="slds-col slds-align-middle">';
+                messageIcon += '<h2 class="slds-text-heading--small">';
+                messageIcon += '<span>' + err + '</span></h2></div></div>';
+
+                searchBox.innerHTML = messageIcon;
+            } else {
+
+                addPrimaryDealerToOpp();
+
+                showOppPartners();
+            }
+        }
+        
+        //  **  display existing opp partners
+
+        // necessary to show Partner Name (rather than parter ID)
+        // updates partner id to the name. used in  showOppPartners
+        function retrieveAccountName(actId, ElemOppPtnr_Id) {
+
+            // retrieves the account (partner) name from Account
+            // necessary because the OpportunityPartner__c object does not store the account Name
+
+            var account = new SObjectModel.Account(),
+                actPtnrName,
+                actName = account.retrieve(
+                    {where: {Id: {eq: actId}}},
+                    function(error, records) {
+                        if (error) {
+                            console.log('retrieveAccountName: ' + error.message);
+                        } else {
+                            actPtnrName = records[0].get("Name");
+                            document.getElementById(ElemOppPtnr_Id).innerHTML = actPtnrName;
+                        }
+                    }
+                );
+        }
+
+        // main function displaying current OpportunityPartner__c records
+        // called from init, addOppPartner, removePartner
+        function showOppPartners() {
+            // retrieves the existing OpportunityPartner__c records for this opportunity
+
+            var oppPtnrs = new SObjectModel.OpportunityPartner__c(),
+                oppId = "{!Opportunity.Id}",
+                where = {Opportunity__c: {eq: oppId}},
+                orderBy = [{Role__c: 'ASC'}, {Partner__c: 'DESC'}],
+                ptnrListDiv = document.getElementById("partnerList"),
+                oppPtnrDiv = document.getElementById("currentPtnrList"),
+                hasPrmy = 0,
+                messageIcon, html, oppPtnr_Id, oppPtnr_OppId, oppPtnr_PtnrId, oppPtnr_Role;
+
+                ptnrListDiv.className = "slds-hide";
+                oppPtnrDiv.innerHTML = '';
+
+            oppPtnrs.retrieve(
+                { where, orderby: orderBy },
+                function(error, records) {
+                    if (error) {
+                        console.log('showOppPartners: ' + error.message);
+                    } else {
+                        if (records.length > 0) {
+
+                            // if OpportunityPartner__c records exist for this opportunity
+
+                            html = '<h3 class="slds-section-title--divider"><span class="slds-text-heading--small">Current partners for this opportunity</span></h3>';
+                            html += '<div class="slds-scrollable--x"><table class="slds-table slds-table--bordered">';
+                            html += '<thead><tr class="slds-text-heading--label">';
+                            html += '<th scope="col" class="slds-text-body--regular">PARTNER</th>';
+                            html += '<th scope="col" class="slds-text-body--regular">ROLE</th>';
+                            html += '<th scope="col"></th><th scope="col"></th>';
+                            html += '</tr></thead><tbody>';
+
+                            records.forEach(function(record) {
+                                oppPtnr_Id = record.get("Id");
+                                oppPtnr_OppId = record.get("Opportunity__c");
+                                oppPtnr_PtnrId = record.get("Partner__c");
+                                //oppPtnr_Ptnr = retrieveAccountName(record.get("Partner__c"));
+                                //console.log('test: '+ retrieveAccountName(record.get("Partner__c")));
+                                oppPtnr_Role = record.get("Role__c");
+
+                                // set hasPrmy; which then determines the partner role picklist
+                                if (oppPtnr_Role === "Primary Dealer") {
+                                    hasPrmy += 1;
+                                } else if (oppPtnr_Role === "Primary Design Firm") {
+                                    hasPrmy += 1;
+                                }
+
+                                if (oppPtnr_Role.substring(0,7) === "Primary") {
+                                    html += '<tr>';
+                                    html += '<td id=\'account_'+ oppPtnr_Id +'\' class=\'slds-m-top--medium\'></td>';
+                                    html += '<td id=\'type_'+ oppPtnr_Id +'\'>' + oppPtnr_Role + '</td>';
+                                    html += '<td><span class="slds-badge slds-theme--info">Primary</span></td>';
+                                    html += '<td></td>';
+                                    html += '</tr>';
+
+                                } else {
+                                    html += '<tr>';
+                                    html += '<td id=\'account_'+ oppPtnr_Id +'\'></td>';
+                                    html += '<td id=\'type_'+ oppPtnr_Id +'\'>' + oppPtnr_Role + '</td>';
+                                    // begin menu
+                                        html += '<td>';
+                                        html += '<div id=\'btn_'+ oppPtnr_Id +'\' class=\'slds-dropdown-trigger slds-dropdown-trigger--click slds-is-closed\' aria-expanded=\'true\' onClick=\"menuOpenClose(\'btn_'+ oppPtnr_Id +'\');\">';
+                                        html += '<button class=\'slds-button slds-button--icon-border-filled\' aria-haspopup=\'true\'>';
+                                        html += '<svg aria-hidden=\'true\' class=\'slds-button__icon slds-button__icon--hint\'>';
+                                        html += '<use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#down')}"></use></svg>';
+                                        html += '</svg>';
+
+                                        html += '<span class=\'slds-assistive-text\'>Show More</span>';
+                                        html += '</button>';
+                                        html += '<div style=\'z-index: 4; position:relative;\' class=\'slds-dropdown slds-dropdown--left\'>';
+                                        html += '<ul class=\'dropdown__list\' role=\'menu\'>';
+                                        html += '<li class=\'slds-dropdown__item\' onClick=\"removePartner(\'menu_'+ oppPtnr_Id +'\');\">';
+                                            html += '<a href=\'#void\' role=\'menuitem\'>';
+                                                html += '<p class=\'slds-truncate\'>Remove this partner</p>';
+                                            html += '</a>';
+                                        html += '</li>';
+                                        html += '<li class=\'slds-dropdown__item\' onClick=\"makePrimary(\'menu_'+ oppPtnr_Id + 'id_' + oppPtnr_PtnrId +'\',\'Dealer\');\">';
+                                            html += '<a href=\'#void\' role=\'menuitem\'>';
+                                                html += '<p class=\'slds-truncate\'>Set as primary Dealer</p>';
+                                            html += '</a>';
+                                        html += '</li>';
+                                        html += '<li class=\'slds-dropdown__item\'onClick=\"makePrimary(\'menu_'+ oppPtnr_Id + 'id_' + oppPtnr_PtnrId +'\',\'DesignFirm\');\">';
+                                            html += '<a href=\'#void\' role=\'menuitem\'>';
+                                                html += '<p class=\'slds-truncate\'>Set as primary Design Firm</p>';
+                                            html += '</a>';
+                                        html += '</li>';
+                                        html += '</ul>';
+                                        html += '</div>'
+                                        html += '</div>';
+                                        html += '</td>';
+                                    // end menu
+
+                                    html += '<td></td>';
+                                    html += '</tr>';
+
+                                }
+
+                                retrieveAccountName(record.get("Partner__c"), 'account_'+ oppPtnr_Id);
+                            });
+
+                        html = html + '</tbody></table></div>';
+                        oppPtnrDiv.innerHTML = html;
+
+                        } else {
+
+                            // if no OpportunityPartner__c records exist for this opportunity
+
+                            html = '<h3 class="slds-section-title--divider"><span class="slds-text-heading--small">Current partners for this opportunity</span></h3>';
+                            html += '<h2 class="slds-text-heading--small slds-m-left--large slds-m-top--small">0 partners selected...</h2>';
+                            oppPtnrDiv.innerHTML = html;
+                        }
+
+                        // set options for role picklist
+                        setRoleOptions(hasPrmy);
+                    }
+                }
+            );
+        }
+
+        //  **  UI events
+
+        // deletes from OpportunityPartner__c
+        // called from the 'remove' button next to each opp ptnr record
+        function removePartner(elemId) {
+
+            var oppPtnrId = elemId.replace("menu_",""),
+                oppPtnrs = new SObjectModel.OpportunityPartner__c(),
+                //partner = new SObjectModel.Partner(),
+                optyId = "{!Opportunity.Id}",
+                ptnrId, ptnrRole, ptnrRecordId;
+                //console.log('removePartner, oppPtnrId: ' + oppPtnrId + ' -- oppId: ' + "{!Opportunity.Id}");
+
+                // delete the opportunityPartner__c record
+                oppPtnrs.del(oppPtnrId, function(err, ids) {
+                    if (err) {
+                        console.log('removePartner: ' + err);
+                    } else {
+                        // show the updated list of opportunity partners
+                        showOppPartners();
+                    }
+                });
+
+            // query OpportunityPartner__c to find the PartnerId
+            /* rewrote this code because api access to 'Partner' requires Modify All Data access
+            oppPtnrs.retrieve({ where: {Id: {eq: oppPtnrId}}}, function(err, records) {
+                    if (err) {
+                        console.log('error retrieving optyPtnr record: ' + err);
+                    } else {
+                        if (records.length > 0) {
+                            records.forEach(function(record) {
+                                ptnrId = record.get("Partner__c");
+                                ptnrRole = record.get("Role__c");
+                                console.log('opty ptnr act id: ' + ptnrId);
+                            });
+                        }
+
+                        // query the Partner object to find the partner record id to delete it
+                        partner.retrieve(
+                            { where: 
+                                {
+                                    AccountToId: { eq: ptnrId },
+                                    OpportunityId: { eq: optyId },
+                                    Role: {eq: ptnrRole}
+                                }
+                            },
+                            function(err, records) {
+                                if (err) {
+                                    console.log('error retrieving partner records: ' + err);
+                                    console.log('ptnrId: ' + ptnrId);
+                                    console.log('optyId: ' + optyId);
+                                } else {
+                                    if (records.length > 0) {
+                                            ptnrRecordId = records[0].get("Id");
+                                            console.log('partner record id: ' + ptnrRecordId);
+                                            // delete the Partner record
+                                            partner.del(ptnrRecordId, function(err, records){
+                                                if (err) {
+                                                    console.log('error delete Partner records: ' + err);
+                                                } else {
+                                                    console.log('success deleting Partner records');
+
+                                                    // delete the opportunityPartner__c record
+                                                    oppPtnrs.del(oppPtnrId, function(err, ids) {
+                                                        if (err) {
+                                                            console.log('error removePartner: ' + err);
+                                                        } else {
+
+                                                            // show the updated list of opportunity partners
+                                                            showOppPartners();
+                                                        }
+                                                    }); // end opportunityPartner__c delete
+                                                }
+
+                                            }); // end Partner record delete
+                                        /*
+                                        records.forEach(function(record) {
+                                            // values in array need to be single quoted.
+                                            ptnrRecordId = record.get("Id");
+                                            console.log('partner record id: ' + ptnrRecordId);
+
+                                            // delete the Partner record
+                                            partner.del(ptnrRecordId, function(err, records){
+                                                if (err) {
+                                                    console.log('error delete Partner records: ' + err);
+                                                } else {
+                                                    console.log('success deleting Partner records');
+
+                                                    // delete the opportunityPartner__c record
+                                                    oppPtnrs.del(oppPtnrId, function(err, ids) {
+                                                        if (err) {
+                                                            console.log('error removePartner: ' + err);
+                                                        } else {
+
+                                                            // show the updated list of opportunity partners
+                                                            showOppPartners();
+                                                        }
+                                                    }); // end opportunityPartner__c delete
+                                                }
+
+                                            }); // end Partner record delete
+                                        });
+
+                                        
+                                    }
+                                }
+                            }
+
+                        );
+                    } // end optyPtnr.retrieve if...then
+                }
+            );
+            */
+        }
+        
+        // modifies selected parter to be the 'primary'
+        // called from the 'make primary' button next to each opp ptnr record
+        // opportunityPartner__c trigger handles updating the existing 'primary' record
+        function makePrimary(elemId, type) {
+
+            var oppPtnrId = elemId.slice(5,23),
+                ptnrId = elemId.slice(26,44),  //  used in addPrimaryToOpty to add the selected partner as the primary on the opty
+                oppId = "{!Opportunity.Id}",
+                currentRole = type === "Dealer" ? "Dealer" : "Design Firm",
+                newRole = type === "Dealer" ? "Primary Dealer" : "Primary Design Firm",
+                optyPtnr = new SObjectModel.OpportunityPartner__c(),
+                //optyPtnrUpdate = new SObjectModel.OpportunityPartner__c(),
+                oppPtnrs = new SObjectModel.OpportunityPartner__c({
+                            Id: oppPtnrId,
+                            Role__c: newRole
+                }),
+                oppPtnrPrimaryId;
+            //console.log('oppPtnrId: ' + oppPtnrId.length + ' -- ptnrId:' + ptnrId.length);
+            //console.log('partner: ' + oppPtnrId + ' -- type: ' + type + ' -- newRole: ' + newRole);
+
+            // retrieve existing 'primary' OpportunityPartner__c record
+            optyPtnr.retrieve(
+                {
+                    where: 
+                        {
+                            Opportunity__c: {eq: oppId},
+                            Role__c: {eq: newRole}
+                        }
+                },
+                function(err, records) {
+                    if (err) {
+                        console.log('makePrimary, error retrieving records: ' + err);
+                    } else {
+                        // change existing 'primary' OpportunityPartner__c record
+                        records.forEach(function(record) {
+                            oppPtnrPrimaryId = record.get("Id");
+                            
+                        });
+
+                        // update the opportunity's primary partner
+                        addPrimaryToOpty(oppId, newRole, ptnrId);
+
+
+                        //console.log('oppPtnrPrimaryId: ' + oppPtnrPrimaryId + ' -- length: ' + oppPtnrPrimaryId.length);
+                        setPrimarytoNormal(oppPtnrPrimaryId, currentRole, oppPtnrs);
+
+
+
+                        // display updated opportunity partner list
+                        //showOppPartners();
+                    }
+                }
+            );
+        }
+
+        function setPrimarytoNormal(optyPtnrRcrdId, currentRole, oppPtnrs) {
+
+            var optyPtnr = new SObjectModel.OpportunityPartner__c({
+                    Id: optyPtnrRcrdId,
+                    Role__c: currentRole
+                });
+
+            //console.log('setPrimarytoNormal, optyPtnrRcrdId: ' + optyPtnrRcrdId);
+
+            optyPtnr.update(function(err,records) {
+                    if (err) {
+                        console.log('setPrimarytoNormal, error retrieving primary to regular: ' + err);
+                    } else {
+                        //console.log('setPrimarytoNormal, sucessfully retrieved from opportunityPartner__c: ' + records.length);
+                        // update the record to be the new primary
+                        oppPtnrs.update(function(err, records) {
+
+                            if (err) {
+                                console.log('error makePrimary: ' + err);
+                            } else {
+                                //console.log('setPrimarytoNormal, success setting to primary')
+                                // update the opportunity's primary partner
+                                //addPrimaryToOpty(oppId, newRole, ptnrId);
+
+                                // display updated opportunity partner list
+                                showOppPartners();
+                            }
+
+                        });
+                    }
+                }
+            );
+        }
+
+        // sets the Partner Role picklist with correct values. controls behavior to add primary dealer first
+        // used in showOppPartners
+        function setRoleOptions(hasPrmy) {
+
+            var newPtnrRoleElm = document.getElementById('newPartnerRole'),
+                html;
+
+            switch (hasPrmy) {
+
+                // only show 'primary dealer' if no partners are selected yet.  
+                // forces a primary dealer selection as the first partner.
+                case 0: 
+                    html = '<option>Primary Dealer</option>';
+                    break;
+                // allow all roles once a primary dealer exists
+                case 1: 
+                    html = '<option>Primary Design Firm</option>';
+                    html += '<option>Dealer Firm</option>';
+                    html += '<option>Design Firm</option>';
+                    html += '<option>Project Managment Firm</option>';
+                    html += '<option>Real Estate Management Firm</option>';
+                    break;
+                case 2:
+                    html = '<option>Dealer</option>';
+                    html += '<option>Design Firm</option>';
+                    html += '<option>Project Managment Firm</option>';
+                    html += '<option>Real Estate Management Firm</option>';
+            }
+
+            newPtnrRoleElm.innerHTML = html;
+        }
+
+        // handles display of record-level 'menu' options
+        // called from the menu button next to each opp ptnr record
+        function menuOpenClose(elemId) {
+
+            var btn = document.getElementById(elemId);
+            if (btn.className === "slds-dropdown-trigger slds-dropdown-trigger--click slds-is-open") {
+                try {
+                    btn.className = "slds-dropdown-trigger slds-dropdown-trigger--click slds-is-closed";
+                } catch(e) {
+                    console.log(e);
+                }
+            } else {
+                try {
+                    btn.className = "slds-dropdown-trigger slds-dropdown-trigger--click slds-is-open";
+                } catch(e) {
+                    console.log(e);
+                }
+            }
+        }
+
+        // navigates the user back to the opportunity
+        // called from the 'back' button
+        function backNav() {
+            var oppId = "{!Opportunity.Id}";
+            //console.log(oppId);
+            if(!sforce.one) {
+                console.log('backNav: no sforce.one object');
+            } else {
+                //sforce.one.back(true);  //doesn't take the user to opp after adding a partner
+                sforce.one.navigateToSObject(oppId);
+            }
+        }
+
+        // uses jquery to close the partner record menu when user clicks off the menu
+        function menuClose() {
+
+            var currentPtnrList = document.getElementById("currentPtnrList"),
+                menuClass = "slds-dropdown-trigger slds-dropdown-trigger--click slds-is-open";
+
+            if (currentPtnrList) {
+                
+                var openMenus = $(".slds-dropdown-trigger.slds-dropdown-trigger--click.slds-is-open");
+
+                if (openMenus.length > 0) {
+
+                    $(openMenus[0]).removeClass("slds-is-open");
+                    $(openMenus[0]).addClass("slds-is-closed");
+                }
+            }
+        }     
+
+        // initialize
+        function init() {
+
+            var oppId = "{!Opportunity.Id}",
+                //oppName = "{!Opportunity.Name}",
+                oppInfo = document.getElementById("displayOppInfo"),
+                menuClass = "slds-dropdown-trigger slds-dropdown-trigger--click slds-is-open";
+            
+            // commented out because double quotes in the opp name throw syntax error - 4.22.16 tb
+            // perhaps should put validation rule on opp name....?
+            //oppInfo.innerHTML = "Add partners for:  " + oppName;
+            oppInfo.innerHTML = "Manage opportunity partners"
+
+            // setup body onClick to close the partner record menu when user clicks off the menu
+            $(document).on('click', function(event) {
+                //console.log("event.target: " + $(event.target).attr("class"));
+                if ($(event.target).attr("class") !== 'slds-dropdown-trigger slds-dropdown-trigger--click eventslds-is-open' && $(event.target).attr("class") !== 'slds-button__icon slds-button__icon--hint' && $(event.target).attr("class") !== 'slds-button slds-button--icon-border-filled' && $(event.target).attr("class") !== 'slds-button__icon slds-button__icon--hint') {
+                    
+                        //console.log('hide the menu');
+
+                        menuClose();
+                }
+            });
+
+            showOppPartners();
+        }
+
+        init();
+    </script>
+    </html>
+</apex:page>

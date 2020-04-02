@@ -1,0 +1,16 @@
+<apex:page id="B2C_CartBIE" controller="B2C_CartController">
+	<c:B2C_CartHeaderView />
+	<c:B2C_CartDetailView />
+	<c:B2C_CartItemDetailView />
+	<c:B2C_CartItemQuantityDetailView />
+	<c:B2C_CartOrderTotal />
+
+	<script src="{!$Resource.B2_CartOrderLogicJS}" ></script>
+	<script src="{!$Resource.B2_CartPostalJS}" ></script>
+	<script src="{!$Resource.B2C_CartOrderLogicJS}" ></script>
+	<script>
+		CCRZ.pubSub.on('view:CartDetailView:refresh', function () {
+			B2_PostalModule.saveShippingOption('', 0);
+        });
+	</script>
+</apex:page>

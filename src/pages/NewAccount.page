@@ -1,0 +1,28 @@
+<apex:page standardController="Account" showHeader="false" sidebar="false">
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">  
+<head>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS100, 'assets/styles/salesforce-lightning-design-system-vf.css')}" />
+</head>
+<body>
+    <div class="slds"> 
+        <div class="slds-spinner_container slds-show" id="scsSpinner">
+            <div class="slds-spinner--brand slds-spinner slds-spinner--large" aria-hidden="false" role="alert">
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+//var productionURL = 'https://ciweb.steelcase.com/Search.aspx';
+
+var productionURL = 'https://ciweb.steelcase.com?crm_system=Salesforce&crm_user={!$User.Alias}&sfdciframeorigin=Production';
+
+//console.log(productionURL);
+
+window.open(productionURL,"_self");
+
+</script>
+</html>
+</apex:page>

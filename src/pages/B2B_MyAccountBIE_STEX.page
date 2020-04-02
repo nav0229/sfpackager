@@ -1,0 +1,428 @@
+<apex:page id="B2B_MyAccountBIE_STEX" controller="B2B_MyAccountController_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" applyHtmlTag="false">
+    <script id="MyAccount-Nav-Desktop" type="text/template">
+        <div class="panel panel-default cc_panel cc_myaccount_nav">
+            <div class="panel-heading cc_heading">
+            <h3 class="panel-title cc_title">{{pageLabelMap 'Component_SiteHeader_MyAccount'}}</h3>
+            </div>
+            <ul class="side_navigation_dropdown list-group cc_myaccount_nav_list" id="side_nav">
+            {{#each this}}
+                {{#ifEquals this.title 'Manage Address Book'}}
+                    <li id="manageAddressLink" class="acctStep{{this.index}} acctStepNav list-group-item cc_acc_step_nav">
+                        <a href="#" class="gotoSection cc_goto_section"data-index="{{this.index}}">{{{pageLabelMap this.title}}}</a>
+                    </li>
+                {{else}}
+                    <li class="acctStep{{this.index}} acctStepNav list-group-item cc_acc_step_nav">
+                        <a href="#" class="gotoSection cc_goto_section" data-index="{{this.index}}">{{{pageLabelMap this.title}}}</a>
+                    </li>
+                {{/ifEquals}}
+            {{/each}}
+            <!-- {{#each this}}
+            <li class="acctStep{{this.index}} acctStepNav list-group-item cc_acc_step_nav">
+            <a href="#" class="gotoSection cc_goto_section" data-index="{{this.index}}">{{{pageLabelMap this.title}}}</a>
+            </li>
+            {{/each}} -->
+            </ul>
+        </div>
+    </script>
+
+
+    <script id="MyAccount-ContactInformation-Desktop" type="text/template">
+        <div class="panel panel-default cc_panel cc_myaccount_profile">
+            <div class="panel-body cc_body cc_myaccount_content">
+            <h3 class="cc_title">{{pageLabelMap 'MyAccount_Profile'}}</h3>
+            {{#ifEquals this.commerceType "B2B"}}
+            <div class="panel panel-default cc_panel cc_myaccount_information">
+            <div class="panel-heading cc_heading">
+                <h3 class="panel-title cc_title">{{pageLabelMap 'MyAccount_Profile_Account_Information'}}</h3>
+            </div>
+            <div class="panel-body cc_body cc_myaccount_general">
+                <p class="myAccProfileNote cc_profile_note">
+                {{pageLabelMap 'MyAccount_Profile_Note'}}
+                </p>
+                {{#ifDisplay 'reg.addlInf'}}
+                <p class="myAccProfileCompany cc_profile_company">
+                <span class="cc_profile_company_label">{{pageLabelMap 'MyAccount_Profile_Company'}}&#58;</span>
+                <span class="cc_profile_company_valuel">{{accountBean.name}}</span>
+                </p>
+                {{/ifDisplay}}
+                <p class="myAccAccountGroup cc_profile_account_group">
+                <span class="cc_profile_account_group_label">{{pageLabelMap 'MyAccount_Profile_Account_Group'}}&#58;</span>
+                <span class="cc_profile_account_group_value">{{accountBean.accountGroupName}}</span>
+                </p>
+                <p class="myAccProfilePhone cc_profile_phone">
+                <span class="cc_profile_phone_label">{{pageLabelMap 'MyAccount_Profile_Phone'}}&#58;</span>
+                <span class="cc_profile_phone_value">{{accountBean.phone}}</span>
+                </p>
+                <div class="row">
+                <div class="col-md-6 myAccBillingAddr cc_billing_address">
+                <span class="cc_profile_billing_label">{{pageLabelMap 'MyAccount_Profile_Account_Billing_Address'}}</span>
+                <span class="cc_profile_billing_value">{{> addressDisplay this.accountBean.billingAddress}}</span>
+                </div>
+                <div class="col-md-6 myAccShippingAddr cc_shipping_address">
+                <span class="cc_profile_shipping_label">{{pageLabelMap 'MyAccount_Profile_Account_Shipping_Address'}}</span>
+                <span class="cc_profile_shipping_value">{{> addressDisplay this.accountBean.shippingAddress}}</span>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div class="panel panel-default cc_panel cc_myaccount_contact_information">
+            <div class="panel-heading cc_heading">
+                <h3 class="panel-title cc_title">{{pageLabelMap 'MyAccount_Profile_Contact_Information'}}</h3>
+            </div>
+            <div class="panel-body cc_body cc_myaccount_contact">
+                <p class="myAccProfileName cc_profile_name">
+                <span class="cc_profile_name_label">{{pageLabelMap 'MyAccount_Profile_Name'}}&#58;</span>
+                {{#if contactBean.firstName}}
+                <span class="cc_profile_name_value">{{contactBean.firstName}} {{contactBean.lastName}}</span>
+                {{else}}
+                <span class="cc_profile_name_label">No name stored.</span>
+                {{/if}}
+                </p>
+                <p class="myAccProfilePhone cc_profile_phone">
+                <span class="cc_profile_phone_label">{{pageLabelMap 'MyAccount_Profile_Phone'}}&#58;</span>
+                {{#if contactBean.phone}}
+                <span class="cc_profile_phone_value">{{contactBean.phone}}</span>
+                {{else}}
+                <span class="cc_profile_phone_value">No phone number stored.</span>
+                {{/if}}
+                </p>
+                <div class="row">
+                <div class="col-md-6 myAccMailingAddr cc_mailing_address">
+                <span class="cc_profile_mailing_label">{{pageLabelMap 'MyAccount_Profile_Contact_Mailing_Address'}}</span>
+                <span class="cc_profile_mailing_value">{{> addressDisplay this.contactBean.mailingAddress}}</span>
+                </div>
+                <div class="col-md-6  myAccOtherAddr cc_other_address">
+                <span class="cc_profile_other_label">{{pageLabelMap 'MyAccount_Profile_Contact_Other_Address'}}</span>
+                <span class="cc_profile_other_valuel">{{> addressDisplay this.contactBean.otherAddress}}</span>
+                </div>
+                </div>
+            </div>
+            </div>
+            {{/ifEquals}}
+            <div class="panel panel-default cc_panel cc_myaccount_user_information">
+            <div class="panel-heading cc_heading">
+            <h3 class="panel-title cc_title">{{pageLabelMap 'MyAccount_Profile_User_Information'}}</h3>
+            </div>
+            <div class="panel-body cc_body cc_myaccount_user">
+            <p class="myAccName cc_name">
+                <span class="cc_profile_name_label">{{pageLabelMap 'MyAccount_Profile_Name'}}&#58;</span>
+                <span class="cc_profile_name_value">{{userFirstName}} {{userLastName}}</span>
+            </p>
+            <p class="myAccPhone cc_acct_phone">
+                <span class="cc_acct_phone_label">{{pageLabelMap 'MyAccount_Profile_Phone'}}&#58;</span>
+                <span class="cc_acct_phone_value">{{userPhone}}</span>
+            </p>
+            <p class="myAccUserName cc_acct_username">
+                <span class="cc_acct_username_label">{{pageLabelMap 'MyAccount_Profile_Username'}}&#58;</span>
+                <span class="cc_acct_username_value">{{username}}</span>
+            </p>
+            <p class="myAccEmailAddr cc_acct_email">
+                <span class="cc_acct_email_label">{{pageLabelMap 'MyAccount_Profile_Email'}}&#58;</span>
+                <span class="cc_acct_email_value">{{emailAddress}}</span>
+            </p>
+            <p class="myAccLanguage cc_acct_language">
+                <span class="cc_acct_language_label">{{pageLabelMap 'MyAccount_Profile_Language'}}&#58;</span>
+                <span class="cc_acct_language_value">{{language}}</span>
+            </p>
+            <p class="myAccCurrency cc_acct_currency">
+                <span class="cc_acct_currency_label">{{pageLabelMap 'MyAccount_Profile_Currency'}}&#58;</span>
+                <span class="cc_acct_currency_value">{{currencyName}}</span>
+            </p>
+            {{#ifDisplay 'reg.tmZn'}}
+                <p class="myAccTimeZone cc_acct_timezone">
+                <span class="cc_acct_timezone_label">{{pageLabelMap 'MyAccount_Profile_TimeZone'}}&#58;</span>
+                <span class="cc_acct_timezone_value">{{timeZone}}</span>
+                </p>
+            {{/ifDisplay}}
+            </div>
+            </div>
+            {{#if hideEditProfile}}
+            {{else}}
+            <input type="button" class="btn btn-default btn-sm gotoSectionContactInfoEdit cc_edit_profile" value="{{pageLabelMap 'MyAccount_EditProfile'}}" />
+            {{/if}}
+            </div>
+        </div>
+    </script>
+    
+    <c:B2B_MyAccountMyCartsView_STEX />
+
+    <script>
+        jQuery( function($){
+            window.allowedToEditAddress = false;
+            const remote = _.extend(CCRZ.RemoteInvocation, { className: 'B2B_MyAccountController_STEX' });
+            remote.invokeCtx('getEditAddressPermissions',
+                (result) => {
+                    window.allowedToEditAddress=result.data;
+                    console.log('user can edit? '+ result.data);
+                },
+                {
+                    buffer:false,
+                    nmsp:false,
+                    escape: false
+            });
+            CCRZ.pubSub.on('view:contactInfoView:refresh', function () {
+                if (!window.allowedToEditAddress){
+                    console.log('should be hidden + false: '+window.allowedToEditAddress);
+                    $(".cc_myaccount_information").hide();
+                    // need to hide manage address link here too
+                    $("#manageAddressLink").hide();
+                }
+            });
+            CCRZ.views.headerView = CCRZ.CloudCrazeView.extend({
+            templateDesktop: CCRZ.util.template(CCRZ.uiProperties.headerView.desktop.tmpl),
+            templatePhone: CCRZ.util.template(CCRZ.uiProperties.headerView.phone.tmpl),
+            className: "cc_ctrl_Header",
+            viewName: "headerView",
+            maViewLinks: [],
+            init: function () {
+
+                if (CCRZ.pagevars.pageConfig.isTrue('MA.useDef')) {
+                    this.loadDefaultViews();
+                }
+
+                if (CCRZ.pagevars.pageConfig.isTrue('MA.overrideFlow')) {
+                    var v = this;
+                    CCRZ.pubSub.on("view:myaccountHDRView:subViewInit", function (data) {
+                        v.prepAndRender();
+                    });
+                    CCRZ.pubSub.trigger("view:myaccountHDRView:awaitingSubViewInit", this);
+                }
+                else {
+                    this.prepAndRender();
+                }
+            },
+            prepAndRender: function () {
+                //add listener to CCRZ event listener
+                this.listenTo(CCRZ.pubSub, 'cartChange', function (cartId) {
+                    this.model.set({ cartId: cartId });
+                    this.update();
+                });
+                this.cartHeaderView = new CCRZ.views.cartHeaderView();
+                this.myAccountHeaderView = new CCRZ.views.myAccountHeaderView({
+                    cartId: this.model.get("cartId"),
+                    viewState: this.model.get("viewState")
+                });
+
+							this.model.set({ myAccountLinks: this.maViewLinks });
+
+                this.render();
+            },
+            loadDefaultViews: function () {
+
+                if (CCRZ.HDRMyAccount.contactInfo) {
+                    CCRZ.HDRMyAccount.contactInfo.register(this);
+                }
+                // if (window.allowedToEditAddress){
+                    if (CCRZ.HDRMyAccount.addressBooks) {
+                        CCRZ.HDRMyAccount.addressBooks.register(this);
+                    }
+                // }
+                if (CCRZ.HDRMyAccount.myCarts) {
+                    CCRZ.HDRMyAccount.myCarts.register(this);
+                }
+
+                if (CCRZ.HDRMyAccount.myOrders) {
+                    CCRZ.HDRMyAccount.myOrders.register(this);
+                }
+
+                if (CCRZ.HDRMyAccount.myWishlists) {
+                    CCRZ.HDRMyAccount.myWishlists.register(this);
+                }
+
+                if (CCRZ.HDRMyAccount.mySubscriptions) {
+                    CCRZ.HDRMyAccount.mySubscriptions.register(this);
+                }
+                if (CCRZ.HDRMyAccount.mySubscriptionsNew) {
+                    CCRZ.HDRMyAccount.mySubscriptionsNew.register(this);
+                }
+                if (CCRZ.HDRMyAccount.myInvoices) {
+                    CCRZ.HDRMyAccount.myInvoices.register(this);
+                }
+
+                if (CCRZ.HDRMyAccount.myWallet) {
+                    CCRZ.HDRMyAccount.myWallet.register(this);
+                }
+            },
+            registerNewView: function (viewName, title) {
+                this.maViewLinks.push({ viewState: viewName, linkLabel: title });
+            },
+            events: {
+                /*"click #cart_btn_phone" : "getCartItems",*/
+                "click #signInButton": "doSignIn",
+                "click #submitBtn": "doForgotPassword",
+                "click #forgotPasswordButton": "forgotPasswordModal",
+                "click .chead": "goToCart",
+                "click #productHeaderLink": "getCategories",
+                "click #cart input.btn-primary": "goToCart",
+                "click #logoUrl": "goHome",
+                "click .gotoMA": "goToMyAccountSection",
+                //BEGIN DEPRECATE
+                "click #goToAccount": "goToAccount",
+                "click .gotoOrders": "goToOrders",
+                "click .gotoWishlists": "gotoWishlists",
+                "click .gotoSubscriptions": "gotoSubscriptions",
+                "click .gotoSubscriptionsNew": "gotoSubscriptionsNew",
+                "click .gotoCarts": "gotoCarts",
+                "click .gotoAddressBook": "goToAddressBook",
+                "click .gotoInvoices": "gotoInvoices",
+                //END DEPRECATE
+                "click .goToLogin": "goToLogin",
+                "click .doLogout": "doLogout",
+                "click #backToLogin": "backToLogin",
+                "click #siteRegister": "gotoSecureRegistration"
+            },
+
+            renderDesktop: function () {
+                $(this.el).html('');
+                this.setElement($(CCRZ.uiProperties.headerView.desktop.selector));
+                $(this.el).html(this.templateDesktop(this.model.toJSON()));
+                this.renderFinish();
+            },
+            renderPhone: function () {
+                $(this.el).html('');
+                this.setElement($(CCRZ.uiProperties.headerView.phone.selector));
+                $(this.el).html(this.templatePhone(this.model.toJSON()));
+                this.renderFinish();
+            },
+
+            renderFinish: function () {
+                this.cartHeaderView.render();
+                this.myAccountHeaderView.render();
+                //this.cartView = new CCRZ.views.cartView();
+            },
+
+            /*getCartItems : function(event){
+             var view = this;
+             view.cartView.cartmodel.fetch(function(response) {
+              view.cartView.render();
+             });
+            },*/
+
+            getCategories: function (event) {
+                this.productListModal = new CCRZ.views.productListModal();
+            },
+            doSignIn: function (event) {
+                var view = this;
+                this.doLogin($("#modal_email").val(), $("#modal_password").val(), function (error) {
+                    view.showError(error);
+                });
+            },
+            doLogin: function (username, password, error) {
+                $("input[id$=hdnUsername]").val(username);
+                $("input[id$=hdnPassword]").val(password);
+                login();
+            },
+            forgotPasswordModal: function (event) {
+                $("#login").modal("hide");
+                $("#forgotPassword").modal("show");
+            },
+            backToLogin: function (event) {
+                $("#forgotPassword").modal("hide");
+                $("#login").modal("show");
+            },
+            doForgotPassword: function (event) {
+                var username = $("#fpEmailField").val();
+                loading($(event.currentTarget));
+                this.invoke(
+                    "forgotPassword",
+                    username,
+                    function (response) {
+                        if (response) {
+                            $("#forgotPassword").modal("hide");
+                            $("#login").modal("show");
+                        }
+                        doneLoading($(event.currentTarget));
+                    }
+                );
+            },
+            update: function () {
+                this.cartHeaderView.update();
+            },
+
+            goToCart: function () {
+                var page = "/exchange/ccrz__Cart";
+                window.location.href = page + '?cartId=' + CCRZ.pagevars.currentCartID + '&viewState=' + this.model.get("viewState") + getCSRQueryString();
+            },
+            goHome: function (event) {
+                var page = "/exchange/ccrz__HomePage";
+                window.location.href = page + '?cartId=' + CCRZ.pagevars.currentCartID + getCSRQueryString();
+            },
+            goToMyAccountSection: function (event) {
+                if (CCRZ.pagevars.linkOverrideMap['HeaderMyAccount']) {
+                    window.location.href = CCRZ.pagevars.linkOverrideMap['HeaderMyAccount'];
+                } else {
+                    var objLink = $(event.currentTarget);
+                    var vs = objLink.data("vs");
+                    window.location.href = '/exchange/ccrz__MyAccount?cartId=' + CCRZ.pagevars.currentCartID + '&viewState=' + vs + getCSRQueryString();
+                }
+            },
+            //BEGIN DEPRECATION
+            goToAccount: function () {
+                if (CCRZ.pagevars.linkOverrideMap['HeaderMyAccount']) {
+                    window.location.href = CCRZ.pagevars.linkOverrideMap['HeaderMyAccount'];
+                } else {
+                    this.goToMAS('viewAccount');
+                }
+            },
+            goToMAS: function (vs) {
+                window.location.href = '/exchange/ccrz__MyAccount?cartId=' + CCRZ.pagevars.currentCartID + '&viewState=' + vs + getCSRQueryString();
+            },
+            goToOrders: function () {
+                this.goToMAS('myOrders');
+            },
+            gotoWishlists: function () {
+                this.goToMAS('myWishlists');
+            },
+            gotoSubscriptions: function () {
+                this.goToMAS('mySubscriptions');
+                // $("#account").modal("hide");
+                // CCRZ.pubSub.trigger('action:refreshSubscription',this);
+            },
+            gotoSubscriptionsNew: function () {
+                this.goToMAS('mySubscriptionsNew');
+                // $("#account").modal("hide");
+                // CCRZ.pubSub.trigger('action:refreshSubscription',this);
+            },
+            gotoCarts: function () {
+                this.goToMAS('myCarts');
+            },
+            goToAddressBook: function () {
+                this.goToMAS('myAddressBook');
+            },
+            gotoInvoices: function () {
+                this.goToMAS('myInvoices');
+            },
+            //END DEPRECATION
+            goToLogin: function (event) {
+                if (CCRZ.pagevars.linkOverrideMap['HeaderLogin']) {
+                    window.location.href = CCRZ.pagevars.linkOverrideMap['HeaderLogin'];
+                } else {
+                    if (CCRZ.pagevars.currentCartID) {
+                        cartParam = CCRZ.pagevars.currentCartID;
+                    } else {
+                        cartParam = "";
+                    }
+                    window.location.href = "/exchange/ccrz__CCSiteLogin?cartID=" + cartParam + getCSRQueryString();
+                }
+            },
+            doLogout: function (event) {
+                if (CCRZ.pagevars.linkOverrideMap['HeaderLogout']) {
+                    window.location.href = CCRZ.pagevars.linkOverrideMap['HeaderLogout'];
+                } else {
+                    window.location.href = "/exchange/secur/logout.jsp";
+                }
+            },
+            showError: function (errorMsg) {
+                $(".error-msg").html(errorMsg);
+                $(".message_container").show();
+            },
+            gotoSecureRegistration: function (event) {
+                var secureUrl = CCRZ.pagevars.storeSettings.Site_Secure_Domain__c;
+                secureUrl = secureUrl + '/exchange/ccrz__CCSiteRegister' + '?cartId=' + CCRZ.pagevars.currentCartID;
+                window.location = secureUrl;
+            }
+
+        });
+    });
+    </script>
+</apex:page>

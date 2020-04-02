@@ -1,0 +1,75 @@
+<apex:page standardController="Opportunity"  showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+<apex:form >
+   <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <head>
+            <title>Email Account info</title>
+            <style>
+                .scsBtn {
+                    padding-left: 16px;
+                    padding-right: 16px;
+                    text-align: center;
+                    vertical-align: middle;
+                    background-color: #0070d2;
+                    border: 1px solid #0070d2;
+                    color: white;
+                    display: inline-block;
+                    border-radius: 4px;
+                    font: 24px Arial;
+                    line-height: 34px;
+                    margin: 20px 0 0 20px;
+                }
+            </style>
+        </head>
+       
+       
+       <body>
+
+            <!--  navigation button for the user to click when finished sending the email  -->
+            <!--  this is a backup plan in case the setTimeout function fails to go back to the account -->
+            <button class="scsBtn" onclick="backNav()" type="button">Back</button>
+
+        </body>
+       
+       <script>
+            // function to take the user back to the account
+            function backNav() {
+
+                var oppId = "{!Opportunity.Id}";
+                if (!sforce.one) {
+                    console.log('backNav: no sforce.one object');
+                } else {
+                    sforce.one.navigateToSObject(oppId);
+                }
+            }
+       
+        // function to create, open and populate the email
+            function sendEmail() {
+                var oppname = "{!TRIM(SUBSTITUTE(URLENCODE(Opportunity.Name),'+', ' '))}";
+                var amount = "{!TRIM(SUBSTITUTE(TEXT(Opportunity.Amount),'.0', ' '))}";
+                var decisiondate ="{!MONTH(Opportunity.Decision_Date__c)}/{!DAY(Opportunity.Decision_Date__c)}/{!YEAR(Opportunity.Decision_Date__c)} (MM/DD/YYYY)";
+                var beginshipdate = "{!MONTH(Opportunity.CloseDate)}/{!DAY(Opportunity.CloseDate)}/{!YEAR(Opportunity.CloseDate)} (MM/DD/YYYY)";
+                var endshipdate = "{!MONTH(Opportunity.Estimated_End_Ship_Date__c)}/{!DAY(Opportunity.Estimated_End_Ship_Date__c)}/{!YEAR(Opportunity.Estimated_End_Ship_Date__c)} (MM/DD/YYYY)";
+                var actName = "{!TRIM(SUBSTITUTE(URLENCODE(Opportunity.Account_Name_Text__c),'+', ' '))}";
+                var salesregion = "{!TRIM(SUBSTITUTE(URLENCODE(Opportunity.Sales_Region_Text__c),'+', ' '))}";
+                var dealer = "{!TRIM(SUBSTITUTE(URLENCODE(Opportunity.Primary_Dealer_Text__c),'+', ' '))}";
+                var influencer = "{!TRIM(SUBSTITUTE(URLENCODE(Opportunity.Primary_Design_Firm_Text__c),'+', ' '))}";
+                var link = "{!TRIM(SUBSTITUTE(URLENCODE(Opportunity.Opportunity_Link__c),'+', ' '))}";
+                var subject = ('CRM Opportunity Information for '+oppname+' - '+actName);
+                var body = ('%0AOpportunity Name: '+oppname+'%0AAccount Name: '+actName+' %0AOpportunity Owner: {!Opportunity.Owner.FirstName} {!Opportunity.Owner.LastName}%0ACountry: {!Opportunity.Country__c}%0ASales Region: '+salesregion+'%0ASales Stage: {!Opportunity.StageName}%0AEstimated Discounted Sales: '+amount+' {!Opportunity.CurrencyIsoCode} %0ADecision Date: '+decisiondate+' %0AEstimated Begin Ship Date: '+beginshipdate+'%0AEstimated End Ship Date: '+endshipdate+' %0APrimary Dealer: '+dealer+'%0APrimary Design Firm: '+influencer+'%0AOpportunity ID: {!Opportunity.Legacy_Opportunity_ID__c}%0A%0AOpportunity Link: '+link+'%0A(Please note this link can only be accessed by users with a Steelcase CRM license.)%0A%0A~~~Opportunity Information from Steelcase CRM~~~');
+                //document.write('<a href="mailto:'  + '?subject=' +subject+ '&body=' +body+ '">' + 'Click here to open your E-Mail Page' + '<'+'/a>');
+
+                // create the mailto link
+                mailtoLink = 'mailto:' + '?subject=' + subject + '&body=' + body;
+
+                setTimeout(backNav, 1000);
+
+                // open the mailto link
+                window.location.href = mailtoLink;
+            }
+
+            // run the sendEmail function when the page loads
+            sendEmail();
+       </script>
+         </html>
+    </apex:form>
+</apex:page>

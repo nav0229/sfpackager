@@ -1,0 +1,1096 @@
+<apex:page sidebar="false" showHeader="false" standardController="Account" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<head>
+  <title>Sales Tools</title>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS_Steelcase_20103, 'assets/styles/salesforce-lightning-design-system-ltng.css')}" />
+    <apex:includeScript value="{!$Resource.jquery0101203}"/>
+    <style>
+        .selCurrency {
+            background-color: #0070d2;
+            color: #ffffff;
+        }
+        .notSelCurrency {
+            background-color: #ffffff;
+            color: #0070d2;
+        }
+    </style>
+</head>
+
+<apex:includeLightning />
+
+    <body id="myAppBody">
+        <div class="steelcase">
+            <!-- Sprint 2016.04.04:  'Customer' record type id = 01237000000ATiRAAW  -->
+            <!-- Sprint 2016.04.04:  'Dealer' record type id = 01237000000ATiSAAW  -->
+            <!-- Sprint 2016.04.04:  'Influencer' record type id = 01237000000ATiUAAW  -->
+            <!-- Sprint 2016.10.31:  added currency selector for Sales History links  -->
+            <!-- Sprint 2017.02.27:  added link to the MCSS BICC reporting Web tool (allows selection of multiple years ) - JZ  -->
+            <!-- Sprint 2017.02.27:  added link to the MDSS BICC reporting Web tool (allows selection of multiple years )   -->
+            <!-- Sprint 2017.05.08:  added a link to a report that shows how dealers are doing in relation to the Incentives Program - JZ -->
+            <!--                     (Steelcase Rewards for Dealer Owners Report). Requestor: Matt Putti - JZ  -->
+            <!-- Sprint 2017.07.31:  added "Environmental Metrics Report Request - AMER" link to the "Other Tools Section." -->
+            <!--                     Requestor: Sustainability Team - JZ   -->
+            <!-- Sprint 2018.03.09:  removed AMER only reference to MCSS report. Now includes EMEA. Requestor: Heather Schuch - JZ  -->
+            <!-- Sprint 2018.04.09:  updated SMI Fact Pack link to accomodate move of files to new SharePoint Online Site by BI Team: Andrew Burkley - JZ  -->
+            <!-- Sprint 2018.04.09:  created link for new BI report called Special Product & Partner Report (SPPR) to be visible for Dealer account type only: Heather Schuch - JZ  -->
+            <!-- Sprint 2018.04.23:  re-created the "mysteriously missing" Competitive Engine link  : Charity Lytle - JZ  -->
+            <!-- Sprint 2018.05.07:  updated the Customer Contracts link to accomodate the migration of materials to SharePoint Online: Oana D. Chende - JZ  -->
+            <!-- Sprint 2018.05.21:  updated the Steelcase Rewards for Dealer Owners Report link to point to the 2018 reports vs the 2017 reports: Dirk Lillard - JZ  -->
+            <!-- Sprint 2018.05.21:  moved Customer Contracts link from "Other Tools" section to "Account Links" section underneath CDAs link for both Account & Dealer: W-000736 - JZ  -->
+            <!-- Sprint 2018.06.04:  created link for Sales Incentive Plan (SIP) SAM/DBM Dashboard - Requestor: Eric Walquist/Amanda Socher: W-000736 - JZ  -->
+            <!-- Sprint 2018.06.04:  added target="_blank" to Environmental Link and SIR Link in response to INC1204377: Laura Herrera - JZ  -->
+            <!-- Sprint 2018.08.27:  modified all links affected by the move to the new SPARK platform - JZ  -->
+            <!-- Sprint 2018.08.27:  updated Dealer Planning - Global Link to point to SharePoint Online Annual Sales Planning site - JZ  -->
+            <!-- Sprint 2018.09.24:  modified Dealer Planning - Global Link to direct the user to the SharePoint Online folder that corresponds to the specific dealer account page from which the user launches - JZ  -->
+            <!-- Sprint 2018.11.19:  modified Account Strategy Workbook (Template) link to point to AMER folder on Spark instead of the EMEA folder -  Requestor: Charity Lytle - JZ -->
+            <!-- Sprint 2019.01.28:  created link for Monthly Dealer Alignment Summary (MDAS) report. - Requestor: Andrew Burkley - JZ -->
+            <!-- Sprint 2019.03.11:  updated the Steelcase Rewards for Dealer Owners Report link to point to the 2019 reports vs the 2018 reports: Dirk Lillard - JZ  -->
+
+
+        <!-- <div class="slds-text-heading--large">
+                      Sales Tools
+           </div> 
+        -->
+
+            <p class="slds-hide" id="scsUltParent">{!Account.Ultimate_Parent_Site_Id__c}</p>
+            <p class="slds-hide" id="scsActSiteId">{!Account.Site_Id__c}</p>
+
+            <div class="myapp">
+                <div align="left" style="padding:10px;">
+           
+            <!-- Account Links section -->
+            <h3 class="slds-section-title--divider slds-m-top-medium slds-m-bottom--medium">Account Links</h3>
+
+            <div class="slds-box">
+
+                <div class="slds-grid">   
+                 
+                    <div class="slds-col">
+
+<!--Customer-->
+
+             <!-- Account Links description section -->
+             <!-- this section for customer accounts -->
+               <apex:pageBlock >
+                 <apex:pageBlockSection rendered="{!Account.RecordTypeId == '01237000000ATiRAAW'}">
+                  <ul class="slds-has-dividers--bottom-space">
+                    <li class="slds-list__item" id="liCDA">
+                      <a href="https://pcm.steelcase.com/CRM/SalesforceCDAList.aspx?siteid={!Account.Site_Id__c}&type=c">CDAs for this Account - GLOBAL</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsCDA" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">CDA Help</span>
+                          </a>
+                        </div>
+                        <div id="scsCDA_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Opens the Pricing Contract Management(PCM) system for a list of CDAs for this account</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                        <!-- end CDA-->
+
+                    <li class="slds-list__item" id="liCustCont">
+                      <a href="https://steelcase.sharepoint.com/sites/pcontract/CustomerContracts/Customer%20Contracts/Forms/summary1.aspx">Customer Contracts - AMER, EMEA</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsCustCont" class="scsInfoIcon" href="javascript:void(0);">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Customer Contracts Help</span>
+                          </a>
+                        </div>
+                        <div id="scsCustCont_help" class="slds-hide">
+                          <div class="slds-popover slds-m-top--small slds-nubbin--top-left" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Provides access to documents outlining customer agreements. (AMER and EMEA only)
+                              </p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+      <!-- end Customer Contracts -->                       
+
+                    <li class="slds-list__item slds-hide" id="liMCSS">
+                      <a href="https://fsrmss.steelcase.com/externalreport?ReportType=MCSS&AccountID={!Account.Site_Id__c}">MCSS Report</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsMCSS" class="scsInfoIcon" href="javascript:void(0);">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">MCSS Help</span>
+                          </a>
+                        </div>
+                        <div id="scsMCSS_help" class="slds-hide">
+                          <div class="slds-popover slds-m-top--small slds-nubbin--top-left" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Monthly Customer Sales Summary (MCSS) – Provides sales information by product line, ship-to locations, and dealers for the TOP 3,000 customer accounts (ultimate parents only) for the current account (AMER and EMEA only).
+                              </p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                            <!-- end account-specific MCSS-->
+                      
+                  <li class="slds-list__item slds-hide" id="liMCSSg"> 
+                      <a href="https://fsrmss.steelcase.com/?pMenu=MCSS">MCSS Report (multiple years)</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsMCSSg" class="scsInfoIcon" href="javascript:void(0);">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">MCSS Help</span>
+                          </a>
+                        </div>
+                        <div id="scsMCSSg_help" class="slds-hide">
+                          <div class="slds-popover slds-m-top--small slds-nubbin--top-left" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Monthly Customer Sales Summary (multiple years) – Provides sales information by product line, ship-to locations, and dealers for the TOP 3,000 customer accounts (ultimate parents only). Also, provides access to MCSS reports for multiple accounts and multiple years (AMER and EMEA only).
+                              </p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                            <!-- end multiple years, multi-account MCSS-->
+
+                   <li class="slds-list__item slds-hide" id="liSalesHistory_Customer">
+                        <!--
+                      <a href="http://grrapiap153/crm/CRMLinkToReport.aspx?ReportType=AccountSalesHistory&AccountID={!Account.Site_Id__c}">Sales History Report - AMER,EMEA</a>
+                        &nbsp; &nbsp;
+                        -->
+                        <a id="scsSalesHistoryLink_Customer" href="#">Sales History Report - AMER, EMEA</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsSalesHistory" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Sales History Help</span>
+                          </a>
+                        </div>
+                        <div id="scsSalesHistory_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Provides a summary of the last 3 years of shipment volume and current backlog for a dealer or account. Audience: SAMs and DBMs.</p>
+                            </div>
+                          </div>
+                      </div>
+                        <!-- currency chooser -->
+                        <div class="slds-hide" id="scsCurrencyChoices_C">
+                            <fieldset class="slds-form-element">
+                                <legend class="slds-form-element__legend slds-form-element__label">First choose a currency:</legend>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-radio--button-group">
+                                        <span class="slds-button slds-radio--button" id="USD_C">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="usd_c">
+                                                <span class="slds-radio--faux">USD</span>
+                                            </label>
+                                        </span>
+                                        <span class="slds-button slds-radio--button" id="EUR_C">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="eur_c">
+                                                <span class="slds-radio--faux">EUR</span>
+                                            </label>
+                                        </span>
+                                        <span class="slds-button slds-radio--button" id="CAD_C">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="cad_c">
+                                                <span class="slds-radio--faux">CAD</span>
+                                            </label>
+                                        </span>
+                                        <span class="slds-button slds-radio--button" id="GBP_C">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="gbp_c">
+                                                <span class="slds-radio--faux">GBP</span>
+                                            </label>
+                                        </span>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <button class="slds-button slds-button--brand slds-m-top--small slds-hide" id="scsSalesHistory_C_Btn">Open sales history</button>
+                        </div>
+                    </li>
+                           <!-- end Sales History-->
+                      
+                    <li class="slds-list__item" id="liSalesDashboard">
+                        <a href="https://reporting.steelcase.com/irj/portal/sr">Sales Dashboard - AMER,EMEA</a>
+                        &nbsp; &nbsp;
+                            <!-- icon -->
+                            <div class="slds-form-element__icon">
+                                <a id="scsSalesDashboard" class="scsInfoIcon">
+                                    <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                                        <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                                    </svg>
+                                    <span class="slds-assistive-text">Sales Dashboard Help</span>
+                                </a>
+                            </div>
+                        <!-- help text -->
+                        <div id="scsSalesDashboard_help" class="slds-hide">
+                            <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                                <div class="slds-popover__body">
+                                    <p>A web-based dashboard showing high-level and detailed sales information. Sales history updated monthly; CRM opportunity information updated monthly; ownership information updated nightly.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                           <!-- end Sales Dashboard-->
+              
+                   
+                     <li class="slds-list__item" id="liFP">
+                      <a href="http://www1.steelcase.com/us/s/FactPacks/Shared%20Documents/{!Account.Site_Id__c}.docx">Fact Pack - AMER,APAC </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsFP" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Fact Pack Help</span>
+                          </a>
+                        </div>
+                        <div id="scsFP_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Provides highlights of macro industry trends, strategy and performance, proposed insights to initiate conversations around space and employee engagement.</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                      <!-- end Fact Pack-->
+                      
+                   <li class="slds-list__item" id="liSMI">
+                      <a href="https://steelcase.sharepoint.com/sites/smifactpacks">SMI Fact Packs - AMER </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsSMI" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">SMI Fact Packs Help</span>
+                          </a>
+                        </div>
+                        <div id="scsSMI_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Includes market potential reporting</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                   <!-- end SMI-->
+
+
+                    <li class="slds-list__item" id="liASP">
+                        <a href="https://crm.steelcase.com/support/crm%20on%20demand/support.html">Annual Sales Planning Resources </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsASP" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Annual Sales Planning Resources</span>
+                          </a>
+                        </div>
+                        <div id="scsASP_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Templates, tools, and reference materials for dealer and account sales planning</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                      <!-- end Annual Sales Planning-->
+
+
+                    <li class="slds-list__item" id="liCompEng">
+                        <a href="https://competitive.steelcase.com">Competitive Engine - AMER </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsCompEng" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Competitive Engine</span>
+                          </a>
+                        </div>
+                        <div id="scsCompEng_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Learn about the competition and how they stack up against Steelcase products in this simple but dynamic comparison tool, authored by the Strategic Project Consultants and product marketing.</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                      <!-- end Competitive Engine -->
+
+                
+                
+                  </ul>
+                </apex:pageBlockSection>   
+                   
+                   
+<!--Dealer-->
+               <apex:pageBlockSection rendered="{!Account.RecordTypeId == '01237000000ATiSAAW'}">
+                  <ul class="slds-has-dividers--bottom-space">
+                    <li class="slds-list__item" id="liCDA">
+                      <a href="https://pcm.steelcase.com/CRM/SalesforceCDAList.aspx?siteid={!Account.Site_Id__c}&type=c">CDAs for this Account - GLOBAL</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsCDA" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">CDA Help</span>
+                          </a>
+                        </div>
+                        <div id="scsCDA_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Opens the Pricing Contract Management(PCM) system for a list of CDAs for this account</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                      <!-- end CDA-->
+
+                    <li class="slds-list__item" id="liCustCont">
+                      <a href="https://steelcase.sharepoint.com/sites/pcontract/CustomerContracts/Customer%20Contracts/Forms/summary1.aspx">Customer Contracts - AMER, EMEA</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsCustCont" class="scsInfoIcon" href="javascript:void(0);">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Customer Contracts Help</span>
+                          </a>
+                        </div>
+                        <div id="scsCustCont_help" class="slds-hide">
+                          <div class="slds-popover slds-m-top--small slds-nubbin--top-left" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Provides access to documents outlining customer agreements. (AMER and EMEA only)
+                              </p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+      <!-- end Customer Contracts -->                       
+
+                        <li class="slds-list__item" id="liMDSS">
+                      <a href="https://fsrmss.steelcase.com/externalreport?ReportType=MDSS&AccountID={!Account.Site_Id__c}">MDSS Report - AMER, EMEA </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsMDSS" class="scsInfoIcon" href="javascript:void(0);">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">MDSS Help</span>
+                          </a>
+                        </div>
+                        <div id="scsMDSS_help" class="slds-hide">
+                          <div class="slds-popover slds-m-top--small slds-nubbin--top-left" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Monthly Dealer Sales Summary (MDSS) – Provides Dealer summary information based on FY period for Orders, Shipments, and Backlog.
+                              </p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                       <!-- end MDSS-->
+
+                   
+
+                       <li class="slds-list__item" id="liMDSSg">
+                      <a href="https://fsrmss.steelcase.com/?pMenu=MDSS">MDSS Report (multiple years) - AMER, EMEA </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsMDSSg" class="scsInfoIcon" href="javascript:void(0);">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">MDSS Help</span>
+                          </a>
+                        </div>
+                        <div id="scsMDSSg_help" class="slds-hide">
+                          <div class="slds-popover slds-m-top--small slds-nubbin--top-left" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Monthly Dealer Sales Summary (MDSS) – Provides Dealer summary information for multiple years (based on FY period) for Orders, Shipments, and Backlog.
+                              </p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                       <!-- end MDSS multiple years, multi-account-->
+
+
+                      <!-- start MDAS-->
+                       <li class="slds-list__item" id="liMDAS">
+                        <a href="https://fsrmss.steelcase.com/externalreport?ReportType=MDAS&AccountID={!Account.Site_Id__c}">MDAS Report - AMER </a>
+                          &nbsp; &nbsp;
+                          <!-- icon -->
+                          <div class="slds-form-element__icon">
+                            <a id="scsMDAS" class="scsInfoIcon" href="javascript:void(0);">
+                              <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                                <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                              </svg>
+                              <span class="slds-assistive-text">MDAS Help</span>
+                            </a>
+                          </div>
+                          <div id="scsMDAS_help" class="slds-hide">
+                            <div class="slds-popover slds-m-top--small slds-nubbin--top-left" role="dialog">
+                              <div class="slds-popover__body">
+                                <p>Monthly Dealer Alignment Summary (MDAS) – Provides Dealer summary information based on current CY for Orders, Shipments, Backlog, and Pipeline.
+                                  
+                                </p>
+                              </div>
+                            </div>
+                        </div>
+                      </li>
+                         <!-- end MDAS-->
+                         
+
+                        <li class="slds-list__item" id="liSPPR">
+                      <a href="https://fsrmss.steelcase.com/externalreport?ReportType=RP&AccountID={!Account.Site_Id__c}">SPPR Report - AMER, EMEA </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsSPPR" class="scsInfoIcon" href="javascript:void(0);">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">SPPR Help</span>
+                          </a>
+                        </div>
+                        <div id="scsSPPR_help" class="slds-hide">
+                          <div class="slds-popover slds-m-top--small slds-nubbin--top-left" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Select Product and Partner Report (SPPR) – Provides the Dealers with a more detailed view of the Key Products and Ancillary sections from the MDSS report.  This report breaks those sections down by GM Category and Product Line for current and prior year shipments.
+                              </p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                       <!-- end SPPR -->                           
+
+                   <li class="slds-list__item slds-hide" id="liSalesHistory_Dealer">
+                        <!--
+                        <a href="http://grrapiap153/crm/CRMLinkToReport.aspx?ReportType=AccountSalesHistory&AccountID={!Account.Site_Id__c}">Sales History Report - AMER,EMEA</a>
+                        &nbsp; &nbsp;
+                        -->
+                        <a id="scsSalesHistoryLink_Dealer" href="#">Sales History Report - AMER, EMEA</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsSalesHistory" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Sales History Help</span>
+                          </a>
+                        </div>
+                        <div id="scsSalesHistory_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Provides a summary of the last 3 years of shipment volume and current backlog for a dealer or account. Audience: SAMs and DBMs.</p>
+                            </div>
+                          </div>
+                      </div>
+                        <!-- currency chooser -->
+                        <div class="slds-hide" id="scsCurrencyChoices_D">
+                            <fieldset class="slds-form-element">
+                                <legend class="slds-form-element__legend slds-form-element__label">First choose a currency:</legend>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-radio--button-group">
+                                        <span class="slds-button slds-radio--button" id="USD_D">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="usd_D">
+                                                <span class="slds-radio--faux">USD</span>
+                                            </label>
+                                        </span>
+                                        <span class="slds-button slds-radio--button" id="EUR_D">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="eur_D">
+                                                <span class="slds-radio--faux">EUR</span>
+                                            </label>
+                                        </span>
+                                        <span class="slds-button slds-radio--button" id="CAD_D">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="cad_D">
+                                                <span class="slds-radio--faux">CAD</span>
+                                            </label>
+                                        </span>
+                                        <span class="slds-button slds-radio--button" id="GBP_D">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="gbp_D">
+                                                <span class="slds-radio--faux">GBP</span>
+                                            </label>
+                                        </span>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <button class="slds-button slds-button--brand slds-m-top--small slds-hide" id="scsSalesHistory_D_Btn">Open sales history</button>
+                        </div>
+                    </li>
+                           <!-- end Sales History-->
+                      
+                     <li class="slds-list__item" id="liSalesDashboard_Dealer">
+                      <a href="https://reporting.steelcase.com/irj/portal/sr">Sales Dashboard - AMER,EMEA</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsSalesDashboard" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                           <span class="slds-assistive-text">Sales Dashboard Help</span>
+                          </a>
+                        </div>
+                        <div id="scsSalesDashboard_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>A web-based dashboard showing high-level and detailed sales information. Sales history updated monthly; CRM opportunity information updated monthly; ownership information updated nightly.</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                           <!-- end Sales Dashboard-->
+              <li class="slds-list__item" id="liDealerDirectory">
+                      <a href="http://ddirect.steelcase.com/Site.aspx?cidb_site_id={!Account.Site_Id__c}&">Dealer Directory - GLOBAL </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsDD" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Dealer Directory Help</span>
+                          </a>
+                        </div>
+                        <div id="scsDD_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>The Steelcase Directory provides information for Steelcase corporate offices, manufacturing locations, and authorized Steelcase dealers around the world</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                      <!-- end Dealer Directory-->
+
+
+                 <li class="slds-list__item" id="liDealerPlanning">
+                      <!--<a href="https://steelcase.sharepoint.com/sites/AnnualSalesPlanning/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FAnnualSalesPlanning%2FShared%20Documents%2FAMER%2FDealer%20Plans">Dealer Planning - AMER </a>-->
+                      <a href="https://steelcase.sharepoint.com/:f:/r/sites/AnnualSalesPlanning/Shared%20Documents/{!Account.Site_Id__c}">Dealer Planning - GLOBAL </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsDP" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Dealer Planning Help</span>
+                          </a>
+                        </div>
+                        <div id="scsDP_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Link to the Dealer Folder in Sharepoint</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                      <!-- end Dealer Planning-->
+
+
+                    <li class="slds-list__item" id="liASP">
+                        <a href="https://crm.steelcase.com/support/crm%20on%20demand/support.html">Annual Sales Planning Resources </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsASP" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Annual Sales Planning Resources</span>
+                          </a>
+                        </div>
+                        <div id="scsASP_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Templates, tools, and reference materials for dealer and account sales planning</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                      <!-- end Annual Sales Planning-->
+
+
+
+                    <li class="slds-list__item" id="liDIG">
+                      <a href="https://dig.steelcase.com/main.aspx?siteid={!Account.Site_Id__c}&type=c">DIG Link - AMER</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsDIG" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">DIG Help</span>
+                          </a>
+                        </div>
+                        <div id="scsDIG_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Opens “Dealer Information Gateway” with display of dealer information and connections to custom reports for dealer, currently supported only for Americas locations.</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                           <!-- end DIG-->
+
+                   <li class="slds-list__item" id="liSMI">
+                      <a href="https://steelcase.sharepoint.com/sites/smifactpacks">SMI Fact Packs - AMER </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsSMI" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">SMI Fact Packs Help</span>
+                          </a>
+                        </div>
+                        <div id="scsSMI_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Includes market potential reporting</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                   <!-- end SMI-->
+                   
+                    <li class="slds-list__item" id="liDPPS">
+                      <a href="http://grrapiap153/crm/CRMLinktoReport.aspx?ReportType=DPPS&AccountID={!Account.Site_Id__c}">DPPS Report - AMER</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsDPPS" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">DPPS Help</span>
+                          </a>
+                        </div>
+                        <div id="scsDPPS_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Opens “Dealer Partner Performance Summary” Report</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                    <!-- end DPPS -->
+
+                    <li class="slds-list__item" id="liRewards">
+                        <a href="https://incentives-reports.steelcase.com/amer/report/dealerowner/2019">Steelcase Rewards for Dealer Owners Report - AMER</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsRewards" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Steelcase Rewards for Dealer Owners Report</span>
+                          </a>
+                        </div>
+                        <div id="scsRewards_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Reporting that shows how dealers are doing in relation to the Incentives Program. This is an AMER report only.</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                      <!-- end Steelcase Rewards for Dealer Owners Report -->
+
+                  </ul>
+                </apex:pageBlockSection>
+
+          
+<!-- Influencer -->  
+               <apex:pageBlockSection rendered="{!Account.RecordTypeId == '01237000000ATiUAAW'}">
+               
+                  <ul class="slds-has-dividers--bottom-space">
+                    <li class="slds-list__item slds-hide" id="liMCSS">
+                      <a href="https://fsrmss.steelcase.com/externalreport?ReportType=MCSS&AccountID={!Account.Site_Id__c}">MCSS Report</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsMCSS" class="scsInfoIcon" href="javascript:void(0);">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">MCSS Help</span>
+                          </a>
+                        </div>
+                        <div id="scsMCSS_help" class="slds-hide">
+                          <div class="slds-popover slds-m-top--small slds-nubbin--top-left" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Monthly Customer Sales Summary(MCSS) – Provides TOP 2800 customer sales information by product line, ship to locations, and dealers (AMER and EMEA only).
+                              </p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                       <!-- end MCSS-->
+
+                 <li class="slds-list__item slds-hide" id="liMCSSg"> 
+                      <a href="https://fsrmss.steelcase.com/?pMenu=MCSS">MCSS Report (multiple years)</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsMCSSg" class="scsInfoIcon" href="javascript:void(0);">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">MCSS Help</span>
+                          </a>
+                        </div>
+                        <div id="scsMCSSg_help" class="slds-hide">
+                          <div class="slds-popover slds-m-top--small slds-nubbin--top-left" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Monthly Customer Sales Summary (multiple years) – Provides sales information by product line, ship-to locations, and dealers for the TOP 3,000 customer accounts (ultimate parents only). Also, provides access to MCSS reports for multiple accounts and multiple years (AMER and EMEA only).
+                              </p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                            <!-- end multiple years, multi-account MCSS-->                       
+           
+                   <li class="slds-list__item slds-hide" id="liSalesHistory_Influencer">
+                        <!--
+                        <a href="http://grrapiap153/crm/CRMLinkToReport.aspx?ReportType=AccountSalesHistory&AccountID={!Account.Site_Id__c}">Sales History Report - AMER,EMEA</a>
+                        &nbsp; &nbsp;
+                        -->
+                        <a id="scsSalesHistoryLink_Influencer" href="#">Sales History Report - AMER, EMEA</a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsSalesHistory" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Sales History Help</span>
+                          </a>
+                        </div>
+                        <div id="scsSalesHistory_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Provides a summary of the last 3 years of shipment volume and current backlog for a dealer or account. Audience: SAMs and DBMs.</p>
+                            </div>
+                          </div>
+                      </div>
+                        <!-- currency chooser -->
+                        <div class="slds-hide" id="scsCurrencyChoices_I">
+                            <fieldset class="slds-form-element">
+                                <legend class="slds-form-element__legend slds-form-element__label">First choose a currency:</legend>
+                                <div class="slds-form-element__control">
+                                    <div class="slds-radio--button-group">
+                                        <span class="slds-button slds-radio--button" id="USD_I">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="usd_I">
+                                                <span class="slds-radio--faux">USD</span>
+                                            </label>
+                                        </span>
+                                        <span class="slds-button slds-radio--button" id="EUR_I">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="eur_I">
+                                                <span class="slds-radio--faux">EUR</span>
+                                            </label>
+                                        </span>
+                                        <span class="slds-button slds-radio--button" id="CAD_I">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="cad_I">
+                                                <span class="slds-radio--faux">CAD</span>
+                                            </label>
+                                        </span>
+                                        <span class="slds-button slds-radio--button" id="GBP_I">
+                                            <input name="radio" type="radio" />
+                                            <label class="slds-radio--button__label" for="gbp_I">
+                                                <span class="slds-radio--faux">GBP</span>
+                                            </label>
+                                        </span>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <button class="slds-button slds-button--brand slds-m-top--small slds-hide" id="scsSalesHistory_I_Btn">Open sales history</button>
+                        </div>
+
+                    </li>
+                           <!-- end Sales History-->
+
+
+                    <li class="slds-list__item" id="liASP">
+                        <a href="https://crm.steelcase.com/support/crm%20on%20demand/support.html">Annual Sales Planning Resources </a>
+                        &nbsp; &nbsp;
+                        <!-- icon -->
+                        <div class="slds-form-element__icon">
+                          <a id="scsASP" class="scsInfoIcon">
+                            <svg aria-hidden="false" class="slds-icon slds-icon--x-small slds-icon-text-default">
+                              <use xlink:href="{!URLFOR($Resource.SLDS100, '/assets/icons/utility-sprite/svg/symbols.svg#info')}"></use>
+                            </svg>
+                            <span class="slds-assistive-text">Annual Sales Planning Resources</span>
+                          </a>
+                        </div>
+                        <div id="scsASP_help" class="slds-hide">
+                          <div class="slds-popover slds-nubbin--top-left slds-m-top--small" role="dialog">
+                            <div class="slds-popover__body">
+                              <p>Templates, tools, and reference materials for dealer and account sales planning</p>
+                            </div>
+                          </div>
+                      </div>
+                    </li>
+                      <!-- end Annual Sales Planning-->
+
+
+
+                  </ul>
+                </apex:pageBlockSection>
+              </apex:pageBlock>
+                </div> <!-- end col -->
+
+
+
+
+
+
+                </div></div><!-- end  slds-grid -->
+
+      
+                 </div>
+       
+        <br></br>
+
+       
+        <!-- Strategy Tools section -->
+        <h3 class="slds-section-title--divider slds-m-top-medium slds-m-bottom--medium">Strategy Tools - Spark resources</h3>
+          
+          <apex:pageBlock >
+            <ul class="slds-list--vertical slds-has-dividers--bottom-space">
+              <li class="slds-list__item"><apex:outputLink value="https://spark.steelcase.com/departments/sales/americas_sales/americas_sales_folders/sales_strategy_development_processpptx">Sales Strategy Development Process </apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://spark.steelcase.com/departments/sales/americas_sales/americas_sales_folders/account_strategy_workbookxlsx">Account Strategy Workbook (Template)</apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://spark.steelcase.com/departments/sales/americas_sales/americas_sales_folders/opportunity_strategy_workbookxlsx">Opportunity Strategy Workbook (Template)</apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://spark.steelcase.com/departments/sales/americas_sales/americas_sales_folders/design_firm_strategy_workbookxlsx">Design Firm Strategy Workbook (Template)</apex:outputLink> </li>
+            </ul>
+          </apex:pageBlock>
+
+        <br></br>
+          
+          <!-- Other Tools section -->
+          <h3 class="slds-section-title--divider slds-m-top-medium slds-m-bottom--medium">Other Tools</h3>
+          
+          <apex:pageBlock >
+            <ul class="slds-list--vertical slds-has-dividers--bottom-space">
+              <li class="slds-list__item"><apex:outputLink value="https://spark.steelcase.com/departments/sales/americas_sales">Spark - AMER Sales</apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://spark.steelcase.com/departments/sales/emea_sales">Spark - EMEA Sales</apex:outputLink> </li>              
+              <li class="slds-list__item"><apex:outputLink value="https://support.steelcase.com/ssp?id=sc_cat_item_guide&sys_id=886033902b232500f8627c30f8da15d0" target="_blank">Sales Information Request - AMER,EMEA </apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://support.steelcase.com/ssp?id=sc_cat_item&sys_id=6c7d564a2b00b900f8627c30f8da15c7" target="_blank">Environmental Metrics Report Request - AMER </apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://spark.steelcase.com/public_spaces/The_Playground_for_North_America">Workplace Tools and Resources Link - AMER </apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://xchange.steelcase.com/teams/playground-emea/WTR/wtr.aspx">Workplace Tools and Resources Link - EMEA </apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://xchange.steelcase.com/teams/playground-cala/WTR/wtr.aspx">Workplace Tools and Resources Link - CALA </apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="http://xchange.steelcase.com/teams/Playground-APAC/WTR/wtr.aspx">Workplace Tools and Resources Link - APAC </apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://asgpqr.steelcase.com/PriceQuoteRequest.aspx">Architectural Solutions - AMER</apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://village.steelcase.com/community/americas/sales/mock-up">Mock-Up - AMER</apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="http://www1.steelcase.com/us/p/TheNetwork/Pages/pdf/IntelliSell.pdf">Intellisell Request - AMER</apex:outputLink> </li>
+              <li class="slds-list__item"><apex:outputLink value="https://fsrmss.steelcase.com/externalreport?ReportType=SIR">SAM / DBM SIP Dashboard</apex:outputLink> </li>
+               
+
+            </ul>
+          </apex:pageBlock>
+  
+        </div>
+        <!-- end primary content wrapper -->
+    </div>
+    <!-- end slds -->
+</body>
+
+<script>
+
+window.onload = function() {
+    if (window.jQuery) {  
+        // jQuery is loaded  
+        console.log('jquery is loaded');
+        init();
+    } else {
+        // jQuery is not loaded
+        console.log("jquery not loaded");
+    }
+}
+
+function init() {
+
+    var scsUltParentElm = document.getElementById('scsUltParent'),
+        scsLiMCSS = document.getElementById('liMCSS'),
+        scsLiMCSSg = document.getElementById('liMCSSg'),      
+        scsLiSalesHistory_C = document.getElementById('liSalesHistory_Customer'),
+        scsSalesHistoryLink_C_1 = "http://supplysync.steelcase.com/irj/servlet/prt/portal/prtroot/pcd!3aportal_content!2fcom.sap.pct!2fplatform_add_ons!2fcom.sap.ip.bi!2fiViews!2fcom.sap.ip.bi.bex?TEMPLATE=ZCRM_ACCOUNT_WT001&BI_COMMAND_1-BI_COMMAND_TYPE=SET_VARIABLES_STATE&BI_COMMAND_1-VARIABLE_VALUES-VARIABLE_VALUE_1-VARIABLE_TYPE=VARIABLE_INPUT_STRING&BI_COMMAND_1-VARIABLE_VALUES-VARIABLE_VALUE_1-VARIABLE_TYPE-VARIABLE_INPUT_STRING=",
+        scsSalesHistoryLink_C_2 = "&BI_COMMAND_1-VARIABLE_VALUES-VARIABLE_VALUE_1-VARIABLE=ZULTSITE_MI_OPT_SING_V2&BI_COMMAND_2-BI_COMMAND_TYPE=SET_VARIABLES_STATE&BI_COMMAND_2-VARIABLE_VALUES-VARIABLE_VALUE_2-VARIABLE_TYPE=VARIABLE_INPUT_STRING&BI_COMMAND_2-VARIABLE_VALUES-VARIABLE_VALUE_2-VARIABLE_TYPE-VARIABLE_INPUT_STRING=",
+        scsSalesHistoryLink_C_3 = "&BI_COMMAND_2-VARIABLE_VALUES-VARIABLE_VALUE_2-VARIABLE=ZFICURZM",
+        currency = "USD",
+        siteId = "{!Account.Site_Id__c}",
+        scsLiSalesHistory_D = document.getElementById('liSalesHistory_Dealer'),
+        scsSalesHistoryLink_D_1 = "http://supplysync.steelcase.com/irj/servlet/prt/portal/prtroot/pcd!3aportal_content!2fcom.sap.pct!2fplatform_add_ons!2fcom.sap.ip.bi!2fiViews!2fcom.sap.ip.bi.bex?TEMPLATE=ZCRM_ACCOUNT_WT002&BI_COMMAND_1-BI_COMMAND_TYPE=SET_VARIABLES_STATE&BI_COMMAND_1-VARIABLE_VALUES-VARIABLE_VALUE_1-VARIABLE_TYPE=VARIABLE_INPUT_STRING&BI_COMMAND_1-VARIABLE_VALUES-VARIABLE_VALUE_1-VARIABLE_TYPE-VARIABLE_INPUT_STRING=",
+        scsSalesHistoryLink_D_2 = "&BI_COMMAND_1-VARIABLE_VALUES-VARIABLE_VALUE_1-VARIABLE=ZSITE_MRG_MI_MAND_SING_DLR&BI_COMMAND_2-BI_COMMAND_TYPE=SET_VARIABLES_STATE&BI_COMMAND_2-VARIABLE_VALUES-VARIABLE_VALUE_2-VARIABLE_TYPE=VARIABLE_INPUT_STRING&BI_COMMAND_2-VARIABLE_VALUES-VARIABLE_VALUE_2-VARIABLE_TYPE-VARIABLE_INPUT_STRING=",
+        scsSalesHistoryLink_D_3 = "&BI_COMMAND_2-VARIABLE_VALUES-VARIABLE_VALUE_2-VARIABLE=ZFICURZM",
+        scsLiSalesHistory_I = document.getElementById('liSalesHistory_Influencer'),
+        scsActHrchy, elemid, crncyId, slsHstryBtn, scsSalesHistoryLink_C, scsSalesHistoryLink_D, scsAcctType;
+
+    siteId = siteId.replace(/^0+/, '');
+
+
+    scsActHrchy = "{!Account.Account_Hierarchy__c}"; //Account_Hierarchy__c= "U1",Account_Hierarchy__c= NULL
+    scsAcctType = "{!Account.RecordTypeId}"; //Customer, Dealer, Influencer
+
+    // Ultimate Parent links
+    if (scsActHrchy == "" || scsActHrchy == "U1") {
+      if (scsAcctType !== '01237000000ATiSAAW') {
+        scsLiMCSS.className = ('slds-list__item');
+        scsLiMCSSg.className = ('slds-list__item');            
+      }
+        try {
+            scsLiSalesHistory_C.className = ('slds-list__item');
+        } catch (ignore) {}
+        try {
+            scsLiSalesHistory_D.className = ('slds-list__item');
+        } catch (ignore) {}
+        try {
+            scsLiSalesHistory_I.className = ('slds-list__item');
+        } catch (ignore) {}
+    }
+
+    // on click for customer sales history link
+    $( "#scsSalesHistoryLink_Customer" ).click(function(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        $( "#scsCurrencyChoices_C").slideToggle( "fast" );
+
+    });
+
+    // on click for dealer sales history link
+    $( "#scsSalesHistoryLink_Dealer" ).click(function(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        $( "#scsCurrencyChoices_D").slideToggle( "fast" );
+
+    });
+
+    // on click for influencer sales history link
+    $( "#scsSalesHistoryLink_Influencer" ).click(function(e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        $( "#scsCurrencyChoices_I").slideToggle( "fast" );
+
+    });
+
+    // on-click for currency span fields
+    $( "span" ).click(function(e) {
+        elemId = $( this ).attr( "id" );
+        crncyId = elemId.slice(4,5);
+        currency = elemId.slice(0,3);
+        slsHstryBtn = "scsSalesHistory_" + crncyId + "_Btn";
+
+            console.log('elemId: ' + elemId + ' - crncyId: ' + crncyId + ' - currency: ' + currency);
+
+        // change selected currency colors
+        selectCurrency(elemId);
+
+        $("#"+slsHstryBtn).removeClass("slds-hide").addClass("slds-show");
+
+        document.getElementById(slsHstryBtn).innerHTML = "Open sales  history with " + currency;
+
+    });
+
+    // on-click for button elements
+    $( "button" ).click(function(e) {
+
+        elemId = $( this ).attr( "id" );
+
+        if (elemId === "scsSalesHistory_C_Btn") {
+            scsSalesHistoryLink_C = scsSalesHistoryLink_C_1 + siteId + scsSalesHistoryLink_C_2 + currency + scsSalesHistoryLink_C_3;
+            window.open(scsSalesHistoryLink_C);
+        } else if (elemId === "scsSalesHistory_D_Btn") {
+            scsSalesHistoryLink_D = scsSalesHistoryLink_D_1 + siteId + scsSalesHistoryLink_D_2 + currency + scsSalesHistoryLink_D_3;
+            window.open(scsSalesHistoryLink_D);
+        } else if (elemId === "scsSalesHistory_I_Btn") {
+            scsSalesHistoryLink_C = scsSalesHistoryLink_C_1 + siteId + scsSalesHistoryLink_C_2 + currency + scsSalesHistoryLink_C_3;
+            window.open(scsSalesHistoryLink_C);
+        }
+
+    });
+
+    // on click for information icons
+    $( ".scsInfoIcon" ).click(function(e) {
+        elemId = $( this ).attr( "id" );
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        elemId = elemId + "_help";
+          $("#" + elemId).slideToggle( "fast" );
+
+        console.log('elemid: ' + elemId);
+
+    });
+}
+
+function selectCurrency(elemId) {
+
+    var type;
+
+    console.log('selectCurrency: type - ' + elemId);
+
+    if (elemId != undefined || elemId != "") {
+
+        type = elemId.slice(4,5);
+
+        console.log('selectCurrency: type - ' + "#" + elemId);
+
+        $( "#USD_" + type).css({"background-color": "#ffffff", "color": "#0070d2"});
+        $( "#CAD_" + type).css({"background-color": "#ffffff", "color": "#0070d2"});
+        $( "#EUR_" + type).css({"background-color": "#ffffff", "color": "#0070d2"});
+        $( "#GBP_" + type).css({"background-color": "#ffffff", "color": "#0070d2"});
+
+        $( "#" + elemId).css({"background-color": "#0070d2", "color": "#ffffff"});
+    }
+}
+
+</script>
+
+</html>
+</apex:page>

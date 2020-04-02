@@ -1,0 +1,93 @@
+<apex:page >
+    <apex:slds />
+<!--    <apex:includeScript value="{!$Resource.json2_js}"/>-->
+<!--    <script type="text/javascript" src="{!URLFOR($Resource.cometd_zip, 'dojo/dojo.js')}" data-dojo-config="async: 1"></script>-->
+    <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/cometd@3.1.10/cometd.js"></script>
+    <apex:stylesheet value="{!$Resource.demo_css}"/>
+    <script> 
+        var token = '{!$Api.Session_ID}';
+    </script>
+<!--    <script type="text/javascript" src="{!$Resource.demo_js}"></script>-->
+    <script>
+    $(function () {
+            // initialize cometd, vanilla JS implementation
+            var cometd = new org.cometd.CometD();
+            cometd.websocketEnabled = false;
+            cometd.configure({
+                url: window.location.protocol + '//' + window.location.hostname + (null != window.location.port ? (':' + window.location.port) : '') + '/cometd/40.0/',
+                requestHeaders: { Authorization: `OAuth ${token}` }
+            });
+
+            console.log('SESSION ID: ', token);
+
+
+            cometd.handshake(function (h) {
+                console.log(h);
+                if (h.successful) {
+                    console.log('handshake successful');
+                    cometd.subscribe('Imaging_URL__e', function (m) {
+                        console.log('in subscribe');
+                        console.log(m);
+                        if(m.successful) {
+                            console.log('connected');
+                        }
+                        var dataFromServer = m.data;
+                        console.log(m);
+                        console.log(m.data);
+                    });
+                }
+            });
+        })
+    </script>
+    
+    <div id="demo" class="slds-scope slds-box">
+        <div id="datastream">
+        </div>
+        
+        <div id="input" class="slds-box">
+            <div id="join">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td> Enter Topic Name </td>
+                            <td>
+                                <input id="topic" type="text" />
+                            </td>
+                            <td>
+                                <button id="subscribeButton" class="button">Subscribe</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="joined">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <button id="leaveButton" class="button">Unsubscribe</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- Close datastream div -->
+        
+        <div id="productDisplay" class="slds-box">
+            <div class="slds-grid slds-gutters">
+                <div id="productImageDiv" class="slds-col slds-size_6-of-12">
+                    <span>Product image here</span>
+                </div>
+                <div class="slds-col slds-size_6-of-12">
+                    <span>Product options here</span>
+                </div>
+            </div>
+        </div>    
+    </div><!-- Close Demo div -->
+
+</apex:page>

@@ -1,0 +1,3 @@
+<apex:page controller="testFollowupPageController">
+  Param name is {!paramName}
+</apex:page>

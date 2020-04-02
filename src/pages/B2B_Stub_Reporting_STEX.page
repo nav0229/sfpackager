@@ -1,0 +1,195 @@
+<apex:page id="B2B_Stub_Reporting_STEX"  docType="html-5.0" sidebar="false" showHeader="false" lightningStyleSheets="true" applyHtmlTag="false">
+<!--    <apex:includeLightning />-->
+<!--    <apex:slds />--> 
+
+<!--    <div id="hedbergReportApp" />-->
+<!--    <script>-->
+
+<!--//        $Lightning.use("c:HedbergReportsTester", function() {-->
+<!--//            $Lightning.createComponent("c:STEX_AllHedbergReports",-->
+<!--//                {-->
+<!--//-->
+<!--//                },-->
+<!--//                "hedbergReportApp",-->
+<!--//                function(cmp) {-->
+<!--//                    console.log("lightning component was inserted");-->
+<!--//                }-->
+<!--//            );-->
+<!--//        });-->
+
+<!--        jQuery(function($) {-->
+<!--            let urlString = window.location.href;-->
+<!--            console.log(urlString);-->
+<!--            let searchableUrl = new URL(urlString);-->
+<!--            let reportType = searchableUrl.searchParams.get("reportType");-->
+<!--            console.log(reportType);-->
+
+<!--//            let site = 'ucsf';-->
+
+<!--            let site = CCRZ.getCookie("site");-->
+<!--            console.log('site: ', site);-->
+
+<!--            let tmdbCustomerId, seeQuotes, seeOrders, hasPermissionSet, customerEmail = "";-->
+
+<!--            const remote = _.extend(CCRZ.RemoteInvocation, {className: 'STEX_ReportingPageController'});-->
+
+<!--            let getAcctData = new Promise(function (resolve, reject) {-->
+<!--                remote.invokeCtx('getAccountInfo', site,-->
+<!--                    (result, err) => {-->
+<!--                        if (result && result.success) {-->
+<!--                            resolve(result.data);-->
+<!--                        }-->
+<!--                        else {-->
+<!--                            console.log('Failed to get reporting Account info');-->
+<!--                            reject(err);-->
+<!--                        }-->
+<!--                    },-->
+<!--                    {-->
+<!--                        buffer: false,-->
+<!--                        nmsp: false-->
+<!--                    }-->
+<!--                );-->
+<!--            });-->
+<!--            getAcctData.then(-->
+<!--                function(data){-->
+<!--                    tmdbCustomerId = data.SiteCustomer__r.STEXTMDBCustomerId__c;-->
+<!--                    seeQuotes = data.STEX_Enable_Quote_Reports__c;-->
+<!--                    seeOrders = data.STEX_Enable_Order_Reports__c;-->
+<!--                    console.log('callout response: ', data);-->
+<!--                }-->
+<!--            );-->
+
+<!--            let getPermissionData = new Promise(function (resolve, reject) {-->
+<!--                remote.invokeCtx('hasPermissionSet',-->
+<!--                    (result, err) => {-->
+<!--                        if (result && result.success) {-->
+<!--                            resolve(result.data);-->
+<!--                        }-->
+<!--                        else {-->
+<!--                            console.log('Failed to get reporting permission set');-->
+<!--                            reject(err);-->
+<!--                        }-->
+<!--                    },-->
+<!--                    {-->
+<!--                        buffer: false,-->
+<!--                        nmsp: false-->
+<!--                    }-->
+<!--                );-->
+<!--            });-->
+<!--            getPermissionData.then(-->
+<!--                function(data) {-->
+<!--                    hasPermissionSet = data;-->
+<!--                    console.log('permission set data: ', data);-->
+<!--                }-->
+<!--            );-->
+
+<!--            let getCurrentUserEmail = new Promise(function (resolve, reject) {-->
+<!--                remote.invokeCtx('getCustomerEmail',-->
+<!--                    (result, err) => {-->
+<!--                        if (result && result.success) {-->
+<!--                            console.log('email callout response: ', result);-->
+<!--                            resolve(result.data);-->
+<!--                        }-->
+<!--                        else {-->
+<!--                            console.log("Failed to get current email");-->
+<!--                            reject(err);-->
+<!--                        }-->
+<!--                    },-->
+<!--                    {-->
+<!--                        buffer: false,-->
+<!--                        nmsp: false-->
+<!--                    }-->
+<!--                );-->
+<!--            });-->
+<!--            getCurrentUserEmail.then(-->
+<!--                function(data) {-->
+<!--                    console.log('resolve data: ', data);-->
+<!--                    customerEmail = data;-->
+<!--                    console.log("current user email: ", customerEmail);-->
+<!--                }-->
+<!--            );-->
+
+
+<!--            let promises = [getAcctData, getPermissionData, getCurrentUserEmail];-->
+<!--            Promise.all(promises).then(function(values) {-->
+<!--                console.log('all promises values: ', values);-->
+<!--                //set variable values here? or just run add reports to page-->
+<!--                //still need to get the site, probably via cookie-->
+<!--               if (tmdbCustomerId) {-->
+<!--                   addReportsToPage(reportType, hasPermissionSet, seeOrders, seeQuotes, customerEmail, tmdbCustomerId);-->
+<!--               }-->
+<!--            })-->
+
+
+
+
+<!--            function addReportsToPage(reportType, seeAllPermission, seeOrders, seeQuotes, customerEmail, tmdbCustomerId) {-->
+<!--                switch (reportType) {-->
+<!--                    case 'orders':-->
+<!--                        if (seeOrders) {-->
+<!--                            if (seeAllPermission) {-->
+<!--                                $Lightning.use("c:HedbergReportsTester", function() {-->
+<!--                                    $Lightning.createComponent("c:STEX_AllHedbergOrders",-->
+<!--                                        {-->
+<!--                                            fieldSetName : "HedbergOrderFieldSet",-->
+<!--                                            reportType : "allOrders",-->
+<!--                                            custEmail : customerEmail,-->
+<!--                                            tmdbCustId : tmdbCustomerId,-->
+<!--                                            reportName : "All Orders"-->
+<!--                                        },-->
+<!--                                        "hedbergReportApp",-->
+<!--                                        function(cmp) {-->
+<!--                                            console.log("all orders component was inserted");-->
+<!--                                        }-->
+<!--                                    );-->
+<!--                                });-->
+<!--                            }-->
+
+<!--                            $Lightning.use("c:HedbergReportsTester", function() {-->
+<!--                                $Lightning.createComponent("c:STEX_MyHedbergOrders",-->
+<!--                                    {-->
+<!--                                        fieldSetName : "HedbergOrderFieldSet",-->
+<!--                                            reportType : "myOrders",-->
+<!--                                            custEmail : customerEmail,-->
+<!--                                            tmdbCustId : tmdbCustomerId,-->
+<!--                                            reportName : "My Orders"-->
+<!--                                    },-->
+<!--                                    "hedbergReportApp",-->
+<!--                                    function(cmp) {-->
+<!--                                        console.log("my orders component was inserted");-->
+<!--                                    }-->
+<!--                                );-->
+<!--                            });-->
+<!--                        }-->
+
+<!--                        break;-->
+<!--                    case 'quotes':-->
+<!--                        $Lightning.use("c:HedbergReportsTester", function() {-->
+<!--                            $Lightning.createComponent("c:STEX_AllHedbergQuotes",-->
+<!--                                {-->
+
+<!--                                },-->
+<!--                                "hedbergReportApp",-->
+<!--                                function(cmp) {-->
+<!--                                    console.log("all quotes component was inserted");-->
+<!--                                }-->
+<!--                            );-->
+<!--                        });-->
+<!--                        $Lightning.use("c:HedbergReportsTester", function() {-->
+<!--                            $Lightning.createComponent("c:STEX_MyHedbergQuotes",-->
+<!--                                {-->
+
+<!--                                },-->
+<!--                                "hedbergReportApp",-->
+<!--                                function(cmp) {-->
+<!--                                    console.log("my quotes component was inserted");-->
+<!--                                }-->
+<!--                            );-->
+<!--                        });-->
+<!--                        break;-->
+<!--                }-->
+<!--            }-->
+
+<!--        });-->
+<!--    </script>-->
+</apex:page>

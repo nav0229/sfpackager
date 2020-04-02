@@ -1,0 +1,527 @@
+<apex:page showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">    
+
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">    
+
+<head>
+    <title>My Accounts</title>
+    <apex:includeScript value="{!$Resource.jquery0101203}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.SLDS_Steelcase_20103, 'assets/styles/salesforce-lightning-design-system-ltng.css')}" />
+</head>    
+<apex:remoteObjects >
+    <apex:remoteObjectModel name="Opportunity" fields="Id,Name,OwnerId,Amount,CloseDate,Decision_Date__c,AccountId,StageName,CurrencyIsoCode,Primary_Dealer__c,Primary_Design_Firm__c"/>
+    <apex:remoteObjectModel name="Account" fields="Id,Name,OwnerId,RecordTypeId,Site_ID__c,Ultimate_Parent_Site_Id__c"/>
+    <apex:remoteObjectModel name="RecordType" fields="Id,Name,SobjectType"/>
+    <apex:remoteObjectModel name="User" fields="Id,DefaultCurrencyIsoCode"/>
+</apex:remoteObjects>
+
+<body>    
+
+<!-- REQUIRED SLDS WRAPPER -->
+<div class="steelcase">    
+    <div id="scsUserId" hidden="true">{!$User.Id}</div>
+    <div id="scsUserCurrency" hidden="true"></div>
+
+<!-- PRIMARY CONTENT WRAPPER -->
+<div class="slds-grid slds-m-left--small" id="scsMyActs">    
+
+
+
+
+</div>
+<!-- / PRIMARY CONTENT WRAPPER -->    
+
+</div>
+<!-- / REQUIRED SLDS WRAPPER -->    
+</body>
+<script>
+
+    // adds commas to Est Disc Sales
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }  
+
+    // required in order to show account type names (rather than IDs)
+    // passes user's search and record type names to updateOutputDiv
+    function getRecordTypes(trncCnt) {
+        // retrieves the record type names
+        var actRecordType = new SObjectModel.RecordType(),
+        where = {SobjectType: {eq: 'Account'}},
+        recordTypes = [];
+
+        actRecordType.retrieve(
+            { where },
+            function(error, records) {
+                if (error) {
+                    console.log(error.message);
+                } else {
+                    records.forEach(function(record) {
+                        recordTypes.push(record.get("Id"));
+                        recordTypes.push(record.get("Name"));
+                    });
+                }
+                // pass these account record types to the function that will display the results
+                loadAccounts(trncCnt, recordTypes);
+            }
+        );
+    }
+
+    function loadAccounts(trncCnt, recordTypes) {
+
+        var act = new SObjectModel.Account(),
+            actNameHtml = '', 
+            html = '',
+            orderBy = [{Name: 'ASC'}],
+            customerRecordType = '01237000000ATiRAAW', 
+            dealerRecordType = '01237000000ATiSAAW', 
+            influencerRecordType = '01237000000ATiUAAW',
+            accountIds = [], rcrdTypes = [], recordTypesAll = [], customerIds = [], dealerIds = [], influencerIds = [],
+            actId, actName, actNameElm, userId, actType, outputDiv, i, j, el, rcdTypeId, rcdTypeName, actTypeId, 
+            cTypeId, dTypeId, iTypeId;
+
+        userId = document.getElementById('scsUserId').innerHTML;
+        outputDiv = document.getElementById('scsMyActs');
+
+        act.retrieve (
+            { where:
+                {
+                    OwnerId: {eq: userId},
+                    RecordTypeId: {in: [customerRecordType, dealerRecordType, influencerRecordType]}
+                },
+                orderby: orderBy,
+                limit: 100
+            },
+            function(error, records) {
+                if (error) {
+                    console.log('getActName: ' + error.message);
+                } else {
+
+                    // get headers into an array
+                    if (records.length > 0) {
+                        records.forEach(function(record) {
+                            recordTypesAll.push(record.get("RecordTypeId"));
+                            
+                            // load account row ids into the correct array for the later opportunity queries
+                            if (record.get("RecordTypeId") === customerRecordType) {
+                                customerIds.push(record.get("Id"));
+                            } else if (record.get("RecordTypeId") === dealerRecordType) {
+                                dealerIds.push(record.get("Id"));
+                            } else if (record.get("RecordTypeId") === influencerRecordType) {
+                                influencerIds.push(record.get("Id"));
+                            }
+                        });
+
+                        j$.each(recordTypesAll, function(i, el){
+                            if(j$.inArray(el, rcrdTypes) === -1) rcrdTypes.push(el);
+                        });
+                    } else {
+                        // no owned accounts
+                        html += '<p class="slds-text-body--regular slds-m-left--xx-large slds-m-top--xx-large" style="color:#5876a3">You do not own any account</p>';
+                    }
+
+                    // header
+                    for (i = 0, j = rcrdTypes.length; i < j; i = i + 1) {
+                        rcdTypeId = rcrdTypes[i];
+                        rcdTypeName = recordTypes[recordTypes.indexOf(rcdTypeId) + 1];
+
+                        html += '<ul class="slds-has-dividers--top slds-has-block-links--space">';
+                        html += '<h3 class="slds-text-heading--large slds-m-bottom--x-small slds-m-left--x-small">'+ rcdTypeName +'s</h3>';
+                        
+                        // loop through account records
+                        if (records.length > 0) {
+                            records.forEach(function(record) {
+
+                                actId = record.get("Id");
+                                actName = record.get("Name");
+                                actTypeId = record.get("RecordTypeId");
+
+
+                                if (actName.length > trncCnt) {
+                                    actName = record.get("Name").slice(0,trncCnt) + "...";
+                                }
+
+                                if (rcdTypeId === actTypeId) {
+
+                                    //actType = recordTypes[recordTypes.indexOf(actTypeId) + 1];
+                                    html += '<li class="slds-item slds-m-bottom--small">';
+                                    html += '<p><a href="https://steelcase.lightning.force.com/one/one.app#/sObject/' + actId +'/view?t=1465172185930">' + actName +'</a></p>';
+                                    html += '<p id="'+ actId + '"></p>';
+                                    html += '</li>';
+                                } else {
+                                    
+                                }
+
+                            });
+                        } 
+                    }
+                }
+
+                //html += '</ul>';
+                outputDiv.innerHTML = html;
+
+                // find Customer opportunities
+                if (customerIds.length > 0 ) {
+                    loadCustomerOpps(customerIds);
+                }
+                // find Dealer opportunities
+                if (dealerIds.length > 0 ) {
+                    loadDealerOpps(dealerIds);
+                }
+                // find Influencer opportunities
+                if (influencerIds.length > 0 ) {
+                    loadInfluencerOpps(influencerIds);
+                }
+            }
+        );
+    }
+
+    // queries and loads opportunities whose accountId = accountIds
+    function loadCustomerOpps(accountIds) {
+
+        var userId = document.getElementById("scsUserId").innerHTML,
+            opps = new SObjectModel.Opportunity(),
+            stage = ['Closed/Won','Closed/Won-Partial','Closed/Cancelled','Closed/Lost'],
+            today = new Date(),
+            orderBy = [{AccountId: 'ASC'}, {Name: 'ASC'}],
+            usersCurrency = document.getElementById('scsUserCurrency').innerHTML,
+            tempActId = 'first', 
+            tempCount = 0,
+            actOptyCountElm, html;
+
+        if (accountIds.length > 0 || accountIds != undefined) {
+
+            opps.retrieve(
+                { where: 
+                    {
+                        AccountId: {in: accountIds},
+                        StageName: {nin: stage},
+                    }, 
+                    orderby: orderBy, 
+                    limit: 100 
+                },
+                function(error, records) {
+                    if (error) {
+                        console.log('loadCustomerOpps: ' + error.message);
+                    } else {
+                        if (records.length == 0) {
+                            console.log('0 opps in loadCustomerOpps query');
+                        }
+                        console.log(records.length + ' opps in loadCustomerOpps query');
+
+                        records.forEach(function(record) {
+
+                            // check if actId for this loop matches last loop's actId
+                            if (records.length === 1) {
+
+                                tempActId = record.get("Primary_Dealer__c");
+                                tempCount = tempCount + 1;
+                                html = '<span class="slds-m-left--small">Pending Opportunities: </span>';
+                                html += '<span class="slds-badge slds-theme--info slds-m-right--xx-small slds-m-left--xx-small">';
+                                html += tempCount +'</span>';
+                                document.getElementById(tempActId).innerHTML = html;
+
+                            } else if (tempActId === 'first') {
+
+                                tempCount = tempCount + 1;
+
+                            } else if (tempActId === record.get("AccountId")) {
+
+                                tempCount = tempCount + 1;
+
+                                // update the account amount on the page with the total for this account
+                                html = '<span class="slds-m-left--small">Pending Opportunities: </span>';
+                                html += '<span class="slds-badge slds-theme--info slds-m-right--xx-small slds-m-left--xx-small">';
+                                html += tempCount +'</span>';
+                                document.getElementById(tempActId).innerHTML = html;
+
+                            } else {
+
+                                // reset variables for next account
+                                tempCount = 0;
+                            }
+
+                            tempActId = record.get("AccountId");
+                        });
+                    }
+                }
+            );
+        }
+    }
+
+    // queries and loads opportunities whose Primary_Dealer__c = accountIds
+    // revised Oct 30, 2016 tb
+    function loadDealerOpps(accountIds) {
+
+        var userId = document.getElementById("scsUserId").innerHTML,
+            opps = new SObjectModel.Opportunity(),
+            stage = ['Closed/Won','Closed/Won-Partial','Closed/Cancelled','Closed/Lost'],
+            today = new Date(),
+            orderBy = [{AccountId: 'ASC'}, {Name: 'ASC'}],
+            usersCurrency = document.getElementById('scsUserCurrency').innerHTML,
+            tempActId = 'first', 
+            tempCount = 0,
+            actOptyCountElm, html, i, j, actId, pendingOppsCnt;
+
+        if (accountIds.length > 0 || accountIds != undefined) {
+
+            for (i = 0, j = accountIds.length; i < j; i = i + 1) {
+
+                actId = accountIds[i];
+
+                opps.retrieve(
+                    { where: 
+                        {
+                            Primary_Dealer__c: {eq: actId},
+                            StageName: {nin: stage},
+                        }, 
+                        orderby: orderBy, 
+                        limit: 100 
+                    },
+                    function(error, records) {
+                        if (error) {
+                            console.log('loadDealerOpps: ' + error.message);
+                        } else {
+
+                            if (records.length === 100) {
+                                console.log('100 opps in loadDealerOpps query');
+                                pendingOppsCnt = '99+';
+                            } else {
+                                pendingOppsCnt = records.length;
+                            }
+
+                            console.log(pendingOppsCnt + ' opps in loadDealerOpps query');
+
+                            records.forEach(function(record) {
+
+                                tempActId = record.get("Primary_Dealer__c");
+                                html = '<span class="slds-m-left--small">Pending Opportunities: </span>';
+                                html += '<span class="slds-badge slds-theme--info slds-m-right--xx-small slds-m-left--xx-small">';
+                                html += pendingOppsCnt +'</span>';
+                                document.getElementById(tempActId).innerHTML = html;
+                            });
+                        }
+                    }
+                );
+            }
+        }
+    }
+
+    // queries and loads opportunities whose Primary_Design_Firm__c = accountIds
+    // revised Oct 30, 2016 tb
+    function loadInfluencerOpps(accountIds) {
+
+        var userId = document.getElementById("scsUserId").innerHTML,
+            opps = new SObjectModel.Opportunity(),
+            stage = ['Closed/Won','Closed/Won-Partial','Closed/Cancelled','Closed/Lost'],
+            today = new Date(),
+            orderBy = [{AccountId: 'ASC'}, {Name: 'ASC'}],
+            usersCurrency = document.getElementById('scsUserCurrency').innerHTML,
+            tempActId = 'first', 
+            tempCount = 0,
+            actOptyCountElm, html, i, j, actId, pendingOppsCnt;
+
+        if (accountIds.length > 0 || accountIds != undefined) {
+
+            for (i = 0, j = accountIds.length; i < j; i = i + 1) {
+
+                actId = accountIds[i];
+
+                opps.retrieve(
+                    { where: 
+                        {
+                            Primary_Design_Firm__c: {eq: actId},
+                            StageName: {nin: stage},
+                        }, 
+                        orderby: orderBy, 
+                        limit: 100 
+                    },
+                    function(error, records) {
+                        if (error) {
+                            console.log('loadDealerOpps: ' + error.message);
+                        } else {
+
+                            if (records.length === 100) {
+                                console.log('100 opps in loadDesignFirmOpps query');
+                                pendingOppsCnt = '99+';
+                            } else {
+                                pendingOppsCnt = records.length;
+                            }
+
+                            console.log(pendingOppsCnt + ' opps in loadDesignFirmOpps query');
+
+                            records.forEach(function(record) {
+
+                                tempActId = record.get("Primary_Design_Firm__c");
+                                html = '<span class="slds-m-left--small">Pending Opportunities: </span>';
+                                html += '<span class="slds-badge slds-theme--info slds-m-right--xx-small slds-m-left--xx-small">';
+                                html += pendingOppsCnt +'</span>';
+                                document.getElementById(tempActId).innerHTML = html;
+                            });
+                        }
+                    }
+                );
+            }
+        }
+    }
+
+
+    // queries and loads opportunities whose Primary_Dealer__c = accountIds
+    function loadDealerOpps_old(accountIds) {
+
+        var userId = document.getElementById("scsUserId").innerHTML,
+            opps = new SObjectModel.Opportunity(),
+            stage = ['Closed/Won','Closed/Won-Partial','Closed/Cancelled','Closed/Lost'],
+            today = new Date(),
+            orderBy = [{AccountId: 'ASC'}, {Name: 'ASC'}],
+            usersCurrency = document.getElementById('scsUserCurrency').innerHTML,
+            tempActId = 'first', 
+            tempCount = 0,
+            actOptyCountElm, html;
+
+        if (accountIds.length > 0 || accountIds != undefined) {
+
+            opps.retrieve(
+                { where: 
+                    {
+                        Primary_Dealer__c: {in: accountIds},
+                        StageName: {nin: stage},
+                    }, 
+                    orderby: orderBy, 
+                    limit: 100 
+                },
+                function(error, records) {
+                    if (error) {
+                        console.log('loadDealerOpps: ' + error.message);
+                    } else {
+                        if (records.length === 0) {
+                            console.log('0 opps in loadDealerOpps query');
+                        } 
+                        console.log(records.length + ' opps in loadDealerOpps query');
+                        records.forEach(function(record) {
+
+                            // check if actId for this loop matches last loop's actId
+                            if (records.length === 1) {
+
+                                tempActId = record.get("Primary_Dealer__c");
+                                tempCount = tempCount + 1;
+                                html = '<span class="slds-m-left--small">Pending Opportunities: </span>';
+                                html += '<span class="slds-badge slds-theme--info slds-m-right--xx-small slds-m-left--xx-small">';
+                                html += tempCount +'</span>';
+                                document.getElementById(tempActId).innerHTML = html;
+
+                            } else if (tempActId === 'first') {
+
+                                tempCount = tempCount + 1;
+
+                            } else if (tempActId === record.get("Primary_Dealer__c")) {
+
+                                tempCount = tempCount + 1;
+
+                                // update the account amount on the page with the total for this account
+                                html = '<span class="slds-m-left--small">Pending Opportunities: </span>';
+                                html += '<span class="slds-badge slds-theme--info slds-m-right--xx-small slds-m-left--xx-small">';
+                                html += tempCount +'</span>';
+                                document.getElementById(tempActId).innerHTML = html;
+
+                            } else {
+
+                                // reset variables for next account
+                                tempCount = 0;
+                            }
+
+                            tempActId = record.get("Primary_Dealer__c");
+                        });
+                    }
+                }
+            );
+        }
+    }
+
+
+    // queries and loads opportunities whose Primary_Design_Firm__c = accountIds
+    function loadInfluencerOpps_old(accountIds) {
+
+        var userId = document.getElementById("scsUserId").innerHTML,
+            opps = new SObjectModel.Opportunity(),
+            stage = ['Closed/Won','Closed/Won-Partial','Closed/Cancelled','Closed/Lost'],
+            today = new Date(),
+            orderBy = [{AccountId: 'ASC'}, {Name: 'ASC'}],
+            usersCurrency = document.getElementById('scsUserCurrency').innerHTML,
+            tempActId = 'first', 
+            tempCount = 0,
+            actOptyCountElm, html;
+
+        if (accountIds.length > 0 || accountIds != undefined) {
+
+            opps.retrieve(
+                { where: 
+                    {
+                        Primary_Design_Firm__c: {in: accountIds},
+                        StageName: {nin: stage},
+                    }, 
+                    orderby: orderBy, 
+                    limit: 100 
+                },
+                function(error, records) {
+                    if (error) {
+                        console.log('loadDealerOpps: ' + error.message);
+                    } else {
+                        if (records.length == 0) {
+                            console.log('0 opps in loadInfluencerOpps query');
+                        }
+                        console.log(records.length + ' opps in loadInfluencerOpps query');
+                        records.forEach(function(record) {
+
+                            // check if actId for this loop matches last loop's actId
+                            if (records.length === 1) {
+                                
+                                tempActId = record.get("Primary_Design_Firm__c");
+                                tempCount = tempCount + 1;
+                                html = '<span class="slds-m-left--small">Pending Opportunities: </span>';
+                                html += '<span class="slds-badge slds-theme--info slds-m-right--xx-small slds-m-left--xx-small">';
+                                html += tempCount +'</span>';
+                                document.getElementById(tempActId).innerHTML = html;
+
+                            } else if (tempActId === 'first') {
+
+                                tempCount = tempCount + 1;
+
+                            } else if (tempActId === record.get("Primary_Design_Firm__c")) {
+
+                                tempCount = tempCount + 1;
+
+                                console.log('dsgn frm: ' + record.get("Primary_Design_Firm__c") + ' opty id: ' + record.get("Id") + ',  opty name: ' + record.get("Name"));
+
+                                // update the account amount on the page with the total for this account
+                                html = '<span class="slds-m-left--small">Pending Opportunities: </span>';
+                                html += '<span class="slds-badge slds-theme--info slds-m-right--xx-small slds-m-left--xx-small">';
+                                html += tempCount +'</span>';
+                                document.getElementById(tempActId).innerHTML = html;
+
+                            } else {
+
+                                // reset variables for next account
+                                tempCount = 0;
+                            }
+
+                            tempActId = record.get("Primary_Design_Firm__c");
+                        });
+                    }
+                }
+            );
+        }
+    }
+
+    function init() {
+
+        getRecordTypes(50);
+    }
+
+j$ = jQuery.noConflict();
+
+j$(document).ready(function() {
+
+   init();
+});
+</script>
+</html>
+</apex:page>

@@ -1,0 +1,3 @@
+<apex:page id="B2C_OrderConfirmationBIE_STEX" controller="B2B_OrderConfirmationBIECTRL_STEX" docType="html-5.0" sideBar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+	<c:B2C_OrderView_STEX OrderIdAttr="{!orderId}" OrderConAttr="TRUE"/>
+</apex:page>

@@ -1,0 +1,95 @@
+<apex:page id="B2C_CreditCardInputForm" showHeader="false" sideBar="false" controller="B2C_CreditCardInputFormController">
+    <style>
+        #creditCardForm{
+        	min-height: 250px;
+        }
+        #creditCardForm label{
+        	margin-right: 140px;
+        }
+        #creditCardForm input:not(.PaymentPage_PayNowButton), #creditCardForm select{
+            border: solid 1px #e3e3e3;
+            color: #676767;
+            line-height: 1.42857143;
+        }
+    	#creditCardForm input:not(.PaymentPage_PayNowButton){
+			height: 12px;
+            padding: 6px 12px;
+        }
+        #creditCardForm select{
+			height: 24px;
+            padding: 2px 12px;
+            min-width: 194px;
+        }
+        table.DataIntercept tbody tr {
+        	height: 30px;
+        }
+        #creditCardForm label, table.DataIntercept tbody tr td:first-child {
+        	font-size: 11px;
+            font-weight: bold;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: normal;
+            letter-spacing: normal;
+            color: #a3a3a3;
+            text-transform: uppercase;
+        	vertical-align: middle;
+        }
+        #PayNowButton{
+        	padding: 9px 17px 7px;
+            font-size: 11px;
+            min-width: 100px;
+            background-color: #336ff0;
+            font-weight: bold;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: normal;
+            letter-spacing: normal;
+            color: #ffffff;
+            margin-bottom: 0;
+            border: none;
+            border-radius: 0px;
+            text-transform: uppercase;
+            transition: 0.5s all;
+        }
+    </style> 
+	<form id="creditCardForm">
+		<label for="NameOnCard">Name on Card</label>
+		<input name="NameOnCard" type="text" id="NameOnCard" />
+		<input name="HFSignedData" type="hidden" id="RequestPacket" value="{!RequestPacket}"/>
+		<script src="{!PaymetricCredentials.Endpoint__c}Preloader/en.ashx?GUID={!PaymetricCredentials.Merchant_Id__c}" type="text/javascript" ></script>
+	</form>
+
+	<apex:outputText value="{!CreditCardToken}"/>
+	<script type="text/javascript" language="javascript">
+		PerformTypeCheck = true;
+		ShowCVV = true;
+		IssuerNumberSizeErrorMessage = 'Issuers Number must be two digits or less';
+		CVVRequiredErrorMessage = 'The CVV value is required';
+		CVVSizeErrorMessage = 'The CVV value must be three or four digits';
+		CCNumberRequiredMessage = 'The Credit Card Number is required';
+		CCNumberLuhnErrorMessage = 'The Credit Card Number is not a valid card number';
+		CCNumberCardTypeErrorMessage = 'Card number does not match the type selected';
+		ExpirationDateErrorMessage = 'The expiration date is not valid';
+
+		UpdatePaymentPageContent('{!RequestPacket}');
+
+		let ccToken = "{!CreditCardToken}";
+		if (ccToken) {
+			parent.$('#NewCardFormContainer').trigger({
+				type: 'paymetricResponse',
+				ccToken: "{!CreditCardToken}",
+				expMonth: "{!ExpirationMonth}",
+				expYear: "{!ExpirationYear}",
+				cardType: "{!CardType}",
+				transactionCode: "{!TransactionCode}",
+				cvv: "{!CVV}"
+			});
+		}
+		window.onbeforeunload = function() {
+			parent.$('#NewCardFormContainer').trigger({
+				type: 'cardFormUnload',
+				nameOnCard: document.getElementById('NameOnCard').value,
+			});
+		};
+	</script>
+</apex:page>

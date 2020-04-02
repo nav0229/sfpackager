@@ -1,0 +1,172 @@
+<apex:page controller="B2B_HeaderExtController_STEX" id="B2B_HeaderPage_STEX" docType="html-5.0" sidebar="false" showHeader="false"
+ standardStylesheets="false" applyHtmlTag="false">
+
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script src="https://www.googletagmanager.com/gtag/js?id=UA-149673236-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag() { dataLayer.push(arguments); }
+		gtag('js', new Date());
+
+		gtag('config', 'UA-149673236-1');
+	</script>
+	<c:B2B_EffAcctSelector_STEX />
+	<c:B2B_HeaderMenu_STEX />
+	<c:B2B_CategoriesMenu_STEX />
+	<script>
+		
+		if(localStorage.getItem('lastActive') !== null && !window.location.href.includes("ccrz__CheckoutNew")) {
+			CCRZ.pagevars.currentCartID = localStorage.getItem('lastActive');
+			localStorage.removeItem('lastActive');
+		}
+
+		jQuery(function ($) {
+
+			var currPage = window.location.href;
+			if ((currPage.includes("ccrz__CCSiteLogin")) || (currPage.includes("ccrz__CCSiteRegister")) || (currPage.includes('ccrz__CCForgotPassword')) || (currPage.includes('ccrz__CCChangePassword'))) {
+				CCRZ.pubSub.on('view:headerView:refresh', function () {
+					$('[id="cc_store_logo_img"]').hide();
+					$('.home_slider').hide();
+					$('.header').hide();
+					$('.navbar').hide();
+				});
+			} else {
+				CCRZ.pubSub.on('view:headerView:refresh', function () {
+					redirectToLogin();
+					createReportLinks();
+                    getHeaderInfo();
+				});
+
+                //	getHeaderInfo();
+			}
+		function htmlDecode(input) {
+			var e = document.createElement('textarea');
+			e.innerHTML = input;
+			// handle case of empty input
+			return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+		}
+		function getSite() {
+			if (localStorage.getItem('siteParam')) {
+				return localStorage.getItem('siteParam');
+			}
+		}
+		function getHeaderInfo() {
+			const remote = _.extend(CCRZ.RemoteInvocation, { className: 'B2B_HeaderExtController_STEX' });
+			remote.invokeCtx('getHeaderInfo', (res, err) => {
+				console.log('get header info running');
+				if (res && res.success) {
+					console.log('get header info successful',res.data);
+					if (res.data) {
+						var response = res.data;
+						let storeLogo = $('#cc_store_logo_img');
+						storeLogo.css("background-image", 'none');
+						if (response.customerLogoUrl) {
+							storeLogo.removeClass("hidden");
+							storeLogo.attr("src", response.customerLogoUrl);
+						}
+						if (response.dealerLogoUrl) {
+							let dealerLogo = $('#cc_dealer_logo_img');
+							dealerLogo.removeClass("hidden");
+							dealerLogo.attr("src", response.dealerLogoUrl);
+						}
+
+						if (Boolean(response.LearnInfoenable) && (response.LearnInfo !== undefined)) {
+							let learnInfoEntries = Object.entries(response.LearnInfo);
+
+							learnInfoEntries.forEach(function(entry) {
+								let learnLink;
+								if (entry[1] === '') {
+									learnLink = document.createElement('span');
+									learnLink.innerHTML = entry[0];
+								}
+								else {
+									learnLink = document.createElement('a');
+									learnLink.innerHTML = entry[0];
+									learnLink.href = htmlDecode(entry[1]);
+								}
+
+								let wrapperDiv = document.createElement('div');
+								wrapperDiv.appendChild(learnLink);
+
+								$("#Dealerlearninfo").append(wrapperDiv);
+							});
+
+							console.log('learn info response', response.LearnInfo);
+						}
+						else {
+						    //hide learn menu base on Acc setup
+							$("#lilearninfo").hide();
+      					}
+
+						//Support Info
+						let supportInfo = document.getElementById("Dealersupportinfo");
+						if (supportInfo) {
+							supportInfo.innerHTML += htmlDecode(response.supportInfo);
+						}
+
+					}
+				}
+			},
+			{
+				nmsp: false
+			}
+			);
+		}
+		function redirectToLogin() {
+			var siteParam = getSite();
+			if (CCRZ.pagevars.isGuest) {
+				if (siteParam) {
+					window.location.replace('/exchange/' + siteParam);
+				} else {
+					window.location.replace('/exchange');
+				}
+			}
+		}
+		function createReportLinks() {
+			let siteName = getSite();
+			const remote = _.extend(CCRZ.RemoteInvocation, { className: 'B2B_HeaderExtController_STEX' });
+			remote.invokeCtx('getReportEnableSettings', siteName,
+				(res, err) => {
+					console.log('get report enable settings running');
+					if (res && res.success) {
+						console.log('get report enable successful',res.data);
+						let responseData = res.data;
+						let linkBase = responseData.baseUrl;
+
+						if (responseData.profileName != 'STEX B2B Dealer') {
+							if (responseData.enableOrderReport == "true") {
+								orderLink = document.createElement('a');
+								orderLink.href = linkBase + 'hedberg-orders';
+								orderLink.innerHTML = "Orders"
+
+								let wrapperDiv = document.createElement('div');
+								wrapperDiv.appendChild(orderLink);
+
+								$("#Reportinfo").append(wrapperDiv);
+							}
+
+							if (responseData.enableQuoteReport == "true") {
+								quoteLink = document.createElement('a');
+								quoteLink.href = linkBase + 'hedberg-quotes';
+								quoteLink.innerHTML = "Quotes"
+
+								let wrapperDiv = document.createElement('div');
+								wrapperDiv.appendChild(quoteLink);
+
+								$("#Reportinfo").append(wrapperDiv);
+							}
+						}
+
+						if ($('#Reportinfo').children().length === 2) {
+							$('#liReportInfo').hide();
+						}
+					}
+				},
+				{
+					nmsp: false
+				}
+			);
+		}
+	});
+	</script>
+</apex:page>

@@ -1,0 +1,25 @@
+<apex:page id="B2C_NotFound" docType="html-5.0" sideBar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false">
+    <h1>
+        404 Not Found
+    </h1>
+    <strong>We are sorry, but the page you are looking for cannot be found.</strong>
+    <p>
+        We've recently done some web work which may have affected links and URLs. Please use the steps below to find the page you're looking for. If you have concerns about a broken link, please email details to us at customercare@steelcase.com.
+    </p>
+    <ul>
+  		<li>If you typed the URL directly, please make sure the spelling is correct.</li>
+  		<li>If you clicked on a link to get here, we must have moved the content.</li>
+  		<li>If you are not sure how you got here, go back to the previous page or return to our <a href="/Store">Store</a> homepage.</li>
+	</ul>
+    
+    <div style="margin-bottom: 30px">
+        
+    </div>
+        
+    <script type="text/javascript">
+    	jQuery(function($) {
+            $('.cc_main_content_col').css('margin-top', '0px');
+            $('.cc_content_body').css('padding-top', '0px');
+        });
+    </script>
+</apex:page>

@@ -1,0 +1,219 @@
+<apex:page controller="B2B_SiteRegisterControllerExt_STEX" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false" cache="false" applyHtmlTag="false"  id="ccRegisterMinimal">
+   
+    <script id="SiteRegister-NewCustomer-Desktop" type="text/template">
+        <div id="error_messages_section_id" class="error_messages_section">
+        </div>
+        <div>
+            <a href="#">
+                <img id="customerLogoSelectorId" style="max-width: 50px;height: 50px;float:center;border: 0px;" />
+            </a>
+        </div>
+        <form id="newCustomerForm" forceSSL="true" class="form-horizontal">
+            <div class="panel panel-default cc_panel cc_new_customer_panel">
+                <div class="panel-heading cc_heading">
+                    <h3 class="panel-title cc_title">{{pageLabelMap 'SiteRegistration_PersonalInfo'}}</h3>
+                </div>
+                <div class="panel-body cc_body">
+                    <div class="form-group">
+                        <label for="firstName" class="col-sm-3 cc_firstname_label">{{pageLabelMap
+                            'CheckOut_FirstName'}}</label>
+                        <div class="col-sm-4">
+                            <input id="firstName" name="firstName" type="text" class="form-control cc_firstname"
+                                   value="{{firstName}}" onfocus="myFocus(this);" onblur="myBlur(this);">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName" class="col-sm-3 cc_lastname_label">{{pageLabelMap
+                            'CheckOut_LastName'}}</label>
+                        <div class="col-sm-4">
+                            <input id="lastName" name="lastName" type="text" class="form-control cc_lastname"
+                                   value="{{lastName}}" onfocus="myFocus(this);" onblur="myBlur(this);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default cc_panel cc_login_info">
+                <div class="panel-heading cc_heading">
+                    <h3 class="panel-title cc_title">{{pageLabelMap 'SiteRegistration_LoginInfo'}}</h3>
+                </div>
+                <div class="panel-body cc_body">
+                    <div class="form-group">
+                        <label for="username" class="col-sm-3 cc_username_label">{{pageLabelMap
+                            'SiteRegistration_UsernameEmail'}}</label>
+                        <div class="col-sm-4">
+                            <input id="username" name="username" type="text" class="form-control cc_username"
+                                   value="{{username}}" onfocus="myFocus(this);" onblur="myBlur(this);">
+                        </div>
+                    </div>
+                    {{#ifDisplay 'UR.DirLogin'}}
+                    <div class="form-group">
+                        <label for="NewPassword" class="col-sm-3 cc_newpassword_label">{{pageLabelMap
+                            'SiteRegistration_NewPassword'}}</label>
+                        <div class="col-sm-4">
+                            <input id="NewPassword" name="NewPassword" type="password"
+                                   class="form-control cc_newpassword" value="{{NewPassword}}" onfocus="myFocus(this);"
+                                   onblur="myBlur(this);">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ConfirmPassword" class="col-sm-3 cc_confirmpassword_label">{{pageLabelMap
+                            'SiteRegistration_ConfirmPassword'}}</label>
+                        <div class="col-sm-4">
+                            <input id="ConfirmPassword" name="ConfirmPassword" type="password"
+                                   class="form-control cc_confirmpassword" value="{{ConfirmPassword}}"
+                                   onfocus="myFocus(this);" onblur="myBlur(this);">
+                        </div>
+                    </div>
+                    {{/ifDisplay}}
+                    <div class="form-group">
+                         <div class="col-sm-offset-32 col-sm-9">
+                              <p class="pull-right cc_required_fields">{{pageLabelMap
+                    'Required_Fields'}}</p>
+                                      <input id="btnReg" name="btnReg" type="button" onclick="registerSubmit()" value="{{pageLabelMap
+                    'Site_Submit'}}" class="btn btn-default-one"/>
+
+                    </div>                  
+                </div>
+            </div>
+            
+        </form>
+    </script>
+
+    <script>
+    function displayMessage(msg,type) {
+            var errName = $("#error_messages_section_id"); //Element selector
+            if( errName != null ) {
+                errName.removeClass('alert alert-danger alert-info');
+            }
+            if(type == 'Error') {
+                errName.addClass('alert alert-danger'); 
+            } else {
+                errName.addClass('alert alert-info'); 
+            }
+            errName.html(msg); // Put the message content inside div
+        
+        }
+        function registerSubmit() {
+            let site = localStorage.getItem('siteParam');
+            let firstName;
+            let lastName;
+            let username;
+            
+            if ((firstName = document.getElementById('firstName').value) == '')
+            {
+                console.log('First name is required.');
+                //alert("First name is required.");
+                //displayMessage($Label.FirstNameIsRequired,'Error');
+                displayMessage("First name is required.",'Error');
+                return false;
+            }
+            else if ((lastName = document.getElementById('lastName').value) == '')
+                {
+                    console.log('Last name is required.');
+                    //alert("Last name is required.");
+                    //displayMessage($Label.LastNameIsRequired,'Error');
+                    displayMessage("Last name is required.",'Error');
+                    return false;
+                 }
+            else if ((username = document.getElementById('username').value) == '')
+                {
+                    console.log('Email is required.'); 
+                    //alert("Email is required.");
+                    displayMessage("Email is required",'Error');
+                    return false;
+                }
+            else if ((site == 'null')||(site==null))
+                {
+                    console.log('Account is required.'); 
+                    //alert("This is not a correct URL for registration. Please contact your administrator.");
+                    displayMessage("This is not a correct URL for registration. Please contact your administrator.",'Error');
+                    return false;
+                }
+            else           
+                {         
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.B2B_SiteRegisterControllerExt_STEX.submit}', 
+                    {'firstName': firstName, 'lastName': lastName, 'username': username, 'site': site }, 
+                    function(result, event) {
+                        if (event.status) {   
+                            console.log(result.result,'Info');
+                            displayMessage(result.result);
+                            $("#newCustomerForm").hide();
+                            // window.location.href='/exchange/ccrz__CCSiteLogin?site='+ site +'&cartId=&portalUser=&store=&cclcl=en_US';
+                                                            
+                        } 
+                        else if (event.type === 'exception') {
+                            console.log('exception');
+                        
+                        } 
+                        else {
+                            console.log('error response');
+                        }
+                    }, 
+                    {escape: true}
+                );
+            }        
+
+        }
+    
+        jQuery(function($){            
+            var GetSiteInfo = CCRZ.CloudCrazeView.extend({
+            id: 'site-register-template-id',
+            viewName: 'site-register-view',
+            template: CCRZ.util.template('SiteRegister-NewCustomer-Desktop'),              
+            initialize: function() {
+                _.bindAll(this,'renderDesktop','getDealerInfo');
+                console.log('init');
+                this.getDealerInfo(this);               
+            },
+            renderDesktop: function(data) {
+                console.log('result.data:'+data);
+                //this.$el.html(this.template);
+                var image = $('#customerLogoSelectorId');
+                var myImage = document.getElementById('customerLogoSelectorId');
+                console.log('myImage: '+myImage);
+                console.log('imagerrr html: '+image);
+                console.log('image src: '+image.attr('id')); 
+                //image.attr('src',data);
+                console.log('image src: '+image.attr('id'));
+                CCRZ.pubSub.on('view:registerNewView:refresh', function () {
+                    console.log('Inside oub sub'); 
+                    $('#customerLogoSelectorId').attr("src", data);
+                }); 
+                
+                              
+            },
+            getDealerInfo: function(currentView) {
+                const site = localStorage.getItem('siteParam');
+                console.log('Site Name: '+ site );
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.B2B_SiteRegisterControllerExt_STEX.getSiteInfo}', 
+                    {'site':site }, 
+                    function(result, event) {
+                        if (event.status) {
+                            console.log('response:'+result.success);
+                            console.log('logoUrl:'+result.logoUrl);                           
+                            currentView.renderDesktop(result.logoUrl);
+                        } else if (event.type === 'exception') {
+                            console.log('exception');
+                        } else {
+                           console.log('error response');
+                        }
+                    }, 
+                    {escape: true}
+                );
+            }
+            
+        }); 
+        console.log('GetSiteInfo');
+        var getSiteInfooView = new GetSiteInfo();          
+                        
+    });     
+    
+    
+    
+    </script>
+    
+    
+</apex:page>

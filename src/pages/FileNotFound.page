@@ -1,0 +1,17 @@
+<apex:page id="FileNotFound" rendered="true" showHeader="false">
+	<script>
+		if (localStorage.getItem('siteParam')){
+			localStorage.setItem('oldSiteParam',localStorage.getItem('siteParam'));
+			localStorage.removeItem('siteParam');
+		}
+		var url = window.location.pathname;
+		var siteName = url.split('/');
+		let siteParam = siteName[siteName.length-1];
+		localStorage.setItem('siteParam',siteParam);
+		if (siteParam==localStorage.getItem('oldSiteParam')){
+			window.location.replace('/exchange/B2B_LandingPage_STEX');
+		} else {
+			window.location.replace('/exchange/secur/logout.jsp');
+		}	
+	</script>
+</apex:page>

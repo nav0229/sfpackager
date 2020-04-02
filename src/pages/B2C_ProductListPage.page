@@ -1,0 +1,10 @@
+<apex:page id="B2C_ProductListPage" controller="B2B_ProductListPageController_STEX"  applyHtmlTag="false" docType="html-5.0" sidebar="false" showHeader="false" standardStylesheets="false">
+    <c:B2B_PLPHeader_STEX />   
+    <c:B2C_ProductListFilter />
+    <c:B2B_PLPProductItemGrid_STEX /> 
+    <c:B2C_PLPPriceDisplay />
+    <apex:includeScript value="{!$Resource.B2C_PLPJS}"/>
+    <script>
+        PLP();
+    </script>
+</apex:page>

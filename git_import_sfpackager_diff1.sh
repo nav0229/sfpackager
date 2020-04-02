@@ -1,6 +1,7 @@
 1#!/usr/bin/sh
 git pull origin
 git branch -a
+git checkout dev1
 cp  ./retrieveUnpackaged/* ./src/
 git add ./src/*
 git commit -m "checkin"
